@@ -14,7 +14,7 @@ if (!PORT || !MONGODB_URI) {
   process.exit(1);
 }
 
-app.
+
 
 // Connect to MongoDB
 connectToDatabase(MONGODB_URI);
