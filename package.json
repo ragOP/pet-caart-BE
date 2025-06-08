@@ -1,0 +1,28 @@
+{
+  "name": "india-trade-be",
+  "version": "1.0.0",
+  "description": "this app provide api for reatime conversation",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/index.js",
+    "start": "node src/index.js",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "author": "india-trade",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "logrotate-stream": "^0.2.9",
+    "mongoose": "^8.14.2",
+    "morgan": "^1.10.0",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "prettier": "^3.5.3"
+  }
+}
