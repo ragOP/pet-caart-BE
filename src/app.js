@@ -38,7 +38,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('Welcome to the cove API');
+  res.send('Welcome to the India Trade API');
 });
 
 app.use('/api/user', require('./routes/users/index'));
