@@ -1,6 +1,6 @@
-const { registerUser, loginUser } = require('../../services/auth/index')
-const { asyncHandler } = require('../../utils/asyncHandler');
-const ApiResponse = require('../../utils/apiResponse/index');
+const { registerUser, loginUser } = require('../../../services/auth/user/index');
+const { asyncHandler } = require('../../../utils/asyncHandler');
+const ApiResponse = require('../../../utils/apiResponse/index');
 
 exports.handleUserRegister = asyncHandler(async (req, res) => {
   const { phoneNumber, otp } = req.body;

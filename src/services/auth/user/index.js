@@ -1,5 +1,5 @@
-const { checkUserExists, createUser } = require('../../repositories/auth/index');
-const { OTP } = require('../../constants/otp/index');
+const { checkUserExists, createUser } = require('../../../repositories/auth/index');
+const { OTP } = require('../../../constants/otp/index');
 const jwt = require('jsonwebtoken');
 
 exports.registerUser = async (phoneNumber, otp) => {

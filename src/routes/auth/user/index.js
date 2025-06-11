@@ -1,7 +1,7 @@
 const express = require('express');
-const { handleUserRegister, handleUserLogin } = require('../../controllers/auth');
-const { validateMobileAndOTP } = require('../../validators/auth/index');
-const { validateRequest } = require('../../middleware/validateRequest/index')
+const { handleUserRegister, handleUserLogin } = require('../../../controllers/auth/user/index');
+const { validateMobileAndOTP } = require('../../../validators/auth/index');
+const { validateRequest } = require('../../../middleware/validateRequest/index')
 const router = express.Router();
 
 /**

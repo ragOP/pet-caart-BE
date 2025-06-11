@@ -11,4 +11,3 @@ exports.createUser = async phoneNumber => {
   return newUser;
 };
 
-// exports.get
