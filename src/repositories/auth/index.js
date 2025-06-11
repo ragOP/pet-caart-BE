@@ -11,3 +11,15 @@ exports.createUser = async phoneNumber => {
   return newUser;
 };
 
+exports.getFilteredUsers = async (filters, skip, limit) => {
+  const [users, total] = await Promise.all([
+    User.find(filters)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit)),
+    User.countDocuments(filters),
+  ]);
+
+  return { users, total };
+};
+
