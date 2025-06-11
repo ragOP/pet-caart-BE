@@ -39,4 +39,34 @@ exports.registerUser = async (phoneNumber, otp) => {
             token
         }
     }
-}
+};
+
+exports.loginUser = async (phoneNumber, otp) => {
+    const isValidOtp = otp == OTP;
+    if (!isValidOtp){
+        return {
+            statusCode: 401, 
+            message: 'Invalid OTP',
+            data: null
+        }
+    }
+
+    let user = await checkUserExists(phoneNumber);
+    if(!user){
+        return {
+            statusCode: 404, 
+            message: 'User not found',
+            data: null
+        }
+    }
+
+    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+    return {
+        statusCode: 200, 
+        message: 'User logged in successfully',
+        data: {
+            user,
+            token
+        }
+    }
+};

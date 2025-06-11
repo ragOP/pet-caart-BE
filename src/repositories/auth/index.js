@@ -10,3 +10,5 @@ exports.createUser = async phoneNumber => {
   const newUser = await User.create({ phoneNumber });
   return newUser;
 };
+
+// exports.get
