@@ -1,21 +1,16 @@
+const { registerUser } = require('../../services/auth/index')
 const { asyncHandler } = require('../../utils/asyncHandler');
+const ApiResponse = require('../../utils/apiResponse/index');
 
 exports.handleUserRegister = asyncHandler(async (req, res) => {
-  const { mobileNumber, otp } = req.body;
+  const { phoneNumber, otp } = req.body;
 
-  if (!mobileNumber || !otp) {
-    return res.status(400).json({
-      success: false,
-      message: 'Mobile number and OTP are required',
-    });
+  if (!phoneNumber || !otp) {
+    return res.status(400).json(new ApiResponse(400, null, 'Phone number and OTP are required'));
   }
 
-  return res.status(201).json({
-    success: true,
-    message: 'User registered successfully',
-    data: {
-      mobileNumber,
-      otp,
-    },
-  });
+  const result = await registerUser(phoneNumber, otp);
+  const { statusCode, message, data } = result;
+
+  return res.status(statusCode).json(new ApiResponse(statusCode, data, message));
 });

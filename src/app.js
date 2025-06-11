@@ -42,7 +42,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/user', require('./routes/users/index'));
-app.use('/api/auth', require('./routes/auth/index'));
+app.use('/api/auth/user', require('./routes/auth/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {

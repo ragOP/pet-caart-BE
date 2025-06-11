@@ -1,10 +1,12 @@
 const express = require('express');
 const { handleUserRegister } = require('../../controllers/auth');
+const { validateMobileAndOTP } = require('../../validators/auth/index');
+const { validateRequest } = require('../../middleware/validateRequest/index')
 const router = express.Router();
 
 /**
  * @swagger
- * /api/auth/user:
+ * /api/auth/user/register:
  *   post:
  *     summary: Register a new user
  *     tags: [Auth]
@@ -15,7 +17,7 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               mobileNumber:
+ *               phoneNumber:
  *                 type: string
  *                 example: '1234567890'
  *               otp:
@@ -25,6 +27,6 @@ const router = express.Router();
  *       201:
  *         description: User registered successfully
  */
-router.route('/user').post(handleUserRegister);
+router.route('/register').post(validateMobileAndOTP, validateRequest, handleUserRegister);
 
 module.exports = router;
