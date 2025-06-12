@@ -3,33 +3,41 @@ const ApiResponse = require('../../utils/apiResponse/index');
 const {
   createSubCategory,
   getAllSubCategories,
+  getAllSubCategoriesByCategoryId,
   getSingleSubCategory,
 } = require('../../services/sub_category/index');
 const { uploadSingleFile } = require('../../utils/upload/index');
+const mongoose = require('mongoose');
 
 exports.handleGetAllSubCategories = asyncHandler(async (req, res) => {
   const { categoryId, search, page = 1, per_page = 50, start_date, end_date } = req.query;
-  if(!categoryId){
-    return res
-      .status(400)
-      .json(new ApiResponse(400, null, 'Category Id is required', false));
-  }
 
-  const result = await getAllSubCategories({
-    search,
-    categoryId,
-    page,
-    perPage: per_page,
-    startDate: start_date,
-    endDate: end_date,
-  });
+  let result;
+  if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
+    result = await getAllSubCategoriesByCategoryId({
+      categoryId,
+      search,
+      page,
+      perPage: per_page,
+      startDate: start_date,
+      endDate: end_date,
+    });
+  } else {
+    result = await getAllSubCategories({
+      search,
+      page,
+      perPage: per_page,
+      startDate: start_date,
+      endDate: end_date,
+    });
+  }
 
   return res
     .status(200)
     .json(new ApiResponse(200, result, 'SubCategories fetched successfully', true));
 });
 
-exports.handleGetSubCategory = asyncHandler(async (req, res) => {
+exports.handleGetSingleSubCategory = asyncHandler(async (req, res) => {
   const { id } = req.params;
   if (!id) {
     return res.status(400).json(new ApiResponse(400, null, 'SubCategory id is required'));

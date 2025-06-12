@@ -46,6 +46,7 @@ app.use('/api/auth/user', require('./routes/auth/user/index'));
 app.use('/api/auth/admin', require('./routes/auth/admin/index'));
 app.use('/api/category', require('./routes/category/index')); 
 app.use('/api/subcategory', require('./routes/sub_category/index'));
+app.use('/api/collection', require('./routes/collection/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {
