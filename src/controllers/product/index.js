@@ -37,10 +37,11 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
 
   // Parse fields that may come as strings but are actually arrays or objects
   const parsedBreedIds = typeof breedId === 'string' ? JSON.parse(breedId) : breedId;
-  const parsedVariants = typeof variants === 'string' ? JSON.parse(variants) : variants;
-  const parsedTags = typeof tags === 'string' ? JSON.parse(tags) : tags;
-  const parsedAttributes = typeof attributes === 'string' ? JSON.parse(attributes) : attributes;
-  const parsedRatings = typeof ratings === 'string' ? JSON.parse(ratings) : ratings;
+const parsedVariants = typeof variants === 'string' ? JSON.parse(variants) : variants;
+const parsedTags = typeof tags === 'string' ? JSON.parse(tags) : tags;
+const parsedAttributes = typeof attributes === 'string' ? JSON.parse(attributes) : attributes;
+const parsedRatings = typeof ratings === 'string' ? JSON.parse(ratings) : ratings;
+
 
   const productPayload = {
     title,
@@ -50,16 +51,16 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
     subCategoryId,
     breedId: parsedBreedIds,
     brandId,
-    variants: parsedVariants,
     price,
     salePrice,
     stock,
     isActive,
     isFeatured,
-    tags: parsedTags,
     images: imageUrls,
-    attributes: parsedAttributes,
-    ratings: parsedRatings
+  variants: parsedVariants,
+  tags: parsedTags,
+  attributes: parsedAttributes,
+  ratings: parsedRatings,
   };
 
   const result = await createProduct(productPayload);
