@@ -7,25 +7,6 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/auth/user:
- *   post:
- *     summary: Get all users
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *     responses:
- *       201:
- *         description: Users retrieved successfully
- */
-router.route('/').get(isAdmin, validateRequest, handleAllUsers);
-
-/**
- * @swagger
  * /api/auth/user/register:
  *   post:
  *     summary: Register a new user
