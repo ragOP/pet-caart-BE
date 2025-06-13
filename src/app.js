@@ -49,6 +49,7 @@ app.use('/api/subcategory', require('./routes/sub_category/index'));
 app.use('/api/collection', require('./routes/collection/index'));
 app.use('/api/breed', require('./routes/breed/index'));
 app.use('/api/brand', require('./routes/brand/index'));
+app.use('/api/product', require('./routes/product/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {
