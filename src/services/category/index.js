@@ -1,6 +1,7 @@
 const {
   createCategory: createCategoryRepo,
   getAllCategories,
+  getCategoryById,
 } = require('../../repositories/category/index');
 
 const createCategory = async ({ name, slug, image, description, createdBy }) => {
@@ -25,7 +26,15 @@ const getCategories = async () => {
   };
 };
 
+const getSingleCategory = async (id) => {
+  const category = await getCategoryById(id);
+  return {
+    category
+  };
+};
+
 module.exports = {
   createCategory,
   getCategories,
+  getSingleCategory
 };

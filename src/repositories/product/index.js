@@ -11,10 +11,18 @@ exports.getSingleProduct = async id => {
 }
 
 exports.getAllProducts = async (filters, skip = 0, limit = 50) => {
-    const [products, total] = await Promise.all([
-        Product.find(filters).sort({ createdAt: -1 }).skip(skip).limit(limit),
-        Product.countDocuments(filters),
-    ])
+  const [products, total] = await Promise.all([
+    Product.find(filters)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate({ path: "categoryId", select: "name _id" })
+      .populate({ path: "subCategoryId", select: "name _id" })
+      .populate({ path: "brandId", select: "name _id" })
+      .populate({ path: "breedId", select: "name _id" }),
+    Product.countDocuments(filters),
+  ]);
 
-    return { products, total };
-}
+  return { products, total };
+};
+

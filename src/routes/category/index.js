@@ -1,5 +1,5 @@
 const express = require("express");
-const { handleCreateCategory, handleGetAllCategories } = require('../../controllers/category/index.js');
+const { handleCreateCategory, handleGetAllCategories, handleGetSingleCategory } = require('../../controllers/category/index.js');
 const { validateCreateCategory } = require('../../validators/category/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index')
 const multer = require("multer");
@@ -48,5 +48,7 @@ router.route("/").post(isAdmin, upload.array("images"), validateCreateCategory, 
  *         description: Categories retrieved successfully
  */
 router.route("/").get(handleGetAllCategories);
+
+router.route("/:id").get(handleGetSingleCategory);
 
 module.exports = router;

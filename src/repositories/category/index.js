@@ -5,6 +5,11 @@ exports.getAllCategories = async () => {
     return categories;
 };
 
+exports.getCategoryById = async (id) => {
+    const category = await Category.findById(id);
+    return category;
+};
+
 exports.createCategory = async (category) => {
     const newCategory = await Category.create(category);
     return newCategory;
