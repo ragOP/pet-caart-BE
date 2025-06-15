@@ -8,7 +8,15 @@ const { isAdmin } = require("../../middleware/auth/adminMiddleware.js");
 const router = express.Router();
 const upload = multer({ storage: storage });
 
-router.route("/").post(isAdmin, upload.array("images", maxCount = 10), validateRequest, handleCreateProduct);
+router.route("/").post(
+  isAdmin,
+  upload.fields([
+    { name: "images", maxCount: 20 },
+    { name: "variantImages", maxCount: 100 },
+  ]),
+  validateRequest,
+  handleCreateProduct
+);
 
 router.route("/").get(handleGetAllProducts);
 

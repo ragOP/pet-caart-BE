@@ -1,14 +1,5 @@
 const mongoose = require('mongoose');
 
-const VariantSchema = new mongoose.Schema({
-  sku: { type: String, required: true },
-  weight: String,
-  price: { type: Number, required: true },
-  salePrice: Number,
-  stock: { type: Number, default: 0 },
-  barcode: String
-});
-
 const ProductSchema = new mongoose.Schema({
   title: { type: String, required: true },
   slug: { type: String, unique: true },
@@ -17,7 +8,6 @@ const ProductSchema = new mongoose.Schema({
   subCategoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory' },
   breedId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Breed' }],
   brandId: { type: mongoose.Schema.Types.ObjectId, ref: 'Brand' },
-  variants: [VariantSchema],
   price: Number,
   salePrice: Number,
   stock: Number,

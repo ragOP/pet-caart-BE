@@ -2,7 +2,7 @@ const multer = require("multer");
 const path = require("path");
 
 const allowedFileTypes = {
-  images: /jpeg|jpg|png|gif/,
+  images: /jpeg|jpg|png|gif|webp/,
   audio: /mp3|wav|ogg|mpeg/,
   pdf: /pdf/,
 };

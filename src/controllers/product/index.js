@@ -1,16 +1,13 @@
-const { createProduct, getSingleProduct, getAllProducts } = require('../../services/product/index.js');
-const { asyncHandler } = require('../../utils/asyncHandler/index');
-const ApiResponse = require('../../utils/apiResponse/index');
-const { uploadMultipleFiles } = require('../../utils/upload/index');
+const {asyncHandler} = require("../../utils/asyncHandler/index");
+const { uploadMultipleFiles } = require("../../utils/upload");
+const { createProduct, getSingleProduct, getAllProducts } = require("../../services/product/index");
+const ApiResponse = require("../../utils/apiResponse/index");
 
 exports.handleCreateProduct = asyncHandler(async (req, res) => {
-  const images = req.files;
-
-  if (!images || images.length === 0) {
-    return res.status(400).json(new ApiResponse(400, null, 'No image(s) found', false));
-  }
+  const { images = [], variantImages = [] } = req.files;
 
   const imageUrls = await uploadMultipleFiles(images);
+  const uploadedVariantImages = await uploadMultipleFiles(variantImages);
 
   const {
     title,
@@ -21,6 +18,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
     breedId,
     brandId,
     variants,
+    variantImageMap,
     price,
     salePrice,
     stock,
@@ -31,17 +29,31 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
     ratings
   } = req.body;
 
-  if (!title || !slug) {
-    return res.status(400).json(new ApiResponse(400, null, 'Title and slug are required', false));
-  }
+  // Parse all incoming data
+  const parsedVariants = Array.isArray(variants)
+    ? variants.map((v) => JSON.parse(v))
+    : [JSON.parse(variants)];
+  const parsedBreedIds = typeof breedId === "string" ? JSON.parse(breedId) : breedId;
+  const parsedTags = typeof tags === "string" ? JSON.parse(tags) : tags;
+  const parsedAttributes = typeof attributes === "string" ? JSON.parse(attributes) : attributes;
+  const parsedRatings = typeof ratings === "string" ? JSON.parse(ratings) : ratings;
+  const parsedVariantImageMap = JSON.parse(variantImageMap || "[]");
 
-  // Parse fields that may come as strings but are actually arrays or objects
-  const parsedBreedIds = typeof breedId === 'string' ? JSON.parse(breedId) : breedId;
-const parsedVariants = typeof variants === 'string' ? JSON.parse(variants) : variants;
-const parsedTags = typeof tags === 'string' ? JSON.parse(tags) : tags;
-const parsedAttributes = typeof attributes === 'string' ? JSON.parse(attributes) : attributes;
-const parsedRatings = typeof ratings === 'string' ? JSON.parse(ratings) : ratings;
+  // Group variant images by variant index
+  const variantImageGroups = {};
+  parsedVariantImageMap.forEach((item, idx) => {
+    const index = item.index;
+    if (!variantImageGroups[index]) {
+      variantImageGroups[index] = [];
+    }
+    variantImageGroups[index].push(uploadedVariantImages[idx]);
+  });
 
+  // Inject images into variants
+  const enrichedVariants = parsedVariants.map((variant, index) => ({
+    ...variant,
+    images: variantImageGroups[index] || [],
+  }));
 
   const productPayload = {
     title,
@@ -57,16 +69,18 @@ const parsedRatings = typeof ratings === 'string' ? JSON.parse(ratings) : rating
     isActive,
     isFeatured,
     images: imageUrls,
-  variants: parsedVariants,
-  tags: parsedTags,
-  attributes: parsedAttributes,
-  ratings: parsedRatings,
+    variants: enrichedVariants,
+    tags: parsedTags,
+    attributes: parsedAttributes,
+    ratings: parsedRatings
   };
 
   const result = await createProduct(productPayload);
-  return res.status(201).json(new ApiResponse(201, result, 'Product created successfully', true));
-});
 
+  return res.status(201).json(
+    new ApiResponse(201, result, "Product with variants created successfully", true)
+  );
+});
 
 exports.handleGetAllProducts = asyncHandler(async (req, res) => {
     const { search, page = 1, per_page = 50, start_date, end_date } = req.query;

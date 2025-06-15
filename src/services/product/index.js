@@ -1,8 +1,25 @@
 const { createProduct, getSingleProduct, getAllProducts } = require('../../repositories/product/index.js');
+const { createManyVariants } = require('../../repositories/variant/index.js');
 
-exports.createProduct = async product => {
-  const newProduct = await createProduct(product);
-  return newProduct;
+exports.createProduct = async productPayload => {
+  const { variants, ...productData } = productPayload;
+
+   // Step 1: Create Product
+  const product = await createProduct(productData);
+
+  // Step 2: Add productId to each variant
+  const enrichedVariants = variants.map(variant => ({
+    ...variant,
+    productId: product._id
+  }));
+
+    // Step 3: Bulk insert variants
+  const createdVariants = await createManyVariants(enrichedVariants);
+
+  return {
+    product,
+    variants: createdVariants
+  };
 };
 
 exports.getSingleProduct = async id => {
