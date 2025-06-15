@@ -69,7 +69,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
     stock,
     isActive,
     isFeatured,
-    isEverydayEssential,
+    isEverdayEssential,
     images: imageUrls,
     variants: enrichedVariants,
     tags: parsedTags,
@@ -85,8 +85,9 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
 });
 
 exports.handleGetAllProducts = asyncHandler(async (req, res) => {
-    const { search, page = 1, per_page = 50, start_date, end_date } = req.query;
-    const result = await getAllProducts({ search, page, perPage: per_page, startDate: start_date, endDate: end_date });
+    const { search, page = 1, per_page = 50, start_date, end_date, max_price } = req.query;
+    console.log(max_price)
+    const result = await getAllProducts({ search, page, perPage: per_page, startDate: start_date, endDate: end_date, maxPrice: max_price });
     return res.status(200).json(new ApiResponse(200, result, 'Products fetched successfully', true));
 });
 

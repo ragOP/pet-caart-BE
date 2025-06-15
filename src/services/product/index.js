@@ -27,7 +27,7 @@ exports.getSingleProduct = async id => {
   return product;
 };
 
-exports.getAllProducts = async ({ search, page, perPage, startDate, endDate }) => {
+exports.getAllProducts = async ({ search, page, perPage, startDate, endDate, maxPrice }) => {
   let filters = {};
 
   if (search) {
@@ -41,6 +41,10 @@ exports.getAllProducts = async ({ search, page, perPage, startDate, endDate }) =
     filters.createdAt = {};
     if (startDate) filters.createdAt.$gte = new Date(startDate);
     if (endDate) filters.createdAt.$lte = new Date(endDate);
+  }
+
+  if (maxPrice) {
+    filters.price = { $lt: maxPrice };
   }
 
   const skip = (page - 1) * perPage;

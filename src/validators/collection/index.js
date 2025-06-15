@@ -18,4 +18,12 @@ exports.validateCreateCollection = [
         .optional()
         .isLength({ min: 3, max: 500 })
         .withMessage('Description must be between 3 and 500 characters long'),
+    body('productIds')
+        .optional()
+        .isArray({ min: 1 })
+        .withMessage('Product ids must be an array with at least one element'),
+        body('productIds.*')
+            .isMongoId()
+            .withMessage('Product ids must be valid ObjectIds'),
+    
 ]

@@ -5,7 +5,7 @@ const { uploadSingleFile } = require('../../utils/upload/index');
 const mongoose = require('mongoose');
 
 exports.handleCreateCollection = asyncHandler(async (req, res) => {
-    const { name, slug, subCategoryId, description } = req.body;
+    const { name, slug, subCategoryId, description, productIds } = req.body;
     if (!subCategoryId || !name || !slug) {
         return res.status(400).json(new ApiResponse(400, null, 'SubCategory id, name and slug fields are required'));
     };
@@ -17,7 +17,7 @@ exports.handleCreateCollection = asyncHandler(async (req, res) => {
 
     const imageUrl = await uploadSingleFile(image[0].path);
 
-    const result = await createCollection({ name, slug, subCategoryId, image: imageUrl, description });
+    const result = await createCollection({ name, slug, subCategoryId, image: imageUrl, description, productIds });
     return res.status(201).json(new ApiResponse(201, result, 'Collection created successfully', true));
 });
 
