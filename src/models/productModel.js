@@ -13,6 +13,7 @@ const ProductSchema = new mongoose.Schema({
   stock: Number,
   isActive: { type: Boolean, default: true },
   isFeatured: { type: Boolean, default: false },
+  isEverydayEssential: { type: Boolean, default: false },
   tags: [String],
   images: [String],
   attributes: mongoose.Schema.Types.Mixed,

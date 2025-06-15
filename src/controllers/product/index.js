@@ -24,6 +24,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
     stock,
     isActive = true,
     isFeatured = false,
+    isEverdayEssential = false,
     tags,
     attributes,
     ratings
@@ -68,6 +69,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
     stock,
     isActive,
     isFeatured,
+    isEverydayEssential,
     images: imageUrls,
     variants: enrichedVariants,
     tags: parsedTags,
