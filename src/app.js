@@ -16,7 +16,6 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-console.log(swaggerSpec.paths);
 
 // Set up logging with Morgan
 if (process.env.NODE_ENV === 'development') {
@@ -38,7 +37,7 @@ if (process.env.NODE_ENV === 'development') {
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('Welcome to the India Trade API');
+  res.send('Welcome to the Pet Caart API');
 });
 
 app.use('/api/users', require('./routes/users/index'));
@@ -50,6 +49,7 @@ app.use('/api/collection', require('./routes/collection/index'));
 app.use('/api/breed', require('./routes/breed/index'));
 app.use('/api/brand', require('./routes/brand/index'));
 app.use('/api/product', require('./routes/product/index'));
+app.use('/api/configuration', require('./routes/configuration/banner/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {
