@@ -1,17 +1,19 @@
 const swaggerJSDoc = require('swagger-jsdoc');
 const path = require('path');
 
+const NODE_ENV = process.env.NODE_ENV;
+
 const options = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'India Trade API',
+      title: 'Pet Caart API',
       version: '1.0.0',
-      description: 'API documentation for India trade app',
+      description: 'API documentation for Pet Caart',
     },
     servers: [
       {
-        url: 'http://localhost:4000',
+        url: process.env.API_URL,
       },
     ],
     components: {
