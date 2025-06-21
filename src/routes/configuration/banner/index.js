@@ -4,7 +4,7 @@ const { storage } = require('../../../config/multer.js');
 const { isAdmin } = require('../../../middleware/auth/adminMiddleware.js');
 const { validateCreateBanner } = require('../../../validators/banners/index.js');
 const { validateRequest } = require('../../../middleware/validateRequest/index');
-const { handleCreateBanner, handleUpdateBanner, handleGetBanner } = require('../../../controllers/configuration/banner/index.js');
+const { handleCreateBanner, handleUpdateBanner, handleGetBanner, handleCreateAdBanner, handleGetAdBanner } = require('../../../controllers/configuration/banner/index.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
 
@@ -87,5 +87,52 @@ router.route('/banner/:id').put(isAdmin, upload.single('image'), validateRequest
  *         description: Banners fetched successfully
  */
 router.route('/banner').get(handleGetBanner);
+
+/**
+ * @swagger
+ * /api/configuration/ad-banner:
+ *   post:
+ *     summary: Create an ad banner
+ *     tags: [Configuration]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: The title of the ad banner
+ *               description:
+ *                 type: string
+ *                 description: The description of the ad banner
+ *               link:
+ *                 type: string
+ *                 description: The link of the ad banner
+ *               products:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: The products of the ad banner
+ *     responses:
+ *       200: 
+ *         description: Ad banner created successfully
+ */
+router.route('/ad-banner').post(isAdmin, validateRequest, handleCreateAdBanner);
+
+/**
+ * @swagger
+ * /api/configuration/ad-banner:
+ *   get:
+ *     summary: Get an ad banner
+ *     tags: [Configuration]
+ *     responses:
+ *       200:
+ *         description: Ad banner fetched successfully
+ */
+router.route('/ad-banner').get(handleGetAdBanner);
 
 module.exports = router;

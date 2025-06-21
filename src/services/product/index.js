@@ -27,7 +27,7 @@ exports.getSingleProduct = async id => {
   return product;
 };
 
-exports.getAllProducts = async ({ search, page, perPage, startDate, endDate, maxPrice }) => {
+exports.getAllProducts = async ({ search, page, perPage, startDate, endDate, maxPrice, isEverydayEssential, isBestSeller,  newleyLaunched, isAddToCart }) => {
   let filters = {};
 
   if (search) {
@@ -47,6 +47,22 @@ exports.getAllProducts = async ({ search, page, perPage, startDate, endDate, max
     filters.price = { $lt: maxPrice };
   }
 
+  if (isEverydayEssential) {
+    filters.isEverydayEssential = isEverydayEssential;
+  }
+
+  if (isBestSeller) {
+    filters.isBestSeller = isBestSeller;
+  }
+
+  if (newleyLaunched) {
+    filters.newleyLaunched = newleyLaunched;
+  }
+
+  if (isAddToCart) {
+    filters.isAddToCart = isAddToCart;
+  }
+
   const skip = (page - 1) * perPage;
 
   const { products, total } = await getAllProducts(filters, skip, perPage);
@@ -57,5 +73,4 @@ exports.getAllProducts = async ({ search, page, perPage, startDate, endDate, max
     page,
     perPage,
   };
-  return products;
 };

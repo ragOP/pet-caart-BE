@@ -14,9 +14,9 @@ exports.createSlider = async (image, link, isActive, type) => {
 
   const resolutionMap = {
     web: { width: 450, height: 250 },
-    app: { width: 350, height: 150 },
-    mobile: { width: 350, height: 150 },
-    tablet: { width: 320, height: 180 },
+    app: { width: 144, height: 80 },
+    mobile: { width: 144, height: 80 },
+    tablet: { width: 324, height: 180 },
   };
 
   const expected = resolutionMap[type];
@@ -96,7 +96,6 @@ exports.getSlider = async (type) => {
 };
 
 exports.updateSlider = async (body, image, id) => {
-  console.log(body, image, id);
   if (!body.type || !id) {
     return {
       success: false,
@@ -108,9 +107,9 @@ exports.updateSlider = async (body, image, id) => {
   if (image) {
     const resolutionMap = {
       web: { width: 450, height: 250 },
-      app: { width: 350, height: 150 },
-      mobile: { width: 350, height: 150 },
-      tablet: { width: 320, height: 180 },
+      app: { width: 144, height: 80 },
+      mobile: { width: 144, height: 80 },
+      tablet: { width: 324, height: 180 },
     };
 
     const expected = resolutionMap[body.type];

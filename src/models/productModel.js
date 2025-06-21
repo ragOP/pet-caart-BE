@@ -13,14 +13,17 @@ const ProductSchema = new mongoose.Schema({
   stock: Number,
   isActive: { type: Boolean, default: true },
   isFeatured: { type: Boolean, default: false },
-  isEverydayEssential: { type: Boolean, default: false },
   tags: [String],
   images: [String],
   attributes: mongoose.Schema.Types.Mixed,
   ratings: {
     average: { type: Number, default: 0 },
     count: { type: Number, default: 0 }
-  }
+  },
+  isEverydayEssential: { type: Boolean, default: false },
+  newleyLaunched: { type: Boolean, default: false },
+  isBestSeller: { type: Boolean, default: false },
+  isAddToCart: { type: Boolean, default: false },
 }, { timestamps: true });
 
 module.exports = mongoose.model('Product', ProductSchema);

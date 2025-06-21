@@ -85,9 +85,9 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
 });
 
 exports.handleGetAllProducts = asyncHandler(async (req, res) => {
-    const { search, page = 1, per_page = 50, start_date, end_date, max_price } = req.query;
+    const { search, page = 1, per_page = 50, start_date, end_date, max_price, isEverydayEssential, isBestSeller,  newleyLaunched, isAddToCart} = req.query;
     console.log(max_price)
-    const result = await getAllProducts({ search, page, perPage: per_page, startDate: start_date, endDate: end_date, maxPrice: max_price });
+    const result = await getAllProducts({ search, page, perPage: per_page, startDate: start_date, endDate: end_date, maxPrice: max_price, isEverydayEssential, isBestSeller,  newleyLaunched, isAddToCart });
     return res.status(200).json(new ApiResponse(200, result, 'Products fetched successfully', true));
 });
 
