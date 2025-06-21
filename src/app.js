@@ -51,6 +51,7 @@ app.use('/api/brand', require('./routes/brand/index'));
 app.use('/api/product', require('./routes/product/index'));
 app.use('/api/configuration', require('./routes/configuration/banner/index'));
 app.use('/api/sliders', require('./routes/configuration/sliders/index'));
+app.use('/api/settings', require('./routes/configuration/headerFooter/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {
