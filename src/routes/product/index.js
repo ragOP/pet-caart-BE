@@ -8,6 +8,73 @@ const { isAdmin } = require("../../middleware/auth/adminMiddleware.js");
 const router = express.Router();
 const upload = multer({ storage: storage });
 
+/**
+ * @swagger
+ * /api/product:
+ *   post:
+ *     summary: Create a product
+ *     tags: [Product]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the product
+ *               slug:
+ *                 type: string
+ *                 description: The slug of the product
+ *               description:
+ *                 type: string
+ *                 description: The description of the product
+ *               price:
+ *                 type: number
+ *                 description: The price of the product
+ *               images:
+ *                 type: array
+ *                 description: The images of the product
+ *                 items:
+ *                   type: file
+ *                   format: binary
+ *                   description: The image of the product
+ *                   required: true
+ *               variantImages:
+ *                 type: array
+ *                 description: The variant images of the product
+ *                 items:
+ *                   type: file
+ *                   format: binary
+ *                   description: The variant image of the product
+ *               category:
+ *                 type: string
+ *                 description: The category of the product
+ *               brand:
+ *                 type: string
+ *                 description: The brand of the product
+ *               breed:
+ *                 type: string
+ *                 description: The breed of the product
+ *               isEverydayEssential:
+ *                 type: boolean
+ *                 description: The is everyday essential of the product
+ *               isBestSeller:
+ *                 type: boolean  
+ *               isNewleyLaunched:
+ *                 type: boolean
+ *                 description: The is newley launched of the product
+ *               isAddToCart:
+ *                 type: boolean
+ *                 description: The is add to cart of the product
+ *     responses:
+ *       201:
+ *         description: Product created successfully
+ */
+
 router.route("/").post(
   isAdmin,
   upload.fields([
