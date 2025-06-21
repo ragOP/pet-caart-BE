@@ -49,6 +49,22 @@ router.route("/").post(isAdmin, upload.array("images"), validateCreateCategory, 
  */
 router.route("/").get(handleGetAllCategories);
 
+/**
+ * @swagger
+ * /api/category/{id}:
+ *   get:
+ *     summary: Get a category by id
+ *     tags: [Category]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The id of the category
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Category fetched successfully
+ */
 router.route("/:id").get(handleGetSingleCategory);
 
 module.exports = router;

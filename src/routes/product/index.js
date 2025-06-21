@@ -101,6 +101,23 @@ router.route("/").post(
 
 router.route("/").get(handleGetAllProducts);
 
+/**
+ * @swagger
+ * /api/product/{id}:
+ *   get:
+ *     summary: Get a product by id
+ *     tags: [Product]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The id of the product
+ *         type: string
+ *     responses:
+ *       200: 
+ *         description: Product fetched successfully
+ */
+
 router.route("/:id").get(handleGetSingleProduct);
 
 module.exports = router;
