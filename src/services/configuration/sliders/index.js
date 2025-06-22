@@ -143,7 +143,7 @@ exports.updateSlider = async (body, image, id) => {
     };
   }
 
-  const updateSlider = slider.images.find(image => image.id === id);
+  const updateSlider = slider.images.find(image => image._id.toString() === id);
   if (!updateSlider) {
     return {
       success: false,
@@ -170,5 +170,33 @@ exports.updateSlider = async (body, image, id) => {
     success: true,
     message: 'Slider updated successfully',
     data: updateSlider,
+  };
+};
+
+exports.getSliderById = async (id) => {
+  const slider = await sliderModel.findOne({
+    'images._id': id,
+  });
+  if (!slider) {
+    return {
+      success: false,
+      message: 'Slider not found',
+      data: null,
+    };
+  }
+  
+  const specificImage = slider.images.find(image => image._id.toString() === id);
+  if (!specificImage) {
+    return {
+      success: false,
+      message: 'Slider image not found',
+      data: null,
+    };
+  }
+  
+  return {
+    success: true,
+    message: 'Slider fetched successfully',
+    data: specificImage,
   };
 };

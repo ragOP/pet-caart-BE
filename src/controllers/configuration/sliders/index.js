@@ -1,4 +1,4 @@
-const { createSlider, getSlider, updateSlider } = require('../../../services/configuration/sliders');
+const { createSlider, getSlider, updateSlider, getSliderById } = require('../../../services/configuration/sliders');
 const { asyncHandler } = require('../../../utils/asyncHandler');
 const ApiResponse = require('../../../utils/apiResponse/index');
 
@@ -30,4 +30,13 @@ exports.handleUpdateSlider = asyncHandler(async (req, res) => {
     return res.status(400).json(new ApiResponse(400, null, result.message, false));
   }
   return res.status(200).json(new ApiResponse(200, result, 'Slider updated successfully', true));
+});
+
+exports.handleGetSliderById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  const result = await getSliderById(id);
+  if (!result.success) {
+    return res.status(400).json(new ApiResponse(400, null, result.message, false));
+  }
+  return res.status(200).json(new ApiResponse(200, result, 'Slider fetched successfully', true));
 });

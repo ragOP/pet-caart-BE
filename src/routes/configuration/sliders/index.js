@@ -6,6 +6,7 @@ const {
   handleCreateSlider,
   handleGetSlider,
   handleUpdateSlider,
+  handleGetSliderById,
 } = require('../../../controllers/configuration/sliders/index.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
@@ -108,5 +109,25 @@ router.route('/slider').get(handleGetSlider);
  */
 
 router.route('/slider/:id').put(isAdmin, upload.single('images'), handleUpdateSlider);
+
+/**
+ * @swagger
+ * /api/sliders/slider/{id}:
+ *   get:
+ *     summary: Get a slider by ID
+ *     tags: [Configuration]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the slider to get
+ *     responses:
+ *       200:
+ *         description: Slider fetched successfully
+ */
+
+router.route('/slider/:id').get(isAdmin, handleGetSliderById);
 
 module.exports = router;
