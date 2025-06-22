@@ -41,6 +41,5 @@ Thumbs.db
 dump/
 
 # Optional: Uploads or temp files
-uploads/
 public/uploads/
 temp/
