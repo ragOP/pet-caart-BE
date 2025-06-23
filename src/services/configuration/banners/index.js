@@ -41,6 +41,15 @@ exports.createBanner = async (type, image) => {
       data: null,
     };
   }
+  
+  const checkExistingBanner = await bannerModel.findOne({ type });
+  if (checkExistingBanner) {
+    return {
+      success: false,
+      message: 'Banner already exists',
+      data: null,
+    };
+  }
 
   const imageUrl = await uploadSingleFile(image.path);
 
@@ -70,7 +79,7 @@ exports.updateBanner = async (type, image, id) => {
       data: null,
     };
   }
-  
+
   const resolutionMap = {
     web: { width: 1448, height: 250 },
     app: { width: 343, height: 120 },
