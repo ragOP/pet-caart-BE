@@ -7,6 +7,8 @@ const {
   handleGetSlider,
   handleUpdateSlider,
   handleGetSliderById,
+  handleDeleteSlider,
+  handleGetAllSlider,
 } = require('../../../controllers/configuration/sliders/index.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
@@ -130,4 +132,47 @@ router.route('/slider/:id').put(isAdmin, upload.single('images'), handleUpdateSl
 
 router.route('/slider/:id').get(isAdmin, handleGetSliderById);
 
+/**
+ * @swagger
+ * /api/sliders/slider/{id}:
+ *   delete:
+ *     summary: Delete a slider
+ *     tags: [Configuration]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the slider to delete
+ *     responses:
+ *       200:
+ *         description: Slider deleted successfully
+ */
+
+router.route('/slider/:id').delete(isAdmin, handleDeleteSlider);
+
+/**
+ * @swagger
+ * /api/sliders/admin/slider:
+ *   get:
+ *     summary: Get all sliders
+ *     tags: [Configuration]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: type
+ *         in: query
+ *         required: true
+ *         description: The type of the slider
+ *         enum:
+ *           - web
+ *           - app
+ *           - mobile
+ *           - tablet
+ *     responses:
+ *       200:
+ *         description: Sliders fetched successfully
+ */
+router.route('/admin/slider').get(isAdmin, handleGetAllSlider);
 module.exports = router;

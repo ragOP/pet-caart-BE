@@ -89,7 +89,7 @@ exports.getSlider = async (type) => {
       data: null,
     };
   }
-  const filteredSlider = slider.images.filter(image => image.type === type);
+  const filteredSlider = slider.images.filter(image => image.type === type && image.isActive);
   return {
     success: true,
     message: 'Slider fetched successfully',
@@ -200,5 +200,49 @@ exports.getSliderById = async id => {
     success: true,
     message: 'Slider fetched successfully',
     data: specificImage,
+  };
+};
+
+exports.deleteSlider = async id => {
+  const slider = await sliderModel.findOne({
+    'images._id': id,
+  });
+  if (!slider) {
+    console.log("slider not found");
+    return {
+      success: false,
+      message: 'Slider not found',
+      data: null,
+    };
+  }
+
+  slider.images = slider.images.filter(image => image._id.toString() !== id);
+  await slider.save();
+  return {
+    success: true,
+    message: 'Slider deleted successfully',
+    data: slider,
+  };
+};
+
+exports.getAllSlider = async (type) => {
+  const slider = await sliderModel.findOne({
+    'images.isActive': true,
+    'images.type': type
+  });
+
+  if (!slider) {
+    return {
+      success: false,
+      message: 'Slider not found',
+      data: null,
+    };
+  }
+
+  const filteredSlider = slider.images.filter(image => image.type === type);
+  return {
+    success: true,
+    message: 'Slider fetched successfully',
+    data: filteredSlider,
   };
 };
