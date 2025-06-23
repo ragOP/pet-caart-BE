@@ -41,7 +41,7 @@ exports.createBanner = async (type, image) => {
       data: null,
     };
   }
-  
+
   const checkExistingBanner = await bannerModel.findOne({ type });
   if (checkExistingBanner) {
     return {
@@ -149,6 +149,14 @@ exports.createAdBanner = async (title, description, link, products) => {
     return {
       success: false,
       message: 'Invalid product ids',
+      data: null,
+    };
+  }
+
+  if(productIds.length > 4) {
+    return {
+      success: false,
+      message: 'You can only add up to 4 products',
       data: null,
     };
   }
