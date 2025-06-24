@@ -21,8 +21,8 @@ const catLifeBannerSchema = new mongoose.Schema({
 
 catLifeBannerSchema.statics.createIfUnderLimit = async function (doc) {
   const count = await this.countDocuments();
-  if (count >= 3) {
-    throw new Error('Limit of 3 CatLifeBanner documents reached.');
+  if (count >= 4) {
+    throw new Error('Limit of 4 CatLifeBanner documents reached.');
   }
   return this.create(doc);
 };
