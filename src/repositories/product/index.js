@@ -6,7 +6,10 @@ exports.createProduct = async product => {
 };
 
 exports.getSingleProduct = async id => {
-    const product = await Product.findById(id);
+    const product = await Product.findById(id).populate({ path: "categoryId", select: "name _id" })
+      .populate({ path: "subCategoryId", select: "name _id" })
+      .populate({ path: "brandId", select: "name _id" })
+      .populate({ path: "breedId", select: "name _id" })
     return product;
 }
 

@@ -1,3 +1,4 @@
+const variantModel = require('../../models/variantModel.js');
 const {
   createProduct,
   getSingleProduct,
@@ -29,7 +30,12 @@ exports.createProduct = async productPayload => {
 
 exports.getSingleProduct = async id => {
   const product = await getSingleProduct(id);
-  return product;
+  const variants = await variantModel.find({ productId: id });
+  const updatedProductWithVariants = {
+    ...product._doc,
+    variants,
+  };
+  return updatedProductWithVariants;
 };
 
 exports.getAllProducts = async ({
