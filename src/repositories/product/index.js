@@ -26,3 +26,7 @@ exports.getAllProducts = async (filters, skip = 0, limit = 50) => {
   return { products, total };
 };
 
+exports.updateProduct = async (id, productData) => {
+  const product = await Product.findByIdAndUpdate(id, productData, { new: true });
+  return product;
+};

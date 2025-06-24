@@ -1,10 +1,15 @@
-const express = require("express");
-const { handleCreateProduct, handleGetAllProducts, handleGetSingleProduct } = require('../../controllers/product/index.js');
+const express = require('express');
+const {
+  handleCreateProduct,
+  handleGetAllProducts,
+  handleGetSingleProduct,
+  handleUpdateProduct,
+} = require('../../controllers/product/index.js');
 const { validateCreateProduct } = require('../../validators/product/index.js');
-const { validateRequest } = require('../../middleware/validateRequest/index')
-const multer = require("multer");
-const { storage } = require("../../config/multer.js");
-const { isAdmin } = require("../../middleware/auth/adminMiddleware.js");
+const { validateRequest } = require('../../middleware/validateRequest/index');
+const multer = require('multer');
+const { storage } = require('../../config/multer.js');
+const { isAdmin } = require('../../middleware/auth/adminMiddleware.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
 
@@ -63,7 +68,7 @@ const upload = multer({ storage: storage });
  *                 type: boolean
  *                 description: The is everyday essential of the product
  *               isBestSeller:
- *                 type: boolean  
+ *                 type: boolean
  *               isNewleyLaunched:
  *                 type: boolean
  *                 description: The is newley launched of the product
@@ -75,11 +80,11 @@ const upload = multer({ storage: storage });
  *         description: Product created successfully
  */
 
-router.route("/").post(
+router.route('/').post(
   isAdmin,
   upload.fields([
-    { name: "images", maxCount: 20 },
-    { name: "variantImages", maxCount: 100 },
+    { name: 'images', maxCount: 20 },
+    { name: 'variantImages', maxCount: 100 },
   ]),
   validateRequest,
   handleCreateProduct
@@ -97,7 +102,7 @@ router.route("/").post(
  *         description: Search by name or slug
  *         required: false
  *         schema:
- *           type: string 
+ *           type: string
  *       - name: page
  *         in: query
  *         description: Page number
@@ -166,7 +171,7 @@ router.route("/").post(
  *                     $ref: '#/components/schemas/Product'
  */
 
-router.route("/").get(handleGetAllProducts);
+router.route('/').get(handleGetAllProducts);
 
 /**
  * @swagger
@@ -181,10 +186,101 @@ router.route("/").get(handleGetAllProducts);
  *         description: The id of the product
  *         type: string
  *     responses:
- *       200: 
+ *       200:
  *         description: Product fetched successfully
  */
 
-router.route("/:id").get(handleGetSingleProduct);
+router.route('/:id').get(handleGetSingleProduct);
+
+/**
+ * @swagger
+ * /api/product/{id}:
+ *   put:
+ *     summary: Update a product by id
+ *     tags: [Product]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The id of the product
+ *         type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the product
+ *               slug:
+ *                 type: string
+ *                 description: The slug of the product
+ *               description:
+ *                 type: string
+ *                 description: The description of the product
+ *               price:
+ *                 type: number
+ *                 description: The price of the product
+ *               images:
+ *                 type: array
+ *                 description: The images of the product
+ *                 items:
+ *                   type: file
+ *                   format: binary
+ *                   description: The image of the product
+ *               variantImages:
+ *                 type: array
+ *                 description: The variant images of the product
+ *                 items:
+ *                   type: file
+ *                   format: binary
+ *                   description: The variant image of the product
+ *               category:
+ *                 type: string
+ *               brand:
+ *                 type: string
+ *               breed:
+ *                 type: string
+ *               isEverydayEssential:
+ *                 type: boolean
+ *               isBestSeller:
+ *                 type: boolean
+ *               isNewleyLaunched:
+ *                 type: boolean
+ *               isAddToCart:
+ *                 type: boolean
+ *               variants:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                     price:
+ *                       type: number
+ *                     images:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     variantImages:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *     responses:
+ *       200:
+ *         description: Product updated successfully
+ */
+
+router.route('/:id').put(
+  upload.fields([
+    { name: 'images', maxCount: 20 },
+    { name: 'variantImages', maxCount: 100 },
+  ]),
+  isAdmin,
+  validateRequest,
+  handleUpdateProduct
+);
 
 module.exports = router;
