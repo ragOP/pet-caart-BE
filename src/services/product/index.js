@@ -96,8 +96,6 @@ exports.updateProduct = async (id, productPayload) => {
 
   const product = await updateProduct(id, productData);
 
-  await product.save();
-
   if (variants) {
     // Fetch current variants from DB
     const currentVariants = product.variants || [];

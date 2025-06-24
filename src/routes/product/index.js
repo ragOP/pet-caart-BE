@@ -251,6 +251,13 @@ router.route('/:id').get(handleGetSingleProduct);
  *                 type: boolean
  *               isAddToCart:
  *                 type: boolean
+ *               variantImageMap:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     index:
+ *                       type: string
  *               variants:
  *                 type: array
  *                 items:
@@ -260,14 +267,26 @@ router.route('/:id').get(handleGetSingleProduct);
  *                       type: string
  *                     price:
  *                       type: number
- *                     images:
- *                       type: array
- *                       items:
- *                         type: string
- *                     variantImages:
- *                       type: array
- *                       items:
- *                         type: string
+ *                     salePrice:
+ *                       type: number
+ *                     stock:
+ *                       type: number
+ *                     sku:
+ *                       type: string
+ *                     weight:
+ *                       type: string
+ *                     attributes:
+ *                       type: object
+ *                       properties:
+ *                         size:
+ *                           type: string
+ *                         color:
+ *                           type: string
+ *                         flavor:
+ *                           type: string
+ *                     isActive:
+ *                       type: boolean
+ * 
  *     responses:
  *       200:
  *         description: Product updated successfully
