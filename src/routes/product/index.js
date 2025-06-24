@@ -198,6 +198,8 @@ router.route('/:id').get(handleGetSingleProduct);
  *   put:
  *     summary: Update a product by id
  *     tags: [Product]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
