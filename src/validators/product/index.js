@@ -69,11 +69,7 @@ exports.validateCreateProduct = [
   body('isActive')
     .optional()
     .isBoolean().withMessage('isActive must be true or false'),
-
-  body('isFeatured')
-    .optional()
-    .isBoolean().withMessage('isFeatured must be true or false'),
-
+    
   body('tags')
     .optional()
     .isArray().withMessage('Tags must be an array of strings'),

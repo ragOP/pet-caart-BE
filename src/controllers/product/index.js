@@ -70,7 +70,6 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
     salePrice,
     stock,
     isActive,
-    isFeatured,
     isEverydayEssential,
     isBestSeller,
     isNewleyLaunched,
