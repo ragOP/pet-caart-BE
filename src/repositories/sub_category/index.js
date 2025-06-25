@@ -34,3 +34,8 @@ exports.getSingleSubCategory = async id => {
   const subCategory = SubCategory.findById(id);
   return subCategory;
 };
+
+exports.updateSubCategory = async (id, data) => {
+  const updatedSubCategory = await SubCategory.findByIdAndUpdate(id, data, { new: true });
+  return updatedSubCategory;
+};

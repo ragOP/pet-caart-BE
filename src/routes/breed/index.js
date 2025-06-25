@@ -58,7 +58,7 @@ router.route("/").post(isAdmin, upload.array("images"), validateCreateBreed, val
 
 /**
  * @swagger
- * /api/breed/get:
+ * /api/breed:
  *   get:
  *     summary: Get all breeds
  *     tags: [Breed]

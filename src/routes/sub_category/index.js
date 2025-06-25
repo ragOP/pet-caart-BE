@@ -3,6 +3,7 @@ const {
   handleCreateSubCategory,
   handleGetAllSubCategories,
   handleGetSingleSubCategory,
+  handleUpdateSubCategory,
 } = require('../../controllers/sub_category/index.js');
 const { validateCreateSubCategory } = require('../../validators/sub_category/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index');
@@ -19,6 +20,8 @@ const upload = multer({ storage: storage });
  *   post:
  *     summary: Create a new subcategory
  *     tags: [SubCategory]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -120,5 +123,52 @@ router.route('/').get(handleGetAllSubCategories);
  *         description: Subcategory retrieved successfully
  */
 router.route('/:id').get(handleGetSingleSubCategory);
+
+/**
+ * @swagger
+ * /api/subcategory/{id}:
+ *   put:
+ *     summary: Update a subcategory by ID
+ *     tags: [SubCategory]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID of the subcategory
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the subcategory
+ *               slug:
+ *                 type: string
+ *                 description: The slug of the subcategory
+ *               description:
+ *                 type: string
+ *                 description: The description of the subcategory
+ *               categoryId:
+ *                 type: string
+ *                 description: The category ID of the subcategory
+ *               image:
+ *                 type: file
+ *                 format: binary 
+ *                 description: The image of the subcategory
+ *               isActive:
+ *                 type: boolean
+ *                 description: The active status of the subcategory
+ *     responses:
+ *       200:
+ *         description: Subcategory updated successfully
+ */
+router.route('/:id').put(upload.single('image'), isAdmin, validateRequest, handleUpdateSubCategory);
 
 module.exports = router;

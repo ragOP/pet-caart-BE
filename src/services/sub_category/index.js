@@ -1,4 +1,5 @@
 const SubCategoryService = require('../../repositories/sub_category/index');
+const { uploadSingleFile } = require('../../utils/upload');
 
 exports.createSubCategory = async subCategory => {
   const newSubCategory = await SubCategoryService.createSubCategory(subCategory);
@@ -80,5 +81,37 @@ exports.getAllSubCategoriesByCategoryId = async ({
     total,
     page,
     perPage,
+  };
+};
+
+exports.updateSubCategory = async (id, data, image, userId) => {
+  const subCategory = await SubCategoryService.getSingleSubCategory(id);
+  if (!subCategory) {
+    return {
+      statusCode: 404,
+      message: 'SubCategory not found',
+      data: null,
+    };
+  }
+  const subCategoryData = {
+    ...data,
+  };
+
+  if (userId) {
+    subCategoryData.updatedBy = userId;
+  }
+
+  let imageUrl = null;
+  if (image) {
+    imageUrl = await uploadSingleFile(image.path);
+    subCategoryData.image = imageUrl;
+  }
+
+  const updatedSubCategory = await SubCategoryService.updateSubCategory(id, subCategoryData);
+
+  return {
+    statusCode: 200,
+    message: 'SubCategory updated successfully',
+    data: updatedSubCategory,
   };
 };
