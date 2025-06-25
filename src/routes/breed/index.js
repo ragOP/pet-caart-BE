@@ -1,5 +1,5 @@
 const express = require("express");
-const { handleCreateBreed, handleGetAllBreeds, handleGetSingleBreed } = require('../../controllers/breed/index.js');
+const { handleCreateBreed, handleGetAllBreeds, handleGetSingleBreed, handleUpdateBreed } = require('../../controllers/breed/index.js');
 const { validateCreateBreed } = require('../../validators/breed/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index')
 const multer = require("multer");
@@ -26,15 +26,17 @@ const upload = multer({ storage: storage });
  *               name:
  *                 type: string
  *                 description: The name of the breed
- *               slug:
+ *               species:
  *                 type: string
- *                 description: The slug of the breed
+ *                 enum:
+ *                   - dog
+ *                   - cat
+ *                   - rabbit
+ *                   - horse
+ *                 description: The species of the breed
  *               description:
  *                 type: string
  *                 description: The description of the breed
- *               active:
- *                 type: boolean
- *                 description: The active status of the breed
  *               images:
  *                 type: array
  *                 description: The images of the breed
@@ -102,6 +104,8 @@ router.route("/").get(handleGetAllBreeds);
  *   get:
  *     summary: Get a breed by id
  *     tags: [Breed]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
@@ -114,5 +118,55 @@ router.route("/").get(handleGetAllBreeds);
  */
 
 router.route("/:id").get(handleGetSingleBreed);
+
+/**
+ * @swagger
+ * /api/breed/{id}:
+ *   put:
+ *     summary: Update a breed by id
+ *     tags: [Breed]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The id of the breed
+ *         type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the breed
+ *               species:
+ *                 type: string
+ *                 enum:
+ *                   - dog
+ *                   - cat
+ *                   - rabbit
+ *                   - horse
+ *                 description: The species of the breed
+ *               description:
+ *                 type: string
+ *                 description: The description of the breed
+ *               images:
+ *                 type: file
+ *                 format: binary
+ *                 description: The image of the breed
+ *                 required: false
+ *                 example:
+ *                   image: image.jpg
+ *                   alt: Breed image
+ *     responses:
+ *       200:
+ *         description: Breed updated successfully
+ */
+
+router.route("/:id").put(isAdmin, upload.single("images"),validateRequest, handleUpdateBreed);
 
 module.exports = router;
