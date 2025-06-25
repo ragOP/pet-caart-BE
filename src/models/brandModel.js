@@ -5,7 +5,9 @@ const BrandSchema = new mongoose.Schema({
   slug: { type: String, unique: true },
   logo: String,
   description: String,
-  active: { type: Boolean, default: true }
-});
+  active: { type: Boolean, default: true },
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+}, { timestamps: true });
 
 module.exports = mongoose.model('Brand', BrandSchema);

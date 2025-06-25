@@ -1,4 +1,5 @@
-const { createBrand, getSingleBrand, getAllBrands } = require('../../repositories/brand/index.js');
+const { createBrand, getSingleBrand, getAllBrands, updateBrand } = require('../../repositories/brand/index.js');
+const { uploadSingleFile } = require('../../utils/upload');
 
 exports.createBrand = async brand => {
   const newBrand = await createBrand(brand);
@@ -28,6 +29,8 @@ exports.getAllBrands = async ({ search, page, perPage, startDate, endDate }) => 
 
   const skip = (page - 1) * perPage;
 
+  filters.active = true;
+
   const { brands, total } = await getAllBrands(filters, skip, perPage);
 
   return {
@@ -36,5 +39,31 @@ exports.getAllBrands = async ({ search, page, perPage, startDate, endDate }) => 
     page,
     perPage,
   };
-  return brands;
+};
+
+exports.updateBrand = async (id, data, image, userId) => {
+  const brand = await getSingleBrand(id);
+  if (!brand) {
+    return {
+      statusCode: 404,
+      message: 'Brand not found',
+      data: null,
+    };
+  }
+  const brandData = {
+    ...data,
+    updatedBy: userId,
+  };
+
+  if (image) {
+    const imageUrl = await uploadSingleFile(image.path);
+    brandData.image = imageUrl;
+  }
+
+  const updatedBrand = await updateBrand(id, brandData);
+  return {
+    statusCode: 200,
+    message: 'Brand updated successfully',
+    data: updatedBrand,
+  };
 };

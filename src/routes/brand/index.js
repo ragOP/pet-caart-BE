@@ -1,5 +1,5 @@
 const express = require("express");
-const { handleCreateBrand, handleGetAllBrands, handleGetSingleBrand } = require('../../controllers/brand/index.js');
+const { handleCreateBrand, handleGetAllBrands, handleGetSingleBrand, handleUpdateBrand } = require('../../controllers/brand/index.js');
 const { validateCreateBrand } = require('../../validators/brand/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index')
 const multer = require("multer");
@@ -86,5 +86,53 @@ router.route("/").get(handleGetAllBrands);
  */
 
 router.route("/:id").get(handleGetSingleBrand);
+
+/**
+ * @swagger
+ * /api/brand/{id}:
+ *   put:
+ *     summary: Update a brand by id
+ *     security:
+ *       - bearerAuth: []
+ *     tags: [Brand]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The id of the brand
+ *         type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the brand
+ *               slug:
+ *                 type: string
+ *                 description: The slug of the brand
+ *               description:
+ *                 type: string
+ *                 description: The description of the brand
+ *               active:
+ *                 type: boolean
+ *                 description: The active status of the brand
+ *               image:
+ *                 type: file
+ *                 format: binary
+ *                 description: The image of the brand
+ *                 required: false
+ *                 example:
+ *                   image: image.jpg
+ *                   alt: Brand image
+ *     responses:
+ *       200:
+ *         description: Brand updated successfully
+ */
+
+router.route("/:id").put(isAdmin, upload.single('image'), validateRequest, handleUpdateBrand);
 
 module.exports = router;
