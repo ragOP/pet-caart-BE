@@ -2,7 +2,10 @@ const {
   createCollection,
   getAllFilteredCollections,
   getAllFilteredCollectionsBySubCategoryId,
+  getSingleCollection,
+  updateCollection,
 } = require('../../repositories/collection/index');
+const { uploadSingleFile } = require('../../utils/upload/index');
 
 exports.createCollection = async data => {
   const newCollection = await createCollection(data);
@@ -75,5 +78,58 @@ exports.getAllCollectionsBySubCategoryId = async ({
     total,
     page,
     perPage,
+  };
+};
+
+exports.getSingleCollection = async (id) => {
+  const collection = await getSingleCollection(id);
+  if (!collection) {
+    return {
+      status: 404,
+      message: 'Collection not found',
+      data: null,
+      success: false,
+    };
+  }
+  return {
+    status: 200,
+    message: 'Collection fetched successfully',
+    data: collection,
+    success: true,
+  };
+};
+
+exports.updateCollection = async (id, data, image, userId) => {
+  const collection = await getSingleCollection(id);
+  if (!collection) {
+    return {
+      status: 404,
+      message: 'Collection not found',
+      data: null,
+      success: false,
+    };
+  };
+  const collectionPayload = {
+    ...data,
+    updatedBy: userId,
+  };
+  if (image) {
+    const imageUrl = await uploadSingleFile(image.path);
+    collectionPayload.image = imageUrl;
+  }
+  const updatedCollection = await updateCollection(id, collectionPayload);
+  if (!updatedCollection) {
+    return {
+      status: 400,
+      message: 'Failed to update collection',
+      data: null,
+      success: false,
+    };
+  }
+  return {
+    status: 200,
+    message: 'Collection updated successfully',
+    data: updatedCollection,
+    success: true,
   };
 };
