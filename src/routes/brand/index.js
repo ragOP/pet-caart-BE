@@ -120,7 +120,7 @@ router.route("/:id").get(handleGetSingleBrand);
  *               active:
  *                 type: boolean
  *                 description: The active status of the brand
- *               image:
+ *               images:
  *                 type: file
  *                 format: binary
  *                 description: The image of the brand
@@ -133,6 +133,6 @@ router.route("/:id").get(handleGetSingleBrand);
  *         description: Brand updated successfully
  */
 
-router.route("/:id").put(isAdmin, upload.single('image'), validateRequest, handleUpdateBrand);
+router.route("/:id").put(isAdmin, upload.single('images'), validateRequest, handleUpdateBrand);
 
 module.exports = router;

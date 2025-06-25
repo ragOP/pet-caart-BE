@@ -126,7 +126,7 @@ router.route("/:id").get(handleGetSingleCategory);
  *               isVisible:
  *                 type: boolean
  *                 description: The visibility of the category
- *               image:
+ *               images:
  *                 type: file
  *                 format: binary
  *                 description: The image of the category
@@ -134,6 +134,6 @@ router.route("/:id").get(handleGetSingleCategory);
  *       200:
  *         description: Category updated successfully
  */
-router.route("/:id").put(upload.single("image"), isAdmin, validateRequest, handleUpdateCategory);
+router.route("/:id").put(upload.single("images"), isAdmin, validateRequest, handleUpdateCategory);
 
 module.exports = router;
