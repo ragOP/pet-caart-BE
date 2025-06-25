@@ -2,6 +2,8 @@ const {
   checkUserExists,
   createUser,
   getFilteredUsers,
+  getUserById,
+  updateUserById,
 } = require('../../../repositories/auth/index');
 const { OTP } = require('../../../constants/otp/index');
 const jwt = require('jsonwebtoken');
@@ -102,3 +104,42 @@ exports.getAllUsers = async ({ search, page = 1, perPage = 50, startDate, endDat
     perPage,
   };
 };
+
+exports.getUserById = async (id) => {
+  const user = await getUserById(id);
+  if (!user) {
+    return {
+      statusCode: 404,
+      message: 'User not found',
+      data: null,
+    };
+  }
+  return {
+    statusCode: 200,
+    message: 'User fetched successfully',
+    data: user,
+  };
+};
+
+exports.updateUser = async (id, data) => {
+  if (!id) {
+    return {
+      statusCode: 400,
+      message: 'User ID is required',
+      data: null,
+    };
+  }
+  const user = await updateUserById(id, data);
+  if (!user) {
+    return {
+      statusCode: 404,
+      message: 'User not found',
+      data: null,
+    };
+  }
+  return {
+    statusCode: 200,
+    message: 'User updated successfully',
+    data: user,
+  };
+}

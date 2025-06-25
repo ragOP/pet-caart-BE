@@ -23,3 +23,12 @@ exports.getFilteredUsers = async (filters, skip, limit) => {
   return { users, total };
 };
 
+exports.getUserById = async (id) => {
+  const user = await User.findById(id);
+  return user;
+};
+
+exports.updateUserById = async (id, data) => {
+  const user = await User.findByIdAndUpdate(id, data, { new: true });
+  return user;
+};

@@ -57,7 +57,7 @@ router.route("/").post(isAdmin, upload.array("images"), validateCreateBrand, val
 
 /**
  * @swagger
- * /api/brand/get:
+ * /api/brand:
  *   get:
  *     summary: Get all brands
  *     tags: [Brand]

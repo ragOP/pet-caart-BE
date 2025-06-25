@@ -1,4 +1,4 @@
-const { registerUser, loginUser, getAllUsers } = require('../../../services/auth/user/index');
+const { registerUser, loginUser, getAllUsers, getUserById, updateUser } = require('../../../services/auth/user/index');
 const { asyncHandler } = require('../../../utils/asyncHandler');
 const ApiResponse = require('../../../utils/apiResponse/index');
 
@@ -33,7 +33,7 @@ exports.handleAllUsers = asyncHandler(async (req, res) => {
   const adminId = req.admin?._id;
 
   if (!adminId) {
-    return res.status(403).json(new ApiResponse(403, null, "Not authorized"));
+    return res.status(403).json(new ApiResponse(403, null, 'Not authorized'));
   }
 
   const result = await getAllUsers({
@@ -44,7 +44,29 @@ exports.handleAllUsers = asyncHandler(async (req, res) => {
     endDate: end_date,
   });
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, result, "Users fetched successfully", true));
+  return res.status(200).json(new ApiResponse(200, result, 'Users fetched successfully', true));
+});
+
+exports.handleGetUserById = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).json(new ApiResponse(400, null, 'User ID is required', false));
+  }
+  const result = await getUserById(id);
+  if (!result) {
+    return res.status(404).json(new ApiResponse(404, null, 'User not found', false));
+  }
+  return res.status(200).json(new ApiResponse(200, result, 'User fetched successfully', true));
+});
+
+exports.handleUpdateUser = asyncHandler(async (req, res) => {
+  const { id } = req.params;
+  if (!id) {
+    return res.status(400).json(new ApiResponse(400, null, 'User ID is required', false));
+  }
+  const result = await updateUser(id, req.body);
+  if (!result) {
+    return res.status(404).json(new ApiResponse(404, null, 'User not found', false));
+  }
+  return res.status(200).json(new ApiResponse(200, result, 'User updated successfully', true));
 });
