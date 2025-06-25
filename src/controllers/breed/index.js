@@ -47,7 +47,7 @@ exports.handleGetSingleBreed = asyncHandler(async (req, res) => {
 exports.handleUpdateBreed = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const userId = req.admin?._id;
-  const image = req.files;
+  const image = req.file;
   const result = await updateBreedService(id, req.body, image, userId);
   if (!result) {
     return res.status(400).json(new ApiResponse(400, null, 'Breed not found'));
