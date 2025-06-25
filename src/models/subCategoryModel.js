@@ -7,7 +7,8 @@ const SubCategorySchema = new mongoose.Schema({
   image: String,
   dynamicFields: mongoose.Schema.Types.Mixed,
   isActive: { type: Boolean, default: true },
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }
 }, { timestamps: true });
 
 module.exports = mongoose.model('SubCategory', SubCategorySchema);

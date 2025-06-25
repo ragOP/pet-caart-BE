@@ -8,6 +8,7 @@ exports.getAllCategories = async (search, page, limit, start_date, end_date) => 
   if (start_date && end_date) {
     query.createdAt = { $gte: new Date(start_date), $lte: new Date(end_date) };
   }
+  query.isVisible = true;
   const categories = await Category.find(query)
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)

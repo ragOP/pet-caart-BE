@@ -28,6 +28,7 @@ exports.getAllSubCategories = async ({ search, page, perPage, startDate, endDate
   }
 
   const skip = (page - 1) * perPage;
+  filters.isActive = true;
 
   const { subCategories, total } = await SubCategoryService.getAllFilteredSubCategories(
     filters,

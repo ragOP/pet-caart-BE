@@ -7,7 +7,12 @@ exports.createSubCategory = async subCategory => {
 
 exports.getAllFilteredSubCategories = async (filters, skip = 0, limit = 50) => {
   const [subCategories, total] = await Promise.all([
-    SubCategory.find(filters).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    SubCategory.find(filters)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('createdBy', 'name')
+      .populate('updatedBy', 'name'),
     SubCategory.countDocuments(filters),
   ]);
 
@@ -23,7 +28,9 @@ exports.getAllFilteredSubCategoriesByCategoryId = async (filters, skip = 0, limi
       })
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit),
+      .limit(limit)
+      .populate('createdBy', 'name')
+      .populate('updatedBy', 'name'),
     SubCategory.countDocuments(filters),
   ]);
 
@@ -31,7 +38,7 @@ exports.getAllFilteredSubCategoriesByCategoryId = async (filters, skip = 0, limi
 };
 
 exports.getSingleSubCategory = async id => {
-  const subCategory = SubCategory.findById(id);
+  const subCategory = await SubCategory.findById(id).populate('createdBy', 'name').populate('updatedBy', 'name');
   return subCategory;
 };
 
