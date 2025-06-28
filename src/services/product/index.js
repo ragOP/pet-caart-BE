@@ -51,6 +51,11 @@ exports.getAllProducts = async ({
   isAddToCart,
   categorySlug,
   subCategorySlug,
+  brandSlug,
+  breedSlug,
+  minPriceRange,
+  maxPriceRange,
+  sortBy,
 }) => {
   let filters = {};
 
@@ -88,8 +93,24 @@ exports.getAllProducts = async ({
   }
 
   const skip = (page - 1) * perPage;
+
+  if (minPriceRange && maxPriceRange) {
+    filters.price = { $gte: minPriceRange, $lte: maxPriceRange };
+  }
+
+  const sort = {};
+
+  if (sortBy) {
+    if (sortBy === 'priceLowToHigh') {
+      sort.price = 1;
+    } else if (sortBy === 'priceHighToLow') {
+      sort.price = -1;
+    }
+  } else {
+    sort.createdAt = -1;
+  }
   
-  const { products, total } = await getAllProducts(filters, skip, perPage, categorySlug, subCategorySlug);
+  const { products, total } = await getAllProducts(filters, skip, perPage, categorySlug, subCategorySlug, brandSlug, breedSlug, sort);
 
   return {
     data: products,

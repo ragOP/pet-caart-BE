@@ -169,6 +169,36 @@ router.route('/').post(
  *         required: false
  *         schema:
  *           type: string
+ *       - name: brandSlug
+ *         in: query
+ *         description: Brand slug
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: breedSlug
+ *         in: query
+ *         description: Breed id
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: price_range
+ *         in: query
+ *         description: Price range
+ *         required: false
+ *         schema:
+ *           type: object
+ *           properties:
+ *             min_price_range:
+ *               type: number
+ *             max_price_range:
+ *               type: number
+ *       - name: sort_by
+ *         in: query
+ *         description: Sort by
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [priceLowToHigh, priceHighToLow, popularity]
  *     responses:
  *       200:
  *         description: Products fetched successfully

@@ -107,6 +107,11 @@ exports.handleGetAllProducts = asyncHandler(async (req, res) => {
     isAddToCart,
     categorySlug,
     subCategorySlug,
+    brandSlug,
+    breedSlug,
+    min_price_range,
+    max_price_range,
+    sort_by
   } = req.query;
   const result = await getAllProducts({
     search,
@@ -121,6 +126,11 @@ exports.handleGetAllProducts = asyncHandler(async (req, res) => {
     isAddToCart,
     categorySlug,
     subCategorySlug,
+    brandSlug,
+    breedSlug,
+    minPriceRange: min_price_range,
+    maxPriceRange: max_price_range,
+    sortBy: sort_by,
   });
   return res.status(200).json(new ApiResponse(200, result, 'Products fetched successfully', true));
 });

@@ -2,6 +2,7 @@ const Product = require('../../models/productModel');
 const variantModel = require('../../models/variantModel');
 const Category = require('../../models/categoryModel');
 const SubCategory = require('../../models/subCategoryModel');
+const brandModel = require('../../models/brandModel');
 
 exports.createProduct = async product => {
   const newProduct = await Product.create(product);
@@ -23,6 +24,9 @@ exports.getAllProducts = async (
   limit = 50,
   categorySlug,
   subCategorySlug,
+  brandSlug,
+  breedSlug,
+  sortFilter
 ) => {
   if (categorySlug) {
     const category = await Category.findOne({ slug: categorySlug });
@@ -38,15 +42,26 @@ exports.getAllProducts = async (
     }
   }
 
+  if (brandSlug) {
+    const brand = await brandModel.findOne({ slug: brandSlug });
+    if (brand) {
+      filters.brandId = brand._id;
+    }
+  }
+
+  if (breedSlug) {
+    filters.breedId = { $in: breedSlug };
+  }
+
   const [products, total] = await Promise.all([
     Product.find(filters)
-      .sort({ createdAt: -1 })
+      .sort(sortFilter)
       .skip(skip)
       .limit(limit)
       .populate({ path: 'categoryId', select: 'name _id slug' })
       .populate({ path: 'subCategoryId', select: 'name _id slug' })
       .populate({ path: 'brandId', select: 'name _id slug' })
-      .populate({ path: 'breedId', select: 'name _id slug' }),
+      .populate({ path: 'breedId', select: 'name _id' }),
     Product.countDocuments(filters),
   ]);
 
