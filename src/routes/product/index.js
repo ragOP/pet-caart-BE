@@ -157,6 +157,18 @@ router.route('/').post(
  *         required: false
  *         schema:
  *           type: boolean
+ *       - name: categorySlug
+ *         in: query
+ *         description: Category slug
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: subCategorySlug
+ *         in: query
+ *         description: Sub category slug
+ *         required: false
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Products fetched successfully

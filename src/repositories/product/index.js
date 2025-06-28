@@ -1,32 +1,73 @@
 const Product = require('../../models/productModel');
+const variantModel = require('../../models/variantModel');
+const Category = require('../../models/categoryModel');
+const SubCategory = require('../../models/subCategoryModel');
 
 exports.createProduct = async product => {
-    const newProduct = await Product.create(product);
-    return newProduct;
+  const newProduct = await Product.create(product);
+  return newProduct;
 };
 
 exports.getSingleProduct = async id => {
-    const product = await Product.findById(id).populate({ path: "categoryId", select: "name _id" })
-      .populate({ path: "subCategoryId", select: "name _id" })
-      .populate({ path: "brandId", select: "name _id" })
-      .populate({ path: "breedId", select: "name _id" })
-    return product;
-}
+  const product = await Product.findById(id)
+    .populate({ path: 'categoryId', select: 'name _id slug' })
+    .populate({ path: 'subCategoryId', select: 'name _id slug' })
+    .populate({ path: 'brandId', select: 'name _id slug' })
+    .populate({ path: 'breedId', select: 'name _id slug' })
+  return product;
+};
 
-exports.getAllProducts = async (filters, skip = 0, limit = 50) => {
+exports.getAllProducts = async (
+  filters,
+  skip = 0,
+  limit = 50,
+  categorySlug,
+  subCategorySlug,
+) => {
+  if (categorySlug) {
+    const category = await Category.findOne({ slug: categorySlug });
+    if (category) {
+      filters.categoryId = category._id;
+    }
+  }
+
+  if (subCategorySlug) {
+    const subCategory = await SubCategory.findOne({ slug: subCategorySlug });
+    if (subCategory) {
+      filters.subCategoryId = subCategory._id;
+    }
+  }
+
   const [products, total] = await Promise.all([
     Product.find(filters)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate({ path: "categoryId", select: "name _id" })
-      .populate({ path: "subCategoryId", select: "name _id" })
-      .populate({ path: "brandId", select: "name _id" })
-      .populate({ path: "breedId", select: "name _id" }),
+      .populate({ path: 'categoryId', select: 'name _id slug' })
+      .populate({ path: 'subCategoryId', select: 'name _id slug' })
+      .populate({ path: 'brandId', select: 'name _id slug' })
+      .populate({ path: 'breedId', select: 'name _id slug' }),
     Product.countDocuments(filters),
   ]);
 
-  return { products, total };
+  const productIds = products.map(product => product._id);
+  const variants = await variantModel.find({ productId: { $in: productIds } });
+
+  const variantMap = variants.reduce((acc, variant) => {
+    acc[variant.productId] = acc[variant.productId] || [];
+    acc[variant.productId].push(variant);
+    return acc;
+  }, {});
+
+  const enrichedProducts = products.map(product => {
+    const variants = variantMap[product._id] || [];
+    return {
+      ...product._doc,
+      variants,
+    };
+  });
+
+  return { products: enrichedProducts, total };
 };
 
 exports.updateProduct = async (id, productData) => {

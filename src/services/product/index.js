@@ -49,6 +49,8 @@ exports.getAllProducts = async ({
   isBestSeller,
   newleyLaunched,
   isAddToCart,
+  categorySlug,
+  subCategorySlug,
 }) => {
   let filters = {};
 
@@ -86,8 +88,8 @@ exports.getAllProducts = async ({
   }
 
   const skip = (page - 1) * perPage;
-
-  const { products, total } = await getAllProducts(filters, skip, perPage);
+  
+  const { products, total } = await getAllProducts(filters, skip, perPage, categorySlug, subCategorySlug);
 
   return {
     data: products,
