@@ -199,6 +199,12 @@ router.route('/').post(
  *         schema:
  *           type: string
  *           enum: [priceLowToHigh, priceHighToLow, popularity]
+ *       - name: rating
+ *         in: query
+ *         description: Rating
+ *         required: false
+ *         schema:
+ *           type: number
  *     responses:
  *       200:
  *         description: Products fetched successfully

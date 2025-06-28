@@ -56,6 +56,7 @@ exports.getAllProducts = async ({
   minPriceRange,
   maxPriceRange,
   sortBy,
+  rating,
 }) => {
   let filters = {};
 
@@ -109,7 +110,11 @@ exports.getAllProducts = async ({
   } else {
     sort.createdAt = -1;
   }
-  
+
+  if (rating) {
+    filters['ratings.average'] = { $gte: rating };
+  }
+
   const { products, total } = await getAllProducts(filters, skip, perPage, categorySlug, subCategorySlug, brandSlug, breedSlug, sort);
 
   return {
