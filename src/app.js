@@ -54,6 +54,7 @@ app.use('/api/sliders', require('./routes/configuration/sliders/index'));
 app.use('/api/settings', require('./routes/configuration/headerFooter/index'));
 app.use('/api/cat-life-banner', require('./routes/configuration/catLifeBanner/index'));
 app.use('/api/product-banner', require('./routes/configuration/productBanner/index'));
+app.use('/api/address', require('./routes/address/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {
