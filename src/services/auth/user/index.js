@@ -105,7 +105,7 @@ exports.getAllUsers = async ({ search, page = 1, perPage = 50, startDate, endDat
   };
 };
 
-exports.getUserById = async (id) => {
+exports.getUserById = async id => {
   const user = await getUserById(id);
   if (!user) {
     return {
@@ -142,4 +142,31 @@ exports.updateUser = async (id, data) => {
     message: 'User updated successfully',
     data: user,
   };
-}
+};
+
+exports.updateProfile = async (id, data) => {
+  const user = await getUserById(id);
+  if (!user) {
+    return {
+      statusCode: 404,
+      success: false,
+      message: 'User not found',
+      data: null,
+    };
+  }
+  const updatedUser = await updateUserById(id, data);
+  if (!updatedUser) {
+    return {
+      statusCode: 404,
+      success: false,
+      message: 'User not found',
+      data: null,
+    };
+  }
+  return {
+    statusCode: 200,
+    success: true,
+    message: 'User profile updated successfully',
+    data: updatedUser,
+  };
+};
