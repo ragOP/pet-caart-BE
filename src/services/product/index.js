@@ -34,12 +34,7 @@ exports.createProduct = async productPayload => {
 
 exports.getSingleProduct = async id => {
   const product = await getSingleProduct(id);
-  const variants = await variantModel
-    .find({ productId: id })
-    .populate('categoryId')
-    .populate('subCategoryId')
-    .populate('breedId')
-    .populate('brandId');
+  const variants = await variantModel.find({ productId: id });
   const updatedProductWithVariants = {
     ...product._doc,
     variants,
