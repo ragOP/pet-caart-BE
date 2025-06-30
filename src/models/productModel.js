@@ -19,6 +19,11 @@ const ProductSchema = new mongoose.Schema({
     average: { type: Number, default: 0 },
     count: { type: Number, default: 0 }
   },
+  hsnCode: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'HSNCode',
+    required: true,
+  },
   isEverydayEssential: { type: Boolean, default: false },
   newleyLaunched: { type: Boolean, default: false },
   isBestSeller: { type: Boolean, default: false },

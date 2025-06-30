@@ -5,7 +5,11 @@ const {
   getAllProducts,
   updateProduct,
 } = require('../../repositories/product/index.js');
-const { createManyVariants, updateManyVariants, deleteVariantsByIds } = require('../../repositories/variant/index.js');
+const {
+  createManyVariants,
+  updateManyVariants,
+  deleteVariantsByIds,
+} = require('../../repositories/variant/index.js');
 
 exports.createProduct = async productPayload => {
   const { variants, ...productData } = productPayload;
@@ -30,7 +34,12 @@ exports.createProduct = async productPayload => {
 
 exports.getSingleProduct = async id => {
   const product = await getSingleProduct(id);
-  const variants = await variantModel.find({ productId: id });
+  const variants = await variantModel
+    .find({ productId: id })
+    .populate('categoryId')
+    .populate('subCategoryId')
+    .populate('breedId')
+    .populate('brandId');
   const updatedProductWithVariants = {
     ...product._doc,
     variants,
@@ -115,7 +124,16 @@ exports.getAllProducts = async ({
     filters['ratings.average'] = { $gte: rating };
   }
 
-  const { products, total } = await getAllProducts(filters, skip, perPage, categorySlug, subCategorySlug, brandSlug, breedSlug, sort);
+  const { products, total } = await getAllProducts(
+    filters,
+    skip,
+    perPage,
+    categorySlug,
+    subCategorySlug,
+    brandSlug,
+    breedSlug,
+    sort
+  );
 
   return {
     data: products,

@@ -75,6 +75,9 @@ const upload = multer({ storage: storage });
  *               isAddToCart:
  *                 type: boolean
  *                 description: The is add to cart of the product
+ *               hsnCode:
+ *                 type: string
+ *                 description: The hsn code of the product
  *     responses:
  *       201:
  *         description: Product created successfully
@@ -336,7 +339,9 @@ router.route('/:id').get(handleGetSingleProduct);
  *                           type: string
  *                     isActive:
  *                       type: boolean
- * 
+ *               hsnCode:
+ *                 type: string
+ *                 description: The hsn code of the product
  *     responses:
  *       200:
  *         description: Product updated successfully

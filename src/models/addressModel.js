@@ -42,6 +42,10 @@ const addressSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    state_code: {
+        type: String,
+        required: true,
+    },
     type: {
         type: String,
         enum: ["home", "office", "other"],
