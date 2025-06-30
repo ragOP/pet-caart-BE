@@ -50,6 +50,9 @@ const router = express.Router();
  *               isDefault:
  *                 type: boolean
  *                 example: true
+ *               state_code:
+ *                 type: string
+ *                 example: 'NY'
  *     responses:
  *       201:
  *         description: Address created successfully
@@ -113,6 +116,9 @@ router.route('/').post(isUser, validateRequest, handleCreateAddress);
  *               isDefault:
  *                 type: boolean
  *                 example: true
+ *               state_code:
+ *                 type: string
+ *                 example: 'NY'
  *     responses:
  *       200:
  *         description: Address updated successfully

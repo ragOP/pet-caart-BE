@@ -1,7 +1,7 @@
 const addressModel = require('../../models/addressModel');
 
 exports.addressService = async (user, body) => {
-  const { firstName, lastName, address, city, state, zip, country, phone, type } = body;
+  const { firstName, lastName, address, city, state, zip, country, phone, type, state_code } = body;
 
 
   if (body.isDefault === true) {
@@ -38,6 +38,7 @@ exports.addressService = async (user, body) => {
     country,
     phone,
     type,
+    state_code,
   };
 
   if (body.isDefault === true) {
@@ -55,7 +56,7 @@ exports.addressService = async (user, body) => {
 };
 
 exports.updateAddressService = async (user, body, id) => {
-  const { firstName, lastName, address, city, state, zip, country, phone, type } = body;
+  const { firstName, lastName, address, city, state, zip, country, phone, type, state_code } = body;
 
   const addressPayload = {
     firstName,
@@ -67,6 +68,7 @@ exports.updateAddressService = async (user, body, id) => {
     country,
     phone,
     type,
+    state_code,
   };
 
   if (body.isDefault === true) {
