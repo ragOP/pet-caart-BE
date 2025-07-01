@@ -5,19 +5,38 @@ exports.getCart = async () => {
   return await Cart.find({});
 };
 
+exports.getCartForUser = async ({ user_id }) => {
+  return await cartModel.findOne({ userId: user_id }).populate({
+    path: 'items.productId',
+    populate: { path: 'hsnCode' },
+  });
+};
+
 exports.getCartByUserId = async ({ user_id, address_id }) => {
   if (user_id && !address_id) {
-    return await cartModel.findOne({ userId: user_id }).populate({
+    const cart = await cartModel.findOne({ userId: user_id }).populate({
       path: 'items.productId',
       populate: { path: 'hsnCode' },
     });
+    const cartResult = {
+      ...cart.toObject(),
+      items: cart.items.map(item => ({
+        ...item.toObject(),
+        cgst: 0,
+        sgst: 0,
+        igst: 0,
+        total_price: item.price * item.quantity,
+      })),
+      total_price: cart.total_price,
+      is_active: cart.is_active,
+    };
+    return cartResult;
   }
   if (user_id && address_id) {
     const cart = await cartModel.findOne({ userId: user_id }).populate({
       path: 'items.productId',
       populate: { path: 'hsnCode' },
     });
-    console.log('cart', cart.items[0].productId.hsnCode);
     if (!cart) {
       return {
         message: 'Cart not found',
@@ -51,13 +70,18 @@ exports.getCartByUserId = async ({ user_id, address_id }) => {
         };
       }
       for (const item of cartResult.items) {
-        console.log('item', item.productId);
-        // if (address.state === 'Gujarat') {
-        //   item.productId.cgst = item.price * item.productId.hsnCode.cgst;
-        //   item.productId.sgst = item.price * item.productId.hsnCode.sgst;
-        // } else {
-        //   item.productId.igst = item.price * item.productId.hsnCode.igst;
-        // }
+        if (address.state === 'Gujarat') {
+          item.cgst = (item.price * item.productId.hsnCode.cgst_rate) / 100;
+          item.sgst = (item.price * item.productId.hsnCode.sgst_rate) / 100;
+          item.igst = null;
+          item.total_price = parseFloat((item.price + item.cgst + item.sgst).toFixed(2));
+        } else {
+          item.igst = (item.price * item.productId.hsnCode.igst_rate) / 100;
+          item.cgst = null;
+          item.sgst = null;
+          item.total_price = parseFloat((item.price + item.igst).toFixed(2));
+        }
+        cartResult.total_price += item.total_price;
       }
     }
     return cartResult;

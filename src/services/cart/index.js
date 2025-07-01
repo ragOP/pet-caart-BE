@@ -22,7 +22,7 @@ exports.getCart = async ({ user_id, address_id }) => {
 };
 
 exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
-  let cart = await CartRepository.getCartByUserId({ user_id });
+  let cart = await CartRepository.getCartForUser({ user_id });
 
   if (quantity < 0) {
     return {
