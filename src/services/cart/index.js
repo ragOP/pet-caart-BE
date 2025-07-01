@@ -1,0 +1,149 @@
+const productModel = require('../../models/productModel.js');
+const variantModel = require('../../models/variantModel.js');
+const cartModel = require('../../models/cartModel.js');
+const CartRepository = require('../../repositories/cart/index.js');
+
+exports.getCart = async ({ user_id, address_id }) => {
+  const cart = await CartRepository.getCartByUserId({ user_id, address_id });
+  if (!cart) {
+    return {
+      message: 'Cart not found',
+      status: 404,
+      success: false,
+      data: null,
+    };
+  }
+  return {
+    message: 'Cart fetched successfully',
+    status: 200,
+    success: true,
+    data: cart,
+  };
+};
+
+exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
+  let cart = await CartRepository.getCartByUserId({ user_id });
+
+  if (quantity < 0) {
+    return {
+      message: 'Invalid quantity',
+      status: 400,
+      success: false,
+      data: null,
+    };
+  }
+
+  const productData = await productModel.findById(product_id);
+
+  if (!productData) {
+    return {
+      message: 'Product not found',
+      status: 404,
+      success: false,
+      data: null,
+    };
+  }
+  let variantData = null;
+
+  if (variant_id) {
+    variantData = await variantModel.findById(variant_id);
+    if (!variantData) {
+      return {
+        message: 'Variant not found',
+        status: 404,
+        success: false,
+        data: null,
+      };
+    }
+  }
+
+  let productPrice = 0;
+  if (variantData) {
+    productPrice = variantData.salePrice;
+  } else {
+    productPrice = productData.salePrice;
+  }
+
+  if (!cart) {
+    if (quantity > 0) {
+      cart = await CartRepository.addToCart({
+        userId: user_id,
+        items: [
+          {
+            productId: product_id,
+            variantId: variantData ? variantData._id : null,
+            quantity,
+            price: productPrice,
+            total: productPrice * quantity,
+            addedAt: new Date(),
+          },
+        ],
+        total_price: productPrice * quantity,
+        is_active: true,
+      });
+    }
+    cart = await cartModel.findOne({ userId: user_id }).populate({
+      path: 'items.productId',
+      populate: { path: 'hsnCode' },
+    });
+    return {
+      message: 'Cart created successfully',
+      status: 201,
+      success: true,
+      data: cart,
+    };
+  }
+
+  const existingItemIndex = cart.items.findIndex(
+    item => item.productId._id.toString() === product_id
+  );
+
+  if (existingItemIndex !== -1) {
+    if (quantity > 0) {
+      cart.items[existingItemIndex].quantity = quantity;
+      cart.items[existingItemIndex].price = productPrice;
+      cart.items[existingItemIndex].total = productPrice * quantity;
+    } else {
+      cart.items.splice(existingItemIndex, 1);
+    }
+  } else if (quantity > 0) {
+    cart.items.push({
+      productId: product_id,
+      quantity,
+      price: productPrice,
+      total: productPrice * quantity,
+      variantId: variantData ? variantData._id : null,
+      addedAt: new Date(),
+    });
+  }
+
+  cart.total_price = cart.items.reduce((sum, item) => sum + item.total, 0);
+  cart.is_active = cart.items.length > 0;
+
+  await cart.save();
+
+  cart = await cartModel.findOne({ userId: user_id }).populate({
+    path: 'items.productId',
+    populate: { path: 'hsnCode' },
+  });
+
+  return {
+    message: 'Cart updated successfully',
+    status: 200,
+    success: true,
+    data: cart,
+  };
+};
+
+exports.deleteCart = async user_id => {
+  const deletedCart = await CartRepository.deleteCartByUserId(user_id);
+  if (!deletedCart) {
+    return {
+      message: 'Cart not found',
+      status: 404,
+      success: false,
+      data: null,
+    };
+  }
+  return deletedCart;
+};
