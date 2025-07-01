@@ -1,4 +1,11 @@
-const { registerUser, loginUser, getAllUsers, getUserById, updateUser, updateProfile } = require('../../../services/auth/user/index');
+const {
+  registerUser,
+  loginUser,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  updateProfile,
+} = require('../../../services/auth/user/index');
 const { asyncHandler } = require('../../../utils/asyncHandler');
 const ApiResponse = require('../../../utils/apiResponse/index');
 
@@ -77,5 +84,7 @@ exports.handleUpdateProfile = asyncHandler(async (req, res) => {
   if (!result) {
     return res.status(404).json(new ApiResponse(404, null, 'User not found', false));
   }
-  return res.status(200).json(new ApiResponse(200, result, 'User profile updated successfully', true));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, 'User profile updated successfully', true));
 });

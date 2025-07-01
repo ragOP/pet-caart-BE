@@ -1,4 +1,7 @@
-const { getHeaderFooter, createHeaderFooter } = require('../../../services/configuration/headerFooter');
+const {
+  getHeaderFooter,
+  createHeaderFooter,
+} = require('../../../services/configuration/headerFooter');
 const ApiResponse = require('../../../utils/apiResponse');
 const { asyncHandler } = require('../../../utils/asyncHandler');
 

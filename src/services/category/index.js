@@ -22,7 +22,13 @@ const createCategory = async ({ name, slug, image, description, createdBy }) => 
 };
 
 const getCategories = async (search, page, limit, start_date, end_date) => {
-  const { categories, total, totalPages } = await getAllCategories(search, page, limit, start_date, end_date);
+  const { categories, total, totalPages } = await getAllCategories(
+    search,
+    page,
+    limit,
+    start_date,
+    end_date
+  );
   if (!categories) {
     return {
       statusCode: 404,

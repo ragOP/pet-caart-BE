@@ -1,5 +1,5 @@
 {
-  "name": "india-trade-be",
+  "name": "pet-caart-be",
   "version": "1.0.0",
   "description": "this app provide api for reatime conversation",
   "main": "index.js",
@@ -9,7 +9,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
-  "author": "india-trade",
+  "author": "pet-caart",
   "license": "ISC",
   "dependencies": {
     "cloudinary": "^2.6.1",

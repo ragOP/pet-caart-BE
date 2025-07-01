@@ -6,13 +6,20 @@ exports.createBreed = async breed => {
 };
 
 exports.getSingleBreed = async id => {
-  const breed = await Breed.findById(id).populate('createdBy', 'name').populate('updatedBy', 'name');
+  const breed = await Breed.findById(id)
+    .populate('createdBy', 'name')
+    .populate('updatedBy', 'name');
   return breed;
 };
 
 exports.getAllBreeds = async (filters, skip = 0, limit = 50) => {
   const [breeds, total] = await Promise.all([
-    Breed.find(filters).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('createdBy', 'name').populate('updatedBy', 'name'),
+    Breed.find(filters)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('createdBy', 'name')
+      .populate('updatedBy', 'name'),
     Breed.countDocuments(filters),
   ]);
 

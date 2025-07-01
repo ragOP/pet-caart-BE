@@ -1,17 +1,17 @@
 const HSNCode = require('../../models/hsnCodeModel.js');
 
-const findAll = (query) => HSNCode.find(query);
+const findAll = query => HSNCode.find(query);
 
-const findById = (id) => HSNCode.findById(id);
+const findById = id => HSNCode.findById(id);
 
-const findOne = (filter) => HSNCode.findOne(filter);
+const findOne = filter => HSNCode.findOne(filter);
 
-const create = (data) => HSNCode.create(data);
+const create = data => HSNCode.create(data);
 
 const updateById = (id, data) =>
   HSNCode.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 
-const deleteById = (id) => HSNCode.findByIdAndDelete(id);
+const deleteById = id => HSNCode.findByIdAndDelete(id);
 
 const count = (query = {}) => HSNCode.countDocuments(query);
 

@@ -160,7 +160,7 @@ router.route('/:id').get(handleGetSingleSubCategory);
  *                 description: The category ID of the subcategory
  *               image:
  *                 type: file
- *                 format: binary 
+ *                 format: binary
  *                 description: The image of the subcategory
  *               isActive:
  *                 type: boolean

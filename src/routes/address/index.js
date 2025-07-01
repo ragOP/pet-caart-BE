@@ -1,6 +1,11 @@
 const express = require('express');
 const { isUser } = require('../../middleware/auth/adminMiddleware');
-const { handleCreateAddress, handleUpdateAddress, handleDeleteAddress, handleGetAllSavedAddresses } = require('../../controllers/address');
+const {
+  handleCreateAddress,
+  handleUpdateAddress,
+  handleDeleteAddress,
+  handleGetAllSavedAddresses,
+} = require('../../controllers/address');
 const { validateRequest } = require('../../middleware/validateRequest');
 const router = express.Router();
 
@@ -171,6 +176,5 @@ router.route('/:id').delete(isUser, handleDeleteAddress);
  *         description: Unauthorized
  */
 router.route('/').get(isUser, handleGetAllSavedAddresses);
-
 
 module.exports = router;

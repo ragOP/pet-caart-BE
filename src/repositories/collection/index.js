@@ -7,7 +7,12 @@ exports.createCollection = async data => {
 
 exports.getAllFilteredCollections = async (filters, skip = 0, limit = 50) => {
   const [collections, total] = await Promise.all([
-    Collection.find(filters).sort({ createdAt: -1 }).skip(skip).limit(limit).populate('createdBy', 'name').populate('updatedBy', 'name'),
+    Collection.find(filters)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('createdBy', 'name')
+      .populate('updatedBy', 'name'),
     Collection.countDocuments(filters),
   ]);
 

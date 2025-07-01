@@ -3,7 +3,12 @@ const multer = require('multer');
 const { storage } = require('../../../config/multer.js');
 const { isAdmin } = require('../../../middleware/auth/adminMiddleware.js');
 const { validateRequest } = require('../../../middleware/validateRequest/index');
-const { handleCreateCatLifeBanner, handleGetCatLifeBanners, handleUpdateCatLifeBanner, handleGetCatLifeBannerById } = require('../../../controllers/configuration/catLifeBanner/index.js');
+const {
+  handleCreateCatLifeBanner,
+  handleGetCatLifeBanners,
+  handleUpdateCatLifeBanner,
+  handleGetCatLifeBannerById,
+} = require('../../../controllers/configuration/catLifeBanner/index.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
 
@@ -36,14 +41,16 @@ const upload = multer({ storage: storage });
  *       200:
  *         description: Cat life banner created successfully
  */
-router.route('/create').post(upload.single('image'), isAdmin, validateRequest, handleCreateCatLifeBanner);
+router
+  .route('/create')
+  .post(upload.single('image'), isAdmin, validateRequest, handleCreateCatLifeBanner);
 
 /**
  * @swagger
  * /api/cat-life-banner/get:
  *   get:
  *     summary: Get all cat life banners
- *     tags: [Configuration]    
+ *     tags: [Configuration]
  *     responses:
  *       200:
  *         description: Cat life banners fetched successfully
@@ -86,7 +93,9 @@ router.route('/get').get(handleGetCatLifeBanners);
  *       200:
  *         description: Cat life banner updated successfully
  */
-router.route('/update/:id').put(upload.single('image'), isAdmin, validateRequest, handleUpdateCatLifeBanner);   
+router
+  .route('/update/:id')
+  .put(upload.single('image'), isAdmin, validateRequest, handleUpdateCatLifeBanner);
 
 /**
  * @swagger

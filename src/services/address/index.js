@@ -3,7 +3,6 @@ const addressModel = require('../../models/addressModel');
 exports.addressService = async (user, body) => {
   const { firstName, lastName, address, city, state, zip, country, phone, type, state_code } = body;
 
-
   if (body.isDefault === true) {
     const checkExistingDefaultAddress = await addressModel.findOne({
       user: user._id,
@@ -143,7 +142,7 @@ exports.deleteAddressService = async (user, id) => {
   };
 };
 
-exports.getAllSavedAddresses = async (user) => {
+exports.getAllSavedAddresses = async user => {
   const addresses = await addressModel.find({ user: user._id }).sort({ createdAt: -1 });
   if (!addresses) {
     return {

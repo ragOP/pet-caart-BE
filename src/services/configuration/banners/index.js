@@ -153,7 +153,7 @@ exports.createAdBanner = async (title, description, link, products) => {
     };
   }
 
-  if(productIds.length > 4) {
+  if (productIds.length > 4) {
     return {
       success: false,
       message: 'You can only add up to 4 products',

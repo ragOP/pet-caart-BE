@@ -1,7 +1,11 @@
 const express = require('express');
-const { handleAllUsers, handleGetUserById, handleUpdateUser } = require('../../controllers/auth/user/index');
+const {
+  handleAllUsers,
+  handleGetUserById,
+  handleUpdateUser,
+} = require('../../controllers/auth/user/index');
 const { isAdmin } = require('../../middleware/auth/adminMiddleware');
-const { validateRequest } = require('../../middleware/validateRequest/index')
+const { validateRequest } = require('../../middleware/validateRequest/index');
 const router = express.Router();
 
 /**

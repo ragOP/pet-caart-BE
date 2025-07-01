@@ -69,7 +69,7 @@ exports.createSlider = async (image, link, isActive, type) => {
   };
 };
 
-exports.getSlider = async (type) => {
+exports.getSlider = async type => {
   if (!type) {
     return {
       success: false,
@@ -208,7 +208,7 @@ exports.deleteSlider = async id => {
     'images._id': id,
   });
   if (!slider) {
-    console.log("slider not found");
+    console.log('slider not found');
     return {
       success: false,
       message: 'Slider not found',
@@ -225,10 +225,10 @@ exports.deleteSlider = async id => {
   };
 };
 
-exports.getAllSlider = async (type) => {
+exports.getAllSlider = async type => {
   const slider = await sliderModel.findOne({
     'images.isActive': true,
-    'images.type': type
+    'images.type': type,
   });
 
   if (!slider) {

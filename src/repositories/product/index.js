@@ -14,7 +14,7 @@ exports.getSingleProduct = async id => {
     .populate({ path: 'categoryId', select: 'name _id slug' })
     .populate({ path: 'subCategoryId', select: 'name _id slug' })
     .populate({ path: 'brandId', select: 'name _id slug' })
-    .populate({ path: 'breedId', select: 'name _id slug' })
+    .populate({ path: 'breedId', select: 'name _id slug' });
   return product;
 };
 

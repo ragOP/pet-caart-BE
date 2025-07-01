@@ -12,7 +12,7 @@ const mongoose = require('mongoose');
 
 exports.handleGetAllSubCategories = asyncHandler(async (req, res) => {
   const { categoryId, search, page = 1, per_page = 50, start_date, end_date } = req.query;
-  
+
   let result;
   if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
     result = await getAllSubCategoriesByCategoryId({
@@ -86,7 +86,7 @@ exports.handleUpdateSubCategory = asyncHandler(async (req, res) => {
   if (!id) {
     return res.status(400).json(new ApiResponse(400, null, 'SubCategory id is required'));
   }
-  console.log(req.body, "req.body");
+  console.log(req.body, 'req.body');
   const { categoryId } = req.body;
 
   if (!categoryId) {

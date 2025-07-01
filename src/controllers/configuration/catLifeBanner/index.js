@@ -48,5 +48,7 @@ exports.handleGetCatLifeBannerById = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res.status(400).json(new ApiResponse(400, null, result.message, false));
   }
-  return res.status(200).json(new ApiResponse(200, result, 'Cat life banner fetched successfully', true));
+  return res
+    .status(200)
+    .json(new ApiResponse(200, result, 'Cat life banner fetched successfully', true));
 });

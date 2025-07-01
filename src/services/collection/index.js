@@ -81,7 +81,7 @@ exports.getAllCollectionsBySubCategoryId = async ({
   };
 };
 
-exports.getSingleCollection = async (id) => {
+exports.getSingleCollection = async id => {
   const collection = await getSingleCollection(id);
   if (!collection) {
     return {
@@ -108,7 +108,7 @@ exports.updateCollection = async (id, data, image, userId) => {
       data: null,
       success: false,
     };
-  };
+  }
   const collectionPayload = {
     ...data,
     updatedBy: userId,

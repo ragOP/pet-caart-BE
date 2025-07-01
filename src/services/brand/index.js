@@ -1,4 +1,9 @@
-const { createBrand, getSingleBrand, getAllBrands, updateBrand } = require('../../repositories/brand/index.js');
+const {
+  createBrand,
+  getSingleBrand,
+  getAllBrands,
+  updateBrand,
+} = require('../../repositories/brand/index.js');
 const { uploadSingleFile } = require('../../utils/upload');
 
 exports.createBrand = async brand => {

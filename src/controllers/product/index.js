@@ -114,7 +114,7 @@ exports.handleGetAllProducts = asyncHandler(async (req, res) => {
     min_price_range,
     max_price_range,
     sort_by,
-    rating
+    rating,
   } = req.query;
   const result = await getAllProducts({
     search,

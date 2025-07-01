@@ -1,10 +1,15 @@
-const express = require("express");
-const { handleCreateBreed, handleGetAllBreeds, handleGetSingleBreed, handleUpdateBreed } = require('../../controllers/breed/index.js');
+const express = require('express');
+const {
+  handleCreateBreed,
+  handleGetAllBreeds,
+  handleGetSingleBreed,
+  handleUpdateBreed,
+} = require('../../controllers/breed/index.js');
 const { validateCreateBreed } = require('../../validators/breed/index.js');
-const { validateRequest } = require('../../middleware/validateRequest/index')
-const multer = require("multer");
-const { storage } = require("../../config/multer.js");
-const { isAdmin } = require("../../middleware/auth/adminMiddleware.js");
+const { validateRequest } = require('../../middleware/validateRequest/index');
+const multer = require('multer');
+const { storage } = require('../../config/multer.js');
+const { isAdmin } = require('../../middleware/auth/adminMiddleware.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
 
@@ -56,7 +61,9 @@ const upload = multer({ storage: storage });
  *         description: Breed created successfully
  */
 
-router.route("/").post(isAdmin, upload.array("images"), validateCreateBreed, validateRequest, handleCreateBreed);
+router
+  .route('/')
+  .post(isAdmin, upload.array('images'), validateCreateBreed, validateRequest, handleCreateBreed);
 
 /**
  * @swagger
@@ -90,13 +97,13 @@ router.route("/").post(isAdmin, upload.array("images"), validateCreateBreed, val
  *         required: false
  *         description: The end date
  *         type: string
- * 
+ *
  *     responses:
  *       200:
  *         description: Breeds fetched successfully
  */
 
-router.route("/").get(handleGetAllBreeds);
+router.route('/').get(handleGetAllBreeds);
 
 /**
  * @swagger
@@ -117,7 +124,7 @@ router.route("/").get(handleGetAllBreeds);
  *         description: Breed fetched successfully
  */
 
-router.route("/:id").get(handleGetSingleBreed);
+router.route('/:id').get(handleGetSingleBreed);
 
 /**
  * @swagger
@@ -167,6 +174,6 @@ router.route("/:id").get(handleGetSingleBreed);
  *         description: Breed updated successfully
  */
 
-router.route("/:id").put(isAdmin, upload.single("images"),validateRequest, handleUpdateBreed);
+router.route('/:id').put(isAdmin, upload.single('images'), validateRequest, handleUpdateBreed);
 
 module.exports = router;

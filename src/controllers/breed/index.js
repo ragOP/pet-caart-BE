@@ -1,4 +1,9 @@
-const { createBreed, getSingleBreed, getAllBreeds, updateBreedService } = require('../../services/breed/index.js');
+const {
+  createBreed,
+  getSingleBreed,
+  getAllBreeds,
+  updateBreedService,
+} = require('../../services/breed/index.js');
 const { asyncHandler } = require('../../utils/asyncHandler/index');
 const ApiResponse = require('../../utils/apiResponse/index');
 const { uploadSingleFile } = require('../../utils/upload/index');
@@ -19,7 +24,14 @@ exports.handleCreateBreed = asyncHandler(async (req, res) => {
 
   const imageUrl = await uploadSingleFile(image[0].path);
 
-  const result = await createBreed({ name, slug, species, description, image: imageUrl, createdBy: userId });
+  const result = await createBreed({
+    name,
+    slug,
+    species,
+    description,
+    image: imageUrl,
+    createdBy: userId,
+  });
   return res.status(201).json(new ApiResponse(201, result, 'Breed created successfully', true));
 });
 

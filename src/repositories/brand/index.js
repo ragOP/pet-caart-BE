@@ -6,7 +6,9 @@ exports.createBrand = async brand => {
 };
 
 exports.getSingleBrand = async id => {
-  const brand = await Brand.findById(id).populate('createdBy', 'name').populate('updatedBy', 'name');
+  const brand = await Brand.findById(id)
+    .populate('createdBy', 'name')
+    .populate('updatedBy', 'name');
   return brand;
 };
 

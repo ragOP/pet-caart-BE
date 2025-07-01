@@ -86,7 +86,7 @@ exports.updateCatLifeBanner = async (id, title, link, image) => {
   };
 };
 
-exports.getCatLifeBannerById = async (id) => {
+exports.getCatLifeBannerById = async id => {
   const catLifeBanner = await CatLifeBanner.findById(id);
   if (!catLifeBanner) {
     return {

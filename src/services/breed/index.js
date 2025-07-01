@@ -1,4 +1,9 @@
-const { createBreed, getSingleBreed, getAllBreeds, updateBreed } = require('../../repositories/breed/index.js');
+const {
+  createBreed,
+  getSingleBreed,
+  getAllBreeds,
+  updateBreed,
+} = require('../../repositories/breed/index.js');
 const { uploadSingleFile } = require('../../utils/upload/index');
 
 exports.createBreed = async breed => {
@@ -47,30 +52,30 @@ exports.updateBreedService = async (id, data, image, userId) => {
       message: 'Breed not found',
       data: null,
       success: false,
-    }
+    };
   }
   const breedData = {
     ...data,
     updatedBy: userId,
-  }
+  };
 
-  if(image){
+  if (image) {
     const imageUrl = await uploadSingleFile(image.path);
     breedData.image = imageUrl;
-  };
+  }
   const updatedBreed = await updateBreed(id, breedData);
-  if(!updatedBreed){
+  if (!updatedBreed) {
     return {
       status: 400,
       message: 'Breed not updated',
       data: null,
       success: false,
-    }
+    };
   }
   return {
     status: 200,
     message: 'Breed updated successfully',
     data: updatedBreed,
     success: true,
-  }
+  };
 };

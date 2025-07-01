@@ -4,7 +4,13 @@ const { storage } = require('../../../config/multer.js');
 const { isAdmin } = require('../../../middleware/auth/adminMiddleware.js');
 const { validateCreateBanner } = require('../../../validators/banners/index.js');
 const { validateRequest } = require('../../../middleware/validateRequest/index');
-const { handleCreateBanner, handleUpdateBanner, handleGetBanner, handleCreateAdBanner, handleGetAdBanner } = require('../../../controllers/configuration/banner/index.js');
+const {
+  handleCreateBanner,
+  handleUpdateBanner,
+  handleGetBanner,
+  handleCreateAdBanner,
+  handleGetAdBanner,
+} = require('../../../controllers/configuration/banner/index.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
 
@@ -34,9 +40,7 @@ const upload = multer({ storage: storage });
  *       201:
  *         description: Banner created successfully
  */
-router
-  .route('/banner')
-  .post(isAdmin, upload.single('image'), validateRequest, handleCreateBanner);
+router.route('/banner').post(isAdmin, upload.single('image'), validateRequest, handleCreateBanner);
 
 /**
  * @swagger
@@ -68,8 +72,10 @@ router
  *     responses:
  *       200:
  *         description: Banner updated successfully
- */     
-router.route('/banner/:id').put(isAdmin, upload.single('image'), validateRequest, handleUpdateBanner);
+ */
+router
+  .route('/banner/:id')
+  .put(isAdmin, upload.single('image'), validateRequest, handleUpdateBanner);
 
 /**
  * @swagger
@@ -118,7 +124,7 @@ router.route('/banner').get(handleGetBanner);
  *                   type: string
  *                 description: The products of the ad banner
  *     responses:
- *       200: 
+ *       200:
  *         description: Ad banner created successfully
  */
 router.route('/ad-banner').post(isAdmin, validateRequest, handleCreateAdBanner);

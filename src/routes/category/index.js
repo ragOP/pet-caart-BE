@@ -1,10 +1,15 @@
-const express = require("express");
-const { handleCreateCategory, handleGetAllCategories, handleGetSingleCategory, handleUpdateCategory } = require('../../controllers/category/index.js');
+const express = require('express');
+const {
+  handleCreateCategory,
+  handleGetAllCategories,
+  handleGetSingleCategory,
+  handleUpdateCategory,
+} = require('../../controllers/category/index.js');
 const { validateCreateCategory } = require('../../validators/category/index.js');
-const { validateRequest } = require('../../middleware/validateRequest/index')
-const multer = require("multer");
-const { storage } = require("../../config/multer.js");
-const { isAdmin } = require("../../middleware/auth/adminMiddleware.js");
+const { validateRequest } = require('../../middleware/validateRequest/index');
+const multer = require('multer');
+const { storage } = require('../../config/multer.js');
+const { isAdmin } = require('../../middleware/auth/adminMiddleware.js');
 const router = express.Router();
 
 const upload = multer({ storage: storage });
@@ -26,7 +31,7 @@ const upload = multer({ storage: storage });
  *               type: string
  *               example: 'Electronics'
  *             slug:
- *               type: string   
+ *               type: string
  *               example: 'electronics'
  *             description:
  *               type: string
@@ -35,7 +40,15 @@ const upload = multer({ storage: storage });
  *       201:
  *         description: Category created successfully
  */
-router.route("/").post(isAdmin, upload.array("images"), validateCreateCategory, validateRequest, handleCreateCategory);
+router
+  .route('/')
+  .post(
+    isAdmin,
+    upload.array('images'),
+    validateCreateCategory,
+    validateRequest,
+    handleCreateCategory
+  );
 
 /**
  * @swagger
@@ -73,7 +86,7 @@ router.route("/").post(isAdmin, upload.array("images"), validateCreateCategory, 
  *       200:
  *         description: Categories retrieved successfully
  */
-router.route("/").get(handleGetAllCategories);
+router.route('/').get(handleGetAllCategories);
 
 /**
  * @swagger
@@ -91,7 +104,7 @@ router.route("/").get(handleGetAllCategories);
  *       200:
  *         description: Category fetched successfully
  */
-router.route("/:id").get(handleGetSingleCategory);
+router.route('/:id').get(handleGetSingleCategory);
 
 /**
  * @swagger
@@ -134,6 +147,6 @@ router.route("/:id").get(handleGetSingleCategory);
  *       200:
  *         description: Category updated successfully
  */
-router.route("/:id").put(upload.single("images"), isAdmin, validateRequest, handleUpdateCategory);
+router.route('/:id').put(upload.single('images'), isAdmin, validateRequest, handleUpdateCategory);
 
 module.exports = router;

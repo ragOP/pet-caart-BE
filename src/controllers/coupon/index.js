@@ -161,10 +161,11 @@ const applyCoupon = asyncHandler(async (req, res) => {
 
 // Get coupon by code
 const getCouponByCode = asyncHandler(async (req, res) => {
-  const coupon = await Coupon.findOne({ _id: req.params.id }).populate(
-    'applicableProducts',
-    'title description slug _id images'
-  ).populate('applicableCategories', 'title description slug _id images').populate('excludedProducts', 'title description slug _id images').populate('excludedCategories', 'title description slug _id images');
+  const coupon = await Coupon.findOne({ _id: req.params.id })
+    .populate('applicableProducts', 'title description slug _id images')
+    .populate('applicableCategories', 'title description slug _id images')
+    .populate('excludedProducts', 'title description slug _id images')
+    .populate('excludedCategories', 'title description slug _id images');
   if (!coupon) return res.status(404).json({ error: 'Coupon not found' });
   res.json(new ApiResponse(200, coupon, 'Coupon fetched successfully', true));
 });

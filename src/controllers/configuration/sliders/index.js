@@ -1,4 +1,11 @@
-const { createSlider, getSlider, updateSlider, getSliderById, deleteSlider, getAllSlider } = require('../../../services/configuration/sliders');
+const {
+  createSlider,
+  getSlider,
+  updateSlider,
+  getSliderById,
+  deleteSlider,
+  getAllSlider,
+} = require('../../../services/configuration/sliders');
 const { asyncHandler } = require('../../../utils/asyncHandler');
 const ApiResponse = require('../../../utils/apiResponse/index');
 
@@ -23,7 +30,7 @@ exports.handleGetSlider = asyncHandler(async (req, res) => {
 
 exports.handleUpdateSlider = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const image = req.file; 
+  const image = req.file;
   console.log(req.body, image, id);
   const result = await updateSlider(req.body, image, id);
   if (!result.success) {

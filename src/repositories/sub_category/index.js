@@ -38,7 +38,9 @@ exports.getAllFilteredSubCategoriesByCategoryId = async (filters, skip = 0, limi
 };
 
 exports.getSingleSubCategory = async id => {
-  const subCategory = await SubCategory.findById(id).populate('createdBy', 'name').populate('updatedBy', 'name');
+  const subCategory = await SubCategory.findById(id)
+    .populate('createdBy', 'name')
+    .populate('updatedBy', 'name');
   return subCategory;
 };
 
