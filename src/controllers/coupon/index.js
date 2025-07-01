@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const { asyncHandler } = require('../../utils/asyncHandler');
-const ApiResponse = require('../../utils/ApiResponse');
 const Coupon = require('../../models/couponModel');
+const ApiResponse = require('../../utils/apiResponse');
 
 const getAllCoupons = asyncHandler(async (req, res) => {
   const { page = 1, per_page = 50, search = '', showOnlyValid = false } = req.query;
