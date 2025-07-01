@@ -66,6 +66,14 @@ exports.loginUser = async (phoneNumber, otp) => {
     };
   }
 
+  if (user.role !== 'user') {
+    return {
+      statusCode: 401,
+      message: 'User is not a user',
+      data: null,
+    };
+  }
+
   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
   return {
     statusCode: 200,
