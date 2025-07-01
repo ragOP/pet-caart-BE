@@ -1,6 +1,6 @@
 const { asyncHandler } = require('../../utils/asyncHandler/index.js');
 const HSNCodeService = require('../../services/hsn_code/index.js');
-const ApiResponse = require('../../utils/ApiResponse/index.js');
+const ApiResponse = require('../../utils/apiResponse/index.js');
 
 const getAllHSNCodes = asyncHandler(async (req, res) => {
   const { start_date, end_date, search = '', is_active = false } = req.query;
