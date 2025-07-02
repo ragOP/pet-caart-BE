@@ -1,20 +1,22 @@
-exports.getTaxForItem = (item, state) => {
-  const price = item.price;
-  const hsn = item.productId.hsnCode;
+exports.getTaxForItem = (unitPrice, hsn, state, quantity) => {
+  const baseAmount = unitPrice * quantity;
 
   if (!hsn) {
-    return { cgst: 0, sgst: 0, igst: 0, total_price: price * item.quantity };
+    return { cgst: 0, sgst: 0, igst: 0, totalTax: 0 };
   }
 
   if (state === 'Gujarat') {
-    const cgst = (price * hsn.cgst_rate) / 100;
-    const sgst = (price * hsn.sgst_rate) / 100;
-    const total_price = parseFloat((price + cgst + sgst).toFixed(2));
-    return { cgst, sgst, igst: null, total_price };
-  } else if (state) {
-    const igst = (price * hsn.igst_rate) / 100;
-    const total_price = parseFloat((price + igst).toFixed(2));
-    return { cgst: null, sgst: null, igst, total_price };
+    const cgst = (baseAmount * hsn.cgst_rate) / 100;
+    const sgst = (baseAmount * hsn.sgst_rate) / 100;
+    const totalTax = parseFloat((cgst + sgst).toFixed(2));
+    return { cgst, sgst, igst: null, totalTax };
   }
-  return { cgst: 0, sgst: 0, igst: 0, total_price: price * item.quantity };
+
+  if (state) {
+    const igst = (baseAmount * hsn.igst_rate) / 100;
+    const totalTax = parseFloat(igst.toFixed(2));
+    return { cgst: null, sgst: null, igst, totalTax };
+  }
+
+  return { cgst: 0, sgst: 0, igst: 0, totalTax: 0 };
 };

@@ -5,7 +5,11 @@ const { asyncHandler } = require('../../utils/asyncHandler/index.js');
 exports.getCart = asyncHandler(async (req, res) => {
   const { _id } = req.user;
 
-  const cart = await getCart({ user_id: _id, address_id: req.query.address_id });
+  const cart = await getCart({
+    user_id: _id,
+    address_id: req.query.address_id,
+    coupon_id: req.query.coupon_id,
+  });
 
   if (!cart.success) {
     return res.json(new ApiResponse(cart.status, null, cart.message, false));

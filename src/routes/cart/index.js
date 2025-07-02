@@ -19,7 +19,14 @@ const router = express.Router();
  *         required: false
  *         schema:
  *           type: string
- *           example: 666666666666666666666666
+ *           example: 6666666666666666
+ *       - name: coupon_id
+ *         in: query
+ *         description: The ID of the coupon to get the cart for
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: 6666666666666666
  *     responses:
  *       200:
  *         description: Cart retrieved successfully

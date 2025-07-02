@@ -3,8 +3,12 @@ const variantModel = require('../../models/variantModel.js');
 const cartModel = require('../../models/cartModel.js');
 const CartRepository = require('../../repositories/cart/index.js');
 
-exports.getCart = async ({ user_id, address_id }) => {
-  const cart = await CartRepository.getCartByUserId({ user_id, address_id });
+exports.getCart = async ({ user_id, address_id, coupon_id }) => {
+  const cart = await CartRepository.getCartByUserId({
+    user_id,
+    address_id,
+    coupon_id,
+  });
   if (!cart) {
     return {
       message: 'Cart not found',
