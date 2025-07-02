@@ -152,10 +152,22 @@ exports.handleUpdateProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { body } = req;
   const { images = [], variantImages = [] } = req.files;
+
+  // upload Images
   const imageUrls = await uploadMultipleFiles(images);
   const uploadedVariantImages = await uploadMultipleFiles(variantImages);
   body.images = imageUrls;
+
+  // parse variants
   const variantImageMap = body.variantImageMap;
+  const parsedVariants = Array.isArray(body.variants)
+    ? body.variants.map(v => JSON.parse(v))
+    : [JSON.parse(body.variants)];
+  const parsedBreedIds = typeof body.breedId === 'string' ? JSON.parse(body.breedId) : body.breedId;
+  const parsedTags = typeof body.tags === 'string' ? JSON.parse(body.tags) : body.tags;
+  const parsedAttributes =
+    typeof body.attributes === 'string' ? JSON.parse(body.attributes) : body.attributes;
+  const parsedRatings = typeof body.ratings === 'string' ? JSON.parse(body.ratings) : body.ratings;
   const parsedVariantImageMap = JSON.parse(variantImageMap || '[]');
   const variantImageGroups = {};
   parsedVariantImageMap.forEach((item, idx) => {
@@ -165,12 +177,41 @@ exports.handleUpdateProduct = asyncHandler(async (req, res) => {
     }
     variantImageGroups[index].push(uploadedVariantImages[idx]);
   });
-  const enrichedVariants = body.variants.map((variant, index) => ({
+
+  // inject images into variants
+  const enrichedVariants = parsedVariants.map((variant, index) => ({
     ...variant,
     images: variantImageGroups[index] || [],
   }));
   body.variants = enrichedVariants;
-  const result = await updateProduct(id, body);
+
+  // create product payload
+  const productPayload = {
+    title: body.title,
+    slug: body.slug,
+    description: body.description,
+    categoryId: body.categoryId,
+    subCategoryId: body.subCategoryId,
+    breedId: parsedBreedIds,
+    brandId: body.brandId,
+    price: body.price,
+    salePrice: body.salePrice,
+    stock: body.stock,
+    isActive: body.isActive,
+    isEverydayEssential: body.isEverydayEssential,
+    isBestSeller: body.isBestSeller,
+    newleyLaunched: body.isNewleyLaunched,
+    isAddToCart: body.isAddToCart,
+    images: imageUrls,
+    variants: enrichedVariants,
+    tags: parsedTags,
+    attributes: parsedAttributes,
+    ratings: parsedRatings,
+    hsnCode: body.hsnCode,
+  };
+
+  // update product
+  const result = await updateProduct(id, productPayload);
   if (!result) {
     return res.status(404).json(new ApiResponse(404, null, 'Product not found'));
   }

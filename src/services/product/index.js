@@ -143,52 +143,78 @@ exports.updateProduct = async (id, productPayload) => {
 
   const product = await updateProduct(id, productData);
 
+  const availableVariants = await variantModel.find({ productId: id });
+
+  if (!product) {
+    return {
+      statusCode: 404,
+      success: false,
+      message: 'Product not found',
+      data: null,
+    };
+  }
+
   if (variants) {
-    // Fetch current variants from DB
-    const currentVariants = product.variants || [];
+    // 1. Fetch current variants from DB
+    const currentVariants = availableVariants || [];
     const currentVariantIds = currentVariants.map(v => v._id.toString());
 
-    // Split incoming variants into new and existing
-    const newVariants = variants.filter(v => !v._id);
-    const updatedVariants = variants.filter(v => v._id);
-    const updatedVariantIds = updatedVariants.map(v => v._id.toString());
+    // 2. Split incoming variants into new and existing
+    const newVariants = variants.filter(v => {
+      const existingVariant = availableVariants.find(av => av.sku === v.sku);
+      return !existingVariant;
+    });
 
-    // Find deleted variants
+    // 3. Find updated variants
+    const updatedVariants = variants.filter(v => {
+      const existingVariant = availableVariants.find(av => av.sku === v.sku);
+      return existingVariant;
+    });
+
+    // 4. Find updated variant IDs
+    const updatedVariantIds = updatedVariants.map(v => {
+      const existingVariant = availableVariants.find(av => av.sku === v.sku);
+      return existingVariant._id.toString();
+    });
+
+    // 5. Find deleted variant IDs
     const deletedVariantIds = currentVariantIds.filter(id => !updatedVariantIds.includes(id));
 
-    // Enrich new variants with productId
+    // 6. Enrich new variants with productId
     const enrichedNewVariants = newVariants.map(variant => ({
       ...variant,
       productId: product._id,
     }));
 
-    // Update existing variants
+    // 7. Update existing variants
     let updatedVariantDocs = [];
     if (updatedVariants.length > 0) {
       updatedVariantDocs = await updateManyVariants(updatedVariants);
     }
 
-    // Create new variants
+    // 8. Create new variants
     let createdVariantDocs = [];
     if (enrichedNewVariants.length > 0) {
       createdVariantDocs = await createManyVariants(enrichedNewVariants);
     }
 
-    // Delete removed variants
+    // 9. Delete removed variants
     if (deletedVariantIds.length > 0) {
       await deleteVariantsByIds(deletedVariantIds);
     }
 
-    // Set product.variants to the up-to-date list
+    // 10. Set product.variants to the up-to-date list
     product.variants = [...updatedVariantDocs, ...createdVariantDocs];
     await product.save();
     return {
+      statusCode: 200,
       success: true,
       message: 'Product updated successfully',
       product,
     };
   }
   return {
+    statusCode: 200,
     success: true,
     message: 'Product updated successfully',
     product,
