@@ -49,7 +49,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
         data: null,
       };
     }
-    state = address.state;
+    state = address.state_code;
   }
 
   // 1. Base subtotal
@@ -128,7 +128,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
   const finalItems = updatedItems.map(item => {
     const hsn = item.productId.hsnCode;
     const quantity = item.quantity;
-    const { cgst, sgst, igst, totalTax } = getTaxForItem(item.discounted_price, hsn, state, quantity);
+    const { cgst, sgst, igst, totalTax, cess } = getTaxForItem(item.discounted_price, hsn, state, quantity);
   
     const baseAmount = item.discounted_price * quantity;
     const total_price = parseFloat((baseAmount + totalTax).toFixed(2));
@@ -139,6 +139,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
       cgst,
       sgst,
       igst,
+      cess,
       total_price,
     };
   });  
