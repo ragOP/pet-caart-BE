@@ -70,6 +70,28 @@ router.get('/', isUser, validateRequest, getCart);
  *         description: Product not found
  */
 router.post('/', isUser, validateRequest, addToCart);
+
+/**
+ * @swagger
+ * /api/cart/{id}:
+ *   delete:
+ *     summary: Delete a product from the cart
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: The ID of the product to delete from the cart
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Product deleted from cart successfully
+ *       404:
+ *         description: Product not found
+ */
 router.delete('/:id', isUser, validateRequest, deleteCart);
 
 module.exports = router;

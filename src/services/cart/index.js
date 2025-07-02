@@ -149,5 +149,10 @@ exports.deleteCart = async user_id => {
       data: null,
     };
   }
-  return deletedCart;
+  return {
+    message: 'Cart deleted successfully',
+    status: 200,
+    success: true,
+    data: deletedCart,
+  };
 };

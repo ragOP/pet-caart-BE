@@ -31,6 +31,9 @@ exports.addToCart = asyncHandler(async (req, res) => {
 exports.deleteCart = asyncHandler(async (req, res) => {
   const { id } = req.params;
 
-  await deleteCart(id);
-  res.json(new ApiResponse(200, null, 'Cart deleted successfully', true));
+  const deletedCart = await deleteCart(id);
+  if (!deletedCart.success) {
+    return res.json(new ApiResponse(deletedCart.status, null, deletedCart.message, false));
+  }
+  return res.json(new ApiResponse(deletedCart.status, deletedCart.data, deletedCart.message, true));
 });
