@@ -4,6 +4,7 @@ const SubCategorySchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
+    description: { type: String },
     categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category', required: true },
     image: String,
     dynamicFields: mongoose.Schema.Types.Mixed,
