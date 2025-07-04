@@ -341,6 +341,7 @@ exports.getAllUserOrdersService = async user => {
     .find({ userId: _id })
     .populate('items.productId')
     .populate('items.variantId');
+
   if (!orders || orders.length === 0) {
     return {
       statusCode: 404,
@@ -350,9 +351,24 @@ exports.getAllUserOrdersService = async user => {
     };
   }
 
+  const transcations = await transcationModel.find({
+    orderId: { $in: orders.map(order => order._id) },
+  });
+  const finalOrders = orders.map(order => {
+    const transcation = transcations.find(
+      transcation => transcation.orderId.toString() === order._id.toString()
+    );
+    return {
+      ...order.toObject(),
+      transcation,
+    };
+  });
+
   return {
     statusCode: 200,
-    data: orders,
+    data: {
+      orders: finalOrders,
+    },
     success: true,
     message: 'Orders retrieved successfully',
   };
@@ -388,8 +404,7 @@ exports.getAllOrdersService = async (
     .populate('items.variantId')
     .skip(skip)
     .limit(limit);
-  const total = await orderModel.countDocuments(query);
-  const totalPages = Math.ceil(total / limit);
+
   if (!orders || orders.length === 0) {
     return {
       statusCode: 404,
@@ -398,10 +413,26 @@ exports.getAllOrdersService = async (
       message: 'No orders found',
     };
   }
+  const total = await orderModel.countDocuments(query);
+  const totalPages = Math.ceil(total / limit);
+
+  const transcations = await transcationModel.find({
+    orderId: { $in: orders.map(order => order._id) },
+  });
+  const finalOrders = orders.map(order => {
+    const transcation = transcations.find(
+      transcation => transcation.orderId.toString() === order._id.toString()
+    );
+    return {
+      ...order.toObject(),
+      transcation,
+    };
+  });
+
   return {
     statusCode: 200,
     data: {
-      orders,
+      orders: finalOrders,
       totalPages,
       total,
       currentPage: page,
@@ -424,9 +455,13 @@ exports.getOrderByIdServiceAdmin = async id => {
       message: 'Order not found',
     };
   }
+  const transcation = await transcationModel.findOne({ orderId: order._id });
   return {
     statusCode: 200,
-    data: order,
+    data: {
+      ...order.toObject(),
+      transcation,
+    },
     success: true,
     message: 'Order retrieved successfully',
   };
@@ -443,9 +478,13 @@ exports.updateOrderStatusService = async (id, payload) => {
       message: 'Order not found',
     };
   }
+  const transcation = await transcationModel.findOne({ orderId: order._id });
   return {
     statusCode: 200,
-    data: order,
+    data: {
+      ...order.toObject(),
+      transcation,
+    },
     success: true,
     message: 'Order status updated successfully',
   };
