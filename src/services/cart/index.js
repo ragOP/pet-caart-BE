@@ -104,7 +104,7 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
         total_price: productPrice * quantity,
         is_active: true,
         isVariant: !!variant_id,
-        selectedVariant: variant_id ? variant_id: null,
+        selectedVariant: variant_id ? variant_id : null,
       });
     }
     cart = await cartModel.findOne({ userId: user_id }).populate({

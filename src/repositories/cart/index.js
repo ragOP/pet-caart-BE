@@ -24,13 +24,16 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
     };
   }
 
-  const cart = await cartModel.findOne({ userId: user_id }).populate({
-    path: 'items.productId',
-    populate: { path: 'hsnCode' },
-  }).populate({
-    path: 'items.variantId',
-    populate: { path: 'productId' },
-  });
+  const cart = await cartModel
+    .findOne({ userId: user_id })
+    .populate({
+      path: 'items.productId',
+      populate: { path: 'hsnCode' },
+    })
+    .populate({
+      path: 'items.variantId',
+      populate: { path: 'productId' },
+    });
 
   if (!cart) {
     return {
@@ -131,12 +134,17 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
   const finalItems = updatedItems.map(item => {
     const hsn = item.productId.hsnCode;
     const quantity = item.quantity;
-    const { cgst, sgst, igst, totalTax, cess } = getTaxForItem(item.discounted_price, hsn, state, quantity);
-  
+    const { cgst, sgst, igst, totalTax, cess } = getTaxForItem(
+      item.discounted_price,
+      hsn,
+      state,
+      quantity
+    );
+
     const baseAmount = item.discounted_price * quantity;
     const total_price = parseFloat((baseAmount + totalTax).toFixed(2));
     total += total_price;
-  
+
     return {
       ...item,
       cgst,
@@ -145,7 +153,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
       cess,
       total_price,
     };
-  });  
+  });
 
   return {
     ...cart.toObject(),

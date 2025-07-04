@@ -23,25 +23,28 @@ const OrderAddressSchema = new mongoose.Schema({
   alternateMobile: { type: String },
 });
 
-const OrderSchema = new mongoose.Schema({
-  orderId: { type: String, required: true, unique: true, index: true },
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-  items: [OrderItemSchema],
-  address: OrderAddressSchema,
-  paymentMethod: { type: String, required: true, default: 'cod', enum: ['cod', 'online'] },
-  status: {
-    type: String,
-    required: true,
-    default: 'pending',
-    enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
+const OrderSchema = new mongoose.Schema(
+  {
+    orderId: { type: String, required: true, unique: true, index: true },
+    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    items: [OrderItemSchema],
+    address: OrderAddressSchema,
+    paymentMethod: { type: String, required: true, default: 'cod', enum: ['cod', 'online'] },
+    status: {
+      type: String,
+      required: true,
+      default: 'pending',
+      enum: ['pending', 'confirmed', 'shipped', 'delivered', 'cancelled'],
+    },
+    rawPrice: { type: Number, required: true },
+    discountedAmount: { type: Number, required: true },
+    discountedAmountAfterCoupon: { type: Number, required: true },
+    amountAfterTax: { type: Number, required: true },
+    totalAmount: { type: Number, required: true },
+    couponCode: { type: String },
+    note: { type: String },
   },
-  rawPrice: { type: Number, required: true },
-  discountedAmount: { type: Number, required: true },
-  discountedAmountAfterCoupon: { type: Number, required: true },
-  amountAfterTax: { type: Number, required: true },
-  totalAmount: { type: Number, required: true },
-  couponCode: { type: String },
-  note: { type: String },
-}, { timestamps: true });
+  { timestamps: true }
+);
 
 module.exports = mongoose.model('Order', OrderSchema);

@@ -8,7 +8,7 @@ const transcationSchema = new mongoose.Schema(
     paymentMethod: {
       type: String,
       required: true,
-      enum: ['razorpay','cod'],
+      enum: ['razorpay', 'cod'],
     },
     amount: { type: Number, required: true },
     status: { type: String, required: true, enum: ['pending', 'success', 'failed', 'refunded'] },

@@ -1,4 +1,10 @@
-const { createOrderService } = require('../../services/orders');
+const {
+  createOrderService,
+  getOrderByIdService,
+  getAllUserOrdersService,
+  getAllOrdersService,
+  getOrderByIdServiceAdmin,
+} = require('../../services/orders');
 const ApiResponse = require('../../utils/apiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
 
@@ -11,6 +17,63 @@ exports.createOrder = asyncHandler(async (req, res) => {
       .json(new ApiResponse(result.statusCode, result.message, result.data, false));
   }
 
+  return res
+    .status(result.statusCode)
+    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+});
+
+exports.getOrderById = asyncHandler(async (req, res) => {
+  const result = await getOrderByIdService(req.params.id, req.user);
+  if (!result.success) {
+    return res
+      .status(result.statusCode)
+      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+  }
+  return res
+    .status(result.statusCode)
+    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+});
+
+exports.getAllUserOrders = asyncHandler(async (req, res) => {
+  const result = await getAllUserOrdersService(req.user);
+  if (!result.success) {
+    return res
+      .status(result.statusCode)
+      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+  }
+  return res
+    .status(result.statusCode)
+    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+});
+exports.getAllOrders = asyncHandler(async (req, res) => {
+  const { page = 1, limit = 25, search, sort, order, status, startDate, endDate } = req.query;
+  const result = await getAllOrdersService(
+    page,
+    limit,
+    search,
+    sort,
+    order,
+    status,
+    startDate,
+    endDate
+  );
+  if (!result.success) {
+    return res
+      .status(result.statusCode)
+      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+  }
+  return res
+    .status(result.statusCode)
+    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+});
+
+exports.getOrderByIdAdmin = asyncHandler(async (req, res) => {
+  const result = await getOrderByIdService(req.params.id);
+  if (!result.success) {
+    return res
+      .status(result.statusCode)
+      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+  }
   return res
     .status(result.statusCode)
     .json(new ApiResponse(result.statusCode, result.message, result.data, true));

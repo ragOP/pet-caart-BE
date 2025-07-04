@@ -1,8 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { createOrder } = require('../../controllers/orders');
+const {
+  createOrder,
+  getOrderById,
+  getAllUserOrders,
+  getAllOrders,
+  getOrderByIdAdmin,
+} = require('../../controllers/orders');
 const { validateRequest } = require('../../middleware/validateRequest');
-const { isUser } = require('../../middleware/auth/adminMiddleware');
+const { isUser, isAdmin } = require('../../middleware/auth/adminMiddleware');
 
 /**
  * @swagger
@@ -44,5 +50,103 @@ const { isUser } = require('../../middleware/auth/adminMiddleware');
  *         description: Unauthorized
  */
 router.route('/').post(isUser, validateRequest, createOrder);
+
+/**
+ * @swagger
+ * /api/orders/get-all-user-orders:
+ *   get:
+ *     summary: Get all user orders
+ *     description: Retrieves all orders for the authenticated user
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Orders retrieved successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: No orders found
+ */
+router.route('/get-all-user-orders').get(isUser, validateRequest, getAllUserOrders);
+
+/**
+ * @swagger
+ * /api/orders/get-all-orders:
+ *   get:
+ *     summary: Get all orders
+ *     description: Retrieves all orders
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Orders retrieved successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ */
+router.route('/get-all-orders').get(isAdmin, validateRequest, getAllOrders);
+
+/**
+ * @swagger
+ * /api/orders/get-order-by-id/{id}:
+ *   get:
+ *     summary: Get an order by ID
+ *     description: Retrieves an order by its ID
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the order to retrieve
+ *     responses:
+ *       200:
+ *         description: Order retrieved successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Order not found
+ */
+router.route('/get-order-by-id/:id').get(isAdmin, validateRequest, getOrderByIdAdmin);
+
+/**
+ * @swagger
+ * /api/orders/{id}:
+ *   get:
+ *     summary: Get an order by ID
+ *     description: Retrieves an order by its ID
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the order to retrieve
+ *     responses:
+ *       200:
+ *         description: Order retrieved successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Order not found
+ */
+router.route('/:id').get(isUser, validateRequest, getOrderById);
 
 module.exports = router;

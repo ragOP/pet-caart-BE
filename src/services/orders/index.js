@@ -300,3 +300,134 @@ exports.createOrderService = async (payload, user) => {
     };
   }
 };
+
+exports.getOrderByIdService = async (id, user) => {
+  const { _id } = user;
+
+  const order = await orderModel
+    .findById(id)
+    .populate('items.productId')
+    .populate('items.variantId');
+  if (!order) {
+    return {
+      statusCode: 404,
+      data: null,
+      success: false,
+      message: 'Order not found',
+    };
+  }
+
+  if (order.userId.toString() !== _id.toString()) {
+    return {
+      statusCode: 403,
+      data: null,
+      success: false,
+      message: 'Unauthorized',
+    };
+  }
+
+  return {
+    statusCode: 200,
+    data: order,
+    success: true,
+    message: 'Order retrieved successfully',
+  };
+};
+
+exports.getAllUserOrdersService = async user => {
+  const { _id } = user;
+
+  const orders = await orderModel
+    .find({ userId: _id })
+    .populate('items.productId')
+    .populate('items.variantId');
+  if (!orders || orders.length === 0) {
+    return {
+      statusCode: 404,
+      data: null,
+      success: false,
+      message: 'No orders found',
+    };
+  }
+
+  return {
+    statusCode: 200,
+    data: orders,
+    success: true,
+    message: 'Orders retrieved successfully',
+  };
+};
+
+exports.getAllOrdersService = async (
+  page,
+  limit,
+  search,
+  sort,
+  order,
+  status,
+  startDate,
+  endDate
+) => {
+  const query = {};
+  if (search) {
+    query.orderId = { $regex: search, $options: 'i' };
+  }
+  if (status) {
+    query.status = status;
+  }
+  if (startDate && endDate) {
+    query.createdAt = { $gte: new Date(startDate), $lte: new Date(endDate) };
+  }
+  if (sort && order) {
+    query[sort] = order;
+  }
+  const skip = (page - 1) * limit;
+  const orders = await orderModel
+    .find(query)
+    .populate('items.productId')
+    .populate('items.variantId')
+    .skip(skip)
+    .limit(limit);
+  const total = await orderModel.countDocuments(query);
+  const totalPages = Math.ceil(total / limit);
+  if (!orders || orders.length === 0) {
+    return {
+      statusCode: 404,
+      data: null,
+      success: false,
+      message: 'No orders found',
+    };
+  }
+  return {
+    statusCode: 200,
+    data: {
+      orders,
+      totalPages,
+      total,
+      currentPage: page,
+    },
+    success: true,
+    message: 'Orders retrieved successfully',
+  };
+};
+
+exports.getOrderByIdServiceAdmin = async id => {
+  const order = await orderModel
+    .findById(id)
+    .populate('items.productId')
+    .populate('items.variantId');
+  if (!order) {
+    return {
+      statusCode: 404,
+      data: null,
+      success: false,
+      message: 'Order not found',
+    };
+  }
+  return {
+    statusCode: 200,
+    data: order,
+    success: true,
+    message: 'Order retrieved successfully',
+  };
+};
