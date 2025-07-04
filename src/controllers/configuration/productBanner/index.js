@@ -22,7 +22,7 @@ exports.handleCreateProductBanner = asyncHandler(async (req, res) => {
 
 exports.handleGetProductBanner = asyncHandler(async (req, res) => {
   const { type } = req.query;
-  const productBanner = await getProductBanner(type);
+  const productBanner = await getProductBanner(type, req.user.isAdmin);
   if (productBanner.success === false) {
     return res
       .status(productBanner.statusCode)

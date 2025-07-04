@@ -74,9 +74,9 @@ exports.createProductBanner = async (productId, image, type) => {
   };
 };
 
-exports.getProductBanner = async type => {
-  if (!type) {
-    const productBanner = await ProductBanner.findOne({ isActive: true }).populate('productId');
+exports.getProductBanner = async (type, isAdmin) => {
+  if (!isAdmin) {
+    const productBanner = await ProductBanner.findOne({ type }).populate('productId');
     if (!productBanner) {
       return {
         statusCode: 404,
