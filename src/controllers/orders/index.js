@@ -4,6 +4,7 @@ const {
   getAllUserOrdersService,
   getAllOrdersService,
   getOrderByIdServiceAdmin,
+  updateOrderStatusService,
 } = require('../../services/orders');
 const ApiResponse = require('../../utils/apiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
@@ -68,7 +69,19 @@ exports.getAllOrders = asyncHandler(async (req, res) => {
 });
 
 exports.getOrderByIdAdmin = asyncHandler(async (req, res) => {
-  const result = await getOrderByIdService(req.params.id);
+  const result = await getOrderByIdServiceAdmin(req.params.id);
+  if (!result.success) {
+    return res
+      .status(result.statusCode)
+      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+  }
+  return res
+    .status(result.statusCode)
+    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+});
+
+exports.updateOrderStatus = asyncHandler(async (req, res) => {
+  const result = await updateOrderStatusService(req.params.id, req.body);
   if (!result.success) {
     return res
       .status(result.statusCode)

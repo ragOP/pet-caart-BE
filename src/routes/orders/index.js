@@ -6,6 +6,7 @@ const {
   getAllUserOrders,
   getAllOrders,
   getOrderByIdAdmin,
+  updateOrderStatus,
 } = require('../../controllers/orders');
 const { validateRequest } = require('../../middleware/validateRequest');
 const { isUser, isAdmin } = require('../../middleware/auth/adminMiddleware');
@@ -148,5 +149,45 @@ router.route('/get-order-by-id/:id').get(isAdmin, validateRequest, getOrderByIdA
  *         description: Order not found
  */
 router.route('/:id').get(isUser, validateRequest, getOrderById);
+
+/**
+ * @swagger
+ * /api/orders/{id}/update-status:
+ *   put:
+ *     summary: Update the status of an order
+ *     description: Updates the status of an order by its ID
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the order to update the status of
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 description: The new status of the order
+ *     responses:
+ *       200:
+ *         description: Order status updated successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Order not found
+ *       500:
+ *         description: Internal server error
+ */
+router.route('/:id/update-status').put(isAdmin, validateRequest, updateOrderStatus);
 
 module.exports = router;

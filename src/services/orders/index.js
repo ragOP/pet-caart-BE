@@ -431,3 +431,22 @@ exports.getOrderByIdServiceAdmin = async id => {
     message: 'Order retrieved successfully',
   };
 };
+
+exports.updateOrderStatusService = async (id, payload) => {
+  const { status } = payload;
+  const order = await orderModel.findByIdAndUpdate(id, { status }, { new: true });
+  if (!order) {
+    return {
+      statusCode: 404,
+      data: null,
+      success: false,
+      message: 'Order not found',
+    };
+  }
+  return {
+    statusCode: 200,
+    data: order,
+    success: true,
+    message: 'Order status updated successfully',
+  };
+};
