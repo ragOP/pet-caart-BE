@@ -39,6 +39,14 @@ const cartSchema = new mongoose.Schema(
           type: Date,
           default: Date.now,
         },
+        isVariant: {
+          type: Boolean,
+          default: false,
+        },
+        selectedVariant: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Variant',
+        },
       },
     ],
     total_price: {

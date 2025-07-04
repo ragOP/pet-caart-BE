@@ -59,6 +59,7 @@ app.use('/api/contact-us', require('./routes/contactUs/index'));
 app.use('/api/hsn-code', require('./routes/hsn_code/index'));
 app.use('/api/coupon', require('./routes/coupon/index'));
 app.use('/api/cart', require('./routes/cart/index'));
+app.use('/api/orders', require('./routes/orders/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {

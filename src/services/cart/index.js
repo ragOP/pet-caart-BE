@@ -47,10 +47,29 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
       data: null,
     };
   }
+
+  if (!variant_id && productData.stock < quantity) {
+    return {
+      message: 'Stock is not available',
+      status: 400,
+      success: false,
+      data: null,
+    };
+  }
+
   let variantData = null;
 
   if (variant_id) {
     variantData = await variantModel.findById(variant_id);
+    if (variantData.stock < quantity) {
+      return {
+        message: 'Stock is not available for this variant',
+        status: 400,
+        success: false,
+        data: null,
+      };
+    }
+
     if (!variantData) {
       return {
         message: 'Variant not found',
@@ -84,6 +103,8 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
         ],
         total_price: productPrice * quantity,
         is_active: true,
+        isVariant: !!variant_id,
+        selectedVariant: variant_id ? variant_id: null,
       });
     }
     cart = await cartModel.findOne({ userId: user_id }).populate({
@@ -123,6 +144,8 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
 
   cart.total_price = cart.items.reduce((sum, item) => sum + item.total, 0);
   cart.is_active = cart.items.length > 0;
+  cart.isVariant = !!variant_id;
+  cart.selectedVariant = variant_id ? variant_id : null;
 
   await cart.save();
 

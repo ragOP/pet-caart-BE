@@ -27,6 +27,9 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
   const cart = await cartModel.findOne({ userId: user_id }).populate({
     path: 'items.productId',
     populate: { path: 'hsnCode' },
+  }).populate({
+    path: 'items.variantId',
+    populate: { path: 'productId' },
   });
 
   if (!cart) {
