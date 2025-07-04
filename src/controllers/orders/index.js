@@ -15,12 +15,12 @@ exports.createOrder = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, false));
   }
 
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, true));
 });
 
 exports.getOrderById = asyncHandler(async (req, res) => {
@@ -28,11 +28,11 @@ exports.getOrderById = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, false));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, true));
 });
 
 exports.getAllUserOrders = asyncHandler(async (req, res) => {
@@ -40,11 +40,11 @@ exports.getAllUserOrders = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, false));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, true));
 });
 exports.getAllOrders = asyncHandler(async (req, res) => {
   const { page = 1, limit = 25, search, sort, order, status, startDate, endDate } = req.query;
@@ -61,11 +61,11 @@ exports.getAllOrders = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, false));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, true));
 });
 
 exports.getOrderByIdAdmin = asyncHandler(async (req, res) => {
@@ -73,11 +73,11 @@ exports.getOrderByIdAdmin = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+      .json(new ApiResponse(result.statusCode, result.data, result.message,false));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, true));
 });
 
 exports.updateOrderStatus = asyncHandler(async (req, res) => {
@@ -85,9 +85,9 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(result.statusCode, result.message, result.data, false));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, false));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, true));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, true));
 });
