@@ -214,10 +214,6 @@ router.post('/:code/apply', isUser, validateRequest, couponController.applyCoupo
  *         in: query
  *         type: boolean
  *         description: The show only valid coupons
- *       - name: isAdmin
- *         in: query
- *         type: boolean
- *         description: The isAdmin status of the coupon
  *     responses:
  *       200:
  *         description: Coupons fetched successfully
