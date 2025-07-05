@@ -6,17 +6,27 @@ const {
   getAllSubCategoriesByCategoryId,
   getSingleSubCategory,
   updateSubCategory,
+  getAllSubCategoriesByCategorySlug
 } = require('../../services/sub_category/index');
 const { uploadSingleFile } = require('../../utils/upload/index');
 const mongoose = require('mongoose');
 
 exports.handleGetAllSubCategories = asyncHandler(async (req, res) => {
-  const { categoryId, search, page = 1, per_page = 50, start_date, end_date } = req.query;
+  const { categoryId, search, page = 1, per_page = 50, start_date, end_date, categorySlug } = req.query;
 
   let result;
   if (categoryId && mongoose.Types.ObjectId.isValid(categoryId)) {
     result = await getAllSubCategoriesByCategoryId({
       categoryId,
+      search,
+      page,
+      perPage: per_page,
+      startDate: start_date,
+      endDate: end_date,
+    });
+  } else if (categorySlug) {
+    result = await getAllSubCategoriesByCategorySlug({
+      categorySlug,
       search,
       page,
       perPage: per_page,

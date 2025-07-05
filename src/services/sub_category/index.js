@@ -85,6 +85,47 @@ exports.getAllSubCategoriesByCategoryId = async ({
   };
 };
 
+exports.getAllSubCategoriesByCategorySlug = async ({
+  categorySlug,
+  search,
+  page,
+  perPage,
+  startDate,
+  endDate,
+}) => {
+  const filters = {};
+  const skip = (page - 1) * perPage;
+
+  if (search) {
+    filters.$or = [
+      { name: { $regex: search, $options: 'i' } },
+      { slug: { $regex: search, $options: 'i' } },
+    ];
+  }
+
+  if (startDate || endDate) {
+    filters.createdAt = {};
+    if (startDate) filters.createdAt.$gte = new Date(startDate);
+    if (endDate) filters.createdAt.$lte = new Date(endDate);
+  }
+
+  filters.isActive = true;
+
+  const { subCategories, total } =
+    await SubCategoryService.getAllFilteredSubCategoriesByCategorySlug(
+      filters,
+      skip,
+      perPage,
+      categorySlug
+    );
+  return {
+    data: subCategories,
+    total,
+    page,
+    perPage,
+  };
+};
+
 exports.updateSubCategory = async (id, data, image, userId) => {
   const subCategory = await SubCategoryService.getSingleSubCategory(id);
   if (!subCategory) {

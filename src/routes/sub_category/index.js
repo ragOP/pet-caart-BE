@@ -72,6 +72,12 @@ router
  *         required: false
  *         description: ID of the category to filter subcategories
  *       - in: query
+ *         name: categorySlug
+ *         schema:
+ *           type: string
+ *         required: false
+ *         description: Slug of the category to filter subcategories
+ *       - in: query
  *         name: search
  *         schema:
  *           type: string
