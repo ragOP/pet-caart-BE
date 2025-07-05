@@ -65,6 +65,10 @@ router.route('/create').post(isAdmin, upload.single('image'), handleCreateProduc
  *             - tablet
  *             - mobile
  *             - app
+ *       - name: isAdmin
+ *         in: query
+ *         type: boolean
+ *         description: The isAdmin status of the product banner
  *     responses:
  *       200:
  *         description: Product banner fetched successfully
