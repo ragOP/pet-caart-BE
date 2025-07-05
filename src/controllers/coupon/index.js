@@ -16,7 +16,9 @@ const getAllCoupons = asyncHandler(async (req, res) => {
     }),
   };
 
-  query.totalUseLimit = { $gt: 0 };
+  if (!req.query.isAdmin) {
+    query.totalUseLimit = { $gt: 0 };
+  }
 
   const totalCoupons = await Coupon.countDocuments(query);
   const coupons = await Coupon.find(query)
