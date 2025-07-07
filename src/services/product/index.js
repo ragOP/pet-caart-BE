@@ -1,3 +1,4 @@
+const collectionModel = require('../../models/collectionModel.js');
 const variantModel = require('../../models/variantModel.js');
 const {
   createProduct,
@@ -61,6 +62,7 @@ exports.getAllProducts = async ({
   maxPriceRange,
   sortBy,
   rating,
+  collectionSlug,
 }) => {
   let filters = {};
 
@@ -95,6 +97,11 @@ exports.getAllProducts = async ({
 
   if (isAddToCart) {
     filters.isAddToCart = isAddToCart;
+  }
+
+  if (collectionSlug) {
+    const collection = await collectionModel.findOne({ slug: collectionSlug });
+    filters = { _id: { $in: collection.productIds } };
   }
 
   const skip = (page - 1) * perPage;

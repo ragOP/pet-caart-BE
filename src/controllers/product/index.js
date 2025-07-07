@@ -115,6 +115,7 @@ exports.handleGetAllProducts = asyncHandler(async (req, res) => {
     max_price_range,
     sort_by,
     rating,
+    collectionSlug,
   } = req.query;
   const result = await getAllProducts({
     search,
@@ -135,6 +136,7 @@ exports.handleGetAllProducts = asyncHandler(async (req, res) => {
     maxPriceRange: max_price_range,
     sortBy: sort_by,
     rating,
+    collectionSlug,
   });
   return res.status(200).json(new ApiResponse(200, result, 'Products fetched successfully', true));
 });
