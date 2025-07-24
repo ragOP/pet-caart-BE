@@ -27,15 +27,14 @@ exports.handleCreateBlog = asyncHandler(async (req, res) => {
     isBanner,
     description
   );
-  console.log(result);
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(res, result.statusCode, result.message, result.data, result.success));
+      .json(new ApiResponse(result.statusCode,result.data, result.message, result.success));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, res, result.success));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, res, result.success));
 });
 
 exports.handleGetAllBlogs = asyncHandler(async (req, res) => {
@@ -52,11 +51,11 @@ exports.handleGetAllBlogs = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(res, result.statusCode, result.message, result.data, result.success));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, res, result.success));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, res, result.success));
 });
 
 exports.handleGetSingleBlog = asyncHandler(async (req, res) => {
@@ -65,11 +64,11 @@ exports.handleGetSingleBlog = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(res, result.statusCode, result.message, result.data, result.success));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, res, result.success));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, res, result.success));
 });
 
 exports.handleDeleteBlog = asyncHandler(async (req, res) => {
@@ -78,18 +77,22 @@ exports.handleDeleteBlog = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(res, result.statusCode, result.message, result.data, result.success));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, res, result.success));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, res, result.success));
 });
 
 exports.handleUpdateBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { title, content, slug, category, isPublished, isFeatured, tags, isBanner, description } =
     req.body;
-  const image = req.file.path;
+
+  let image = null;
+  if (req.file) {
+    image = req.file.path;
+  }
   const result = await updateBlog(
     id,
     title,
@@ -106,11 +109,11 @@ exports.handleUpdateBlog = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(res, result.statusCode, result.message, result.data, result.success));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, res, result.success));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, res, result.success));
 });
 
 exports.handleYouMayLike = asyncHandler(async (req, res) => {
@@ -119,11 +122,11 @@ exports.handleYouMayLike = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(res, result.statusCode, result.message, result.data, result.success));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, res, result.success));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, res, result.success));
 });
 
 exports.handleGetLatestBlogs = asyncHandler(async (req, res) => {
@@ -131,9 +134,9 @@ exports.handleGetLatestBlogs = asyncHandler(async (req, res) => {
   if (!result.success) {
     return res
       .status(result.statusCode)
-      .json(new ApiResponse(res, result.statusCode, result.message, result.data, result.success));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.message, result.data, res, result.success));
+    .json(new ApiResponse(result.statusCode, result.data, result.message, res, result.success));
 });

@@ -115,7 +115,7 @@ router.route('/').get(validateRequest, handleGetAllBlogs);
 
 /**
  * @swagger
- * /api/blog/{id}:
+ * /api/blog/get-single-blog/{id}:
  *   get:
  *     summary: Get a blog
  *     tags: [Blog]
@@ -138,11 +138,11 @@ router.route('/').get(validateRequest, handleGetAllBlogs);
  *         description: Blog not found
  */
 
-router.route('/:id').get(validateRequest, handleGetSingleBlog);
+router.route('/get-single-blog/:id').get(validateRequest, handleGetSingleBlog);
 
 /**
  * @swagger
- * /api/blog/{id}:
+ * /api/blog/delete/{id}:
  *   delete:
  *     summary: Delete a blog
  *     tags: [Blog]
@@ -167,11 +167,11 @@ router.route('/:id').get(validateRequest, handleGetSingleBlog);
  *         description: Blog not found
  */
 
-router.route('/:id').delete(handleDeleteBlog);
+router.route('/delete/:id').delete(handleDeleteBlog);
 
 /**
  * @swagger
- * /api/blog/{id}:
+ * /api/blog/edit/{id}:
  *   put:
  *     summary: Update a blog
  *     tags: [Blog]
@@ -221,7 +221,7 @@ router.route('/:id').delete(handleDeleteBlog);
  *       404:
  *         description: Blog not found
  */
-router.route('/:id').put(handleUpdateBlog);
+router.route('/edit/blog/:id').put(upload.single('image'), handleUpdateBlog);
 
 /**
  * @swagger

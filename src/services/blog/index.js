@@ -81,6 +81,8 @@ exports.getAllBlogs = async (page, limit, search, category, isPublished, isFeatu
 
 exports.getSingleBlog = async id => {
   const blog = await Blog.findById(id);
+//   blog.totalViews++;
+//   await blog.save();
   if (!blog) {
     return {
       success: false,

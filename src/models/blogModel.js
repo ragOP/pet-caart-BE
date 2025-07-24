@@ -41,6 +41,10 @@ const blogSchema = new mongoose.Schema({
         type: Boolean,
         default: false,
     },
+    totalViews: {
+        type: Number,
+        default: 0,
+    },
 }, { timestamps: true });
 
 const Blog = mongoose.model('Blog', blogSchema);
