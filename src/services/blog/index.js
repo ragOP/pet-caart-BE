@@ -80,9 +80,7 @@ exports.getAllBlogs = async (page, limit, search, category, isPublished, isFeatu
 };
 
 exports.getSingleBlog = async id => {
-  const blog = await Blog.findById(id);
-//   blog.totalViews++;
-//   await blog.save();
+  const blog = await Blog.findById(id).populate('relatedProducts');
   if (!blog) {
     return {
       success: false,
@@ -91,6 +89,8 @@ exports.getSingleBlog = async id => {
       data: null,
     };
   }
+  blog.totalViews = blog.totalViews + 1;
+  await blog.save();
   return {
     success: true,
     statusCode: 200,

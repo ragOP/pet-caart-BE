@@ -51,6 +51,11 @@ const upload = multer({ storage: storage });
  *                 items:
  *                   type: string
  *                 default: []
+ *               relatedProducts:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 default: []
  *     responses:
  *       200:
  *         description: Blog created successfully
@@ -205,6 +210,11 @@ router.route('/delete/:id').delete(handleDeleteBlog);
  *               isFeatured:
  *                 type: boolean
  *               tags:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 default: []
+ *               relatedProducts:
  *                 type: array
  *                 items:
  *                   type: string
