@@ -182,7 +182,7 @@ exports.updateBlog = async (
 };
 
 exports.youMayLike = async () => {
-  const blogs = await Blog.find({ isPublished: true }).sort({ totalViews: -1 }).limit(8);
+  const blogs = await Blog.find({ isPublished: true }).sort({ totalViews: -1 }).limit(6);
   return {
     success: true,
     statusCode: 200,
@@ -192,7 +192,7 @@ exports.youMayLike = async () => {
 };
 
 exports.getLatestBlogs = async () => {
-  const blogs = await Blog.find({ isPublished: true }).sort({ createdAt: -1 }).limit(8);
+  const blogs = await Blog.find({ isPublished: true }).sort({ createdAt: -1 }).limit(4);
   return {
     success: true,
     statusCode: 200,
