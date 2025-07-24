@@ -11,7 +11,7 @@ const {
 } = require('../../services/blog');
 
 exports.handleCreateBlog = asyncHandler(async (req, res) => {
-  const { title, content, slug, category, isPublished, isFeatured, tags, isBanner, description } =
+  const { title, content, slug, category, isPublished, isFeatured, tags, isBanner, description, relatedProducts } =
     req.body;
   const image = req.file.path;
 
@@ -25,7 +25,8 @@ exports.handleCreateBlog = asyncHandler(async (req, res) => {
     isFeatured,
     tags,
     isBanner,
-    description
+    description,
+    relatedProducts
   );
   if (!result.success) {
     return res
@@ -86,7 +87,7 @@ exports.handleDeleteBlog = asyncHandler(async (req, res) => {
 
 exports.handleUpdateBlog = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { title, content, slug, category, isPublished, isFeatured, tags, isBanner, description } =
+  const { title, content, slug, category, isPublished, isFeatured, tags, isBanner, description, relatedProducts } =
     req.body;
 
   let image = null;
@@ -104,7 +105,8 @@ exports.handleUpdateBlog = asyncHandler(async (req, res) => {
     isFeatured,
     tags,
     isBanner,
-    description
+    description,
+    relatedProducts
   );
   if (!result.success) {
     return res
@@ -117,8 +119,7 @@ exports.handleUpdateBlog = asyncHandler(async (req, res) => {
 });
 
 exports.handleYouMayLike = asyncHandler(async (req, res) => {
-  const tags = req.query.tags;
-  const result = await youMayLike(tags);
+  const result = await youMayLike();
   if (!result.success) {
     return res
       .status(result.statusCode)

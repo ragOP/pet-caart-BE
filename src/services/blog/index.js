@@ -11,7 +11,8 @@ exports.createBlog = async (
   isFeatured,
   tags,
   isBanner,
-  description
+  description,
+  relatedProducts
 ) => {
   const payload = {
     title,
@@ -23,13 +24,19 @@ exports.createBlog = async (
     tags,
     isBanner,
     description,
+    relatedProducts,
   };
-  console.log(image);
+  if (isBanner) {
+    const banner = await Blog.findOne({ isBanner: true });
+    if (banner) {
+      banner.isBanner = false;
+      await banner.save();
+    }
+  }
   if (image) {
     const imageUrl = await uploadSingleFile(image, 'blog');
     payload.image = imageUrl;
   }
-  console.log(payload);
   const blog = await Blog.create(payload);
   if (!blog) {
     return {
@@ -129,9 +136,17 @@ exports.updateBlog = async (
   isFeatured,
   tags,
   isBanner,
-  description
+  description,
+  relatedProducts
 ) => {
   let payload = {};
+  if (isBanner) {
+    const banner = await Blog.findOne({ isBanner: true, _id: { $ne: id } });
+    if (banner) {
+      banner.isBanner = false;
+      await banner.save();
+    }
+  }
   const blog = await Blog.findById(id);
   if (!blog) {
     return {
@@ -151,6 +166,7 @@ exports.updateBlog = async (
     tags,
     isBanner,
     description,
+    relatedProducts,
   };
   if (image) {
     const imageUrl = await uploadSingleFile(image, 'blog');
@@ -165,8 +181,8 @@ exports.updateBlog = async (
   };
 };
 
-exports.youMayLike = async tags => {
-  const blogs = await Blog.find({ tags: { $in: tags } }).limit(8);
+exports.youMayLike = async () => {
+  const blogs = await Blog.find({ isPublished: true }).sort({ totalViews: -1 }).limit(8);
   return {
     success: true,
     statusCode: 200,

@@ -240,13 +240,6 @@ router.route('/edit/blog/:id').put(upload.single('image'), handleUpdateBlog);
  *     summary: Get you may like blogs
  *     tags: [Blog]
  *     description: Get you may like blogs
- *     parameters:
- *       - name: tags
- *         in: query
- *         type: array
- *         items:
- *           type: string
- *         required: true
  *     responses:
  *       200:
  *         description: Blogs fetched successfully
