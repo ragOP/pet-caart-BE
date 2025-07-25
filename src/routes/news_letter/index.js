@@ -5,7 +5,7 @@ const {
   handleSubscribe,
   handleUnsubscribe,
   handleGetAllSubscribers,
-} = require('../../controllers/news_letter/index');
+} = require('../../controllers/news_letter/index.js');
 
 const { isAdmin } = require('../../middleware/auth/adminMiddleware');
 const { validateRequest } = require('../../middleware/validateRequest');

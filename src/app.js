@@ -61,6 +61,8 @@ app.use('/api/coupon', require('./routes/coupon/index'));
 app.use('/api/cart', require('./routes/cart/index'));
 app.use('/api/orders', require('./routes/orders/index'));
 app.use('/api/blog', require('./routes/blog/index'));
+app.use('/api/featured-blog-products', require('./routes/featured_blog_products/index'));
+app.use('/api/news-letter', require('./routes/news_letter/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {

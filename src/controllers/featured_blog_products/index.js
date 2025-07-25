@@ -7,7 +7,7 @@ exports.handleCreateBlogFeaturedProduct = asyncHandler(async (req, res) => {
   const { productId } = req.body;
   const existingProduct = await BlogFeaturedProduct.findOne({ productId });
   if (existingProduct) {
-    return res.status(400).json(new ApiResponse(400, 'Product already exists', null, false));
+    return res.status(400).json(new ApiResponse(400, null, 'Product already exists', false));
   }
 
   let bannerUrl = null;
@@ -23,7 +23,7 @@ exports.handleCreateBlogFeaturedProduct = asyncHandler(async (req, res) => {
   return res
     .status(201)
     .json(
-      new ApiResponse(201, 'Blog featured product created successfully', blogFeaturedProduct, true)
+      new ApiResponse(201, blogFeaturedProduct, 'Blog featured product created successfully', true)
     );
 });
 
@@ -33,7 +33,7 @@ exports.handleGetFeaturedProducts = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, 'Blog featured product fetched successfully', blogFeaturedProduct, true)
+      new ApiResponse(200, blogFeaturedProduct, 'Blog featured product fetched successfully', true)
     );
 });
 
@@ -42,7 +42,7 @@ exports.handleDeleteFeaturedProduct = asyncHandler(async (req, res) => {
   await BlogFeaturedProduct.findByIdAndDelete(id);
   return res
     .status(200)
-    .json(new ApiResponse(200, 'Blog featured product deleted successfully', null, true));
+    .json(new ApiResponse(200, null, 'Blog featured product deleted successfully', true));
 });
 
 exports.handleUpdateFeaturedProduct = asyncHandler(async (req, res) => {
@@ -63,6 +63,6 @@ exports.handleUpdateFeaturedProduct = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, 'Blog featured product updated successfully', blogFeaturedProduct, true)
+      new ApiResponse(200, blogFeaturedProduct, 'Blog featured product updated successfully', true)
     );
 });
