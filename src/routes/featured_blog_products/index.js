@@ -29,13 +29,11 @@ const upload = multer({ storage: storage });
  *           schema:
  *             type: object
  *             properties:
- *               productId:
+ *               productIds:
  *                 type: array
  *                 items:
- *                   type: object
- *                   properties:
- *                     productId:
- *                       type: string
+ *                   type: string
+ *                 description: The product IDs for the featured product
  *               bannerImage:
  *                 type: file
  *                 format: binary
@@ -56,20 +54,11 @@ router
 
 /**
  * @swagger
- * /api/featured-blog-products/get-featured-products/{id}:
+ * /api/featured-blog-products/get-featured-products:
  *   get:
  *     summary: Get featured products
- *     security:
- *       - bearerAuth: []
  *     description: Gets all featured products
  *     tags: [Featured Blog Products]
- *     parameters:
- *       - name: id
- *         in: path
- *         description: The ID of the featured product
- *         required: true
- *         schema:
- *           type: string
  *     responses:
  *       200:
  *         description: Featured products fetched successfully
@@ -80,7 +69,7 @@ router
  *       403:
  *         description: Forbidden
  */
-router.route('/get-featured-products/:id').get(isAdmin, handleGetFeaturedProducts);
+router.route('/get-featured-products').get(handleGetFeaturedProducts);
 
 /**
  * @swagger

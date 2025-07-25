@@ -4,8 +4,9 @@ const ApiResponse = require('../../utils/apiResponse');
 const { uploadSingleFile } = require('../../utils/upload');
 
 exports.handleCreateBlogFeaturedProduct = asyncHandler(async (req, res) => {
-  const { productId } = req.body;
-  const existingProduct = await BlogFeaturedProduct.findOne({ productId });
+  const { productIds } = req.body;
+
+  const existingProduct = await BlogFeaturedProduct.findOne();
   if (existingProduct) {
     return res.status(400).json(new ApiResponse(400, null, 'Product already exists', false));
   }
@@ -17,7 +18,7 @@ exports.handleCreateBlogFeaturedProduct = asyncHandler(async (req, res) => {
   }
 
   const blogFeaturedProduct = await BlogFeaturedProduct.create({
-    productId,
+    productIds: productIdsArray,
     bannerImage: bannerUrl,
   });
   return res
@@ -28,8 +29,7 @@ exports.handleCreateBlogFeaturedProduct = asyncHandler(async (req, res) => {
 });
 
 exports.handleGetFeaturedProducts = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const blogFeaturedProduct = await BlogFeaturedProduct.findById(id).populate('productId');
+  const blogFeaturedProduct = await BlogFeaturedProduct.findOne({}).populate('productIds');
   return res
     .status(200)
     .json(
@@ -47,17 +47,18 @@ exports.handleDeleteFeaturedProduct = asyncHandler(async (req, res) => {
 
 exports.handleUpdateFeaturedProduct = asyncHandler(async (req, res) => {
   const { id } = req.params;
-  const { productId } = req.body;
+  const { productIds } = req.body;
   const bannerImage = req.file ? req.file.path : null;
 
   let bannerUrl = null;
   if (bannerImage) {
     bannerUrl = await uploadSingleFile(bannerImage);
   }
+  const productIdsArray = productIds.split(',');
 
   const blogFeaturedProduct = await BlogFeaturedProduct.findByIdAndUpdate(
     id,
-    { productId, bannerImage: bannerUrl },
+    { productIds: productIdsArray, bannerImage: bannerUrl },
     { new: true }
   );
   return res
