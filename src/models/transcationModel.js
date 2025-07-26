@@ -10,6 +10,8 @@ const transcationSchema = new mongoose.Schema(
       required: true,
       enum: ['razorpay', 'cod'],
     },
+    razorpayOrderId: { type: String },
+    razorpayPaymentId: { type: String },
     amount: { type: Number, required: true },
     status: { type: String, required: true, enum: ['pending', 'success', 'failed', 'refunded'] },
     transactionId: { type: String },

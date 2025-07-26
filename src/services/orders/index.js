@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const crypto = require('crypto');
 const addressModel = require('../../models/addressModel');
 const cartModel = require('../../models/cartModel');
 const Coupon = require('../../models/couponModel');
@@ -7,32 +8,36 @@ const { getTaxForItem } = require('../../utils/getTaxRate');
 const productModel = require('../../models/productModel');
 const variantModel = require('../../models/variantModel');
 const transcationModel = require('../../models/transcationModel');
-
-const validateId = (id, name) => {
-  if (id && !mongoose.Types.ObjectId.isValid(id)) {
-    return {
-      statusCode: 400,
-      data: null,
-      success: false,
-      message: `Invalid ${name} ID`,
-    };
-  }
-};
+const { validateId } = require('../../utils/validateId');
 
 exports.createOrderService = async (payload, user) => {
   const session = await mongoose.startSession();
   session.startTransaction();
 
   try {
-    const { cartId, addressId, couponId, paymentMethod } = payload;
+    const { cartId, addressId, couponId, razorpayOrderId, razorpayPaymentId, razorpaySignature } =
+      payload;
     const { _id } = user;
 
-    if (!cartId || !addressId) {
+    if (!cartId || !addressId || !razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
       return {
         statusCode: 400,
         data: null,
         success: false,
         message: 'Invalid request',
+      };
+    }
+
+    const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);
+    hmac.update(razorpayOrderId + '|' + razorpayPaymentId);
+    const generatedSignature = hmac.digest('hex');
+
+    if (generatedSignature !== razorpaySignature) {
+      return {
+        statusCode: 400,
+        data: null,
+        success: false,
+        message: 'Invalid signature',
       };
     }
 
@@ -187,7 +192,11 @@ exports.createOrderService = async (payload, user) => {
       productId: item.productId._id,
       variantId: item.variantId,
       quantity: item.quantity,
+      taxType: item.igst ? 'igst' : 'cgst & sgst',
       taxAmount: item.igst ? item.igst : item.cgst + item.sgst,
+      cgstAmount: item.cgst ? item.cgst : null,
+      sgstAmount: item.sgst ? item.sgst : null,
+      igstAmount: item.igst ? item.igst : null,
       cessAmount: item.cess,
       couponDiscount: item.discounted_price,
       price: item.price,
@@ -201,7 +210,7 @@ exports.createOrderService = async (payload, user) => {
       userId: _id,
       items: orderItemPayload,
       address: addressPayload,
-      paymentMethod,
+      paymentMethod: 'razorpay',
       status: 'pending',
       rawPrice: subtotal + totalDiscountedAmount,
       discountedAmount: totalDiscountedAmount,
@@ -257,25 +266,25 @@ exports.createOrderService = async (payload, user) => {
     await cartModel.findByIdAndDelete(cartId, { session });
 
     // Create transcation
-    if (paymentMethod === 'cod') {
-      const transcationPayload = {
-        orderId: order[0]._id,
-        userId: _id,
-        type: 'order',
-        paymentMethod: 'cod',
-        amount: total,
-        status: 'pending',
-        transactionId: null,
+    const transcationPayload = {
+      orderId: order[0]._id,
+      razorpayOrderId,
+      razorpayPaymentId,
+      userId: _id,
+      type: 'order',
+      paymentMethod: 'razorpay',
+      amount: total,
+      status: 'pending',
+      transactionId: null,
+    };
+    const transcation = await transcationModel.create([transcationPayload], { session });
+    if (!transcation || !transcation[0]) {
+      return {
+        statusCode: 500,
+        data: null,
+        success: false,
+        message: 'Failed to create transcation',
       };
-      const transcation = await transcationModel.create([transcationPayload], { session });
-      if (!transcation || !transcation[0]) {
-        return {
-          statusCode: 500,
-          data: null,
-          success: false,
-          message: 'Failed to create transcation',
-        };
-      }
     }
     await session.commitTransaction();
     session.endSession();

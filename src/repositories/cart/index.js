@@ -20,7 +20,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
       message: 'User ID is required',
       status: 400,
       success: false,
-      data: null,
+      cart: null,
     };
   }
 
@@ -40,7 +40,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
       message: 'Cart not found',
       status: 404,
       success: false,
-      data: null,
+      cart: null,
     };
   }
 
@@ -50,9 +50,9 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
     if (!address) {
       return {
         message: 'Address not found',
-        status: 404,
+        status: 400,
         success: false,
-        data: null,
+        cart,
       };
     }
     state = address.state_code;
@@ -78,9 +78,9 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
     if (!coupon) {
       return {
         message: 'Coupon not found',
-        status: 404,
+        status: 400,
         success: false,
-        data: null,
+        cart,
       };
     }
 
@@ -95,7 +95,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
           message: 'Minimum purchase amount is not met',
           status: 400,
           success: false,
-          data: null,
+          cart,
         };
       }
 
@@ -124,7 +124,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
         message: 'Coupon is expired or inactive',
         status: 400,
         success: false,
-        data: null,
+        cart,
       };
     }
   }

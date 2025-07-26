@@ -36,9 +36,15 @@ const { isUser, isAdmin } = require('../../middleware/auth/adminMiddleware');
  *               couponId:
  *                 type: string
  *                 description: The ID of the coupon to use for the order
- *               paymentMethod:
+ *               razorpayOrderId:
  *                 type: string
- *                 description: The payment method to use for the order
+ *                 description: The ID of the Razorpay order
+ *               razorpayPaymentId:
+ *                 type: string
+ *                 description: The ID of the Razorpay payment
+ *               razorpaySignature:
+ *                 type: string
+ *                 description: The signature of the Razorpay order
  *               note:
  *                 type: string
  *                 description: The note to add to the order

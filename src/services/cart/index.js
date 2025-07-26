@@ -18,11 +18,17 @@ exports.getCart = async ({ user_id, address_id, coupon_id }) => {
     };
   }
   return {
-    message: 'Cart fetched successfully',
+    message: cart.status === 400 ? cart.message : 'Cart fetched successfully',
     status: 200,
     success: true,
-    data: cart,
+    data: cart.status === 400 ? cart.cart : cart,
   };
+  // return {
+  //   message: 'Cart fetched successfully',
+  //   status: 200,
+  //   success: true,
+  //   data: cart,
+  // }
 };
 
 exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
