@@ -19,7 +19,7 @@ exports.handleUserRegister = asyncHandler(async (req, res) => {
   const result = await registerUser(phoneNumber, otp);
   const { statusCode, message, data } = result;
 
-  return res.status(statusCode).json(new ApiResponse(statusCode, data, message));
+  return res.status(200).json(new ApiResponse(statusCode, data, message));
 });
 
 exports.handleUserLogin = asyncHandler(async (req, res) => {
@@ -32,7 +32,7 @@ exports.handleUserLogin = asyncHandler(async (req, res) => {
   const result = await loginUser(phoneNumber, otp);
   const { statusCode, message, data } = result;
 
-  return res.status(statusCode).json(new ApiResponse(statusCode, data, message));
+  return res.status(200).json(new ApiResponse(statusCode, data, message));
 });
 
 exports.handleAllUsers = asyncHandler(async (req, res) => {

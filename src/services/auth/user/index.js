@@ -5,18 +5,30 @@ const {
   getUserById,
   updateUserById,
 } = require('../../../repositories/auth/index');
-const { OTP } = require('../../../constants/otp/index');
 const jwt = require('jsonwebtoken');
+const otpModel = require('../../../models/otpModel');
 
 exports.registerUser = async (phoneNumber, otp) => {
-  const isValidOtp = otp == OTP;
-  if (!isValidOtp) {
+  const otpData = await otpModel.findOne({ phoneNumber, otp });
+  console.log(otpData, 'otpData');
+  if (!otpData) {
     return {
       statusCode: 401,
-      message: 'Invalid OTP',
+      message: 'You have entered an invalid OTP',
       data: null,
     };
   }
+  
+  if (otpData.isVerified) {
+    return {
+      statusCode: 401,
+      message: 'You have entered an expired OTP',
+      data: null,
+    };
+  }
+
+  otpData.isVerified = true;
+  await otpData.save();
 
   let existingUser = await checkUserExists(phoneNumber);
   if (existingUser) {
@@ -37,6 +49,7 @@ exports.registerUser = async (phoneNumber, otp) => {
   }
 
   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+  await otpModel.deleteOne({ _id: otpData._id });
   return {
     statusCode: 201,
     message: 'User registered successfully',
@@ -48,14 +61,25 @@ exports.registerUser = async (phoneNumber, otp) => {
 };
 
 exports.loginUser = async (phoneNumber, otp) => {
-  const isValidOtp = otp == OTP;
-  if (!isValidOtp) {
+  const otpData = await otpModel.findOne({ phoneNumber, otp });
+  if (!otpData) {
     return {
       statusCode: 401,
-      message: 'Invalid OTP',
+      message: 'You have entered an invalid OTP',
       data: null,
     };
   }
+  if (otpData.isVerified) {
+    await otpModel.deleteOne({ _id: otpData._id });
+    return {
+      statusCode: 401,
+      message: 'Try again with new OTP',
+      data: null,
+    };
+  }
+ 
+  otpData.isVerified = true;
+  await otpData.save();
 
   let user = await checkUserExists(phoneNumber);
   if (!user) {
@@ -75,6 +99,9 @@ exports.loginUser = async (phoneNumber, otp) => {
   }
 
   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+
+  await otpModel.deleteOne({ _id: otpData._id });
+
   return {
     statusCode: 200,
     message: 'User logged in successfully',
