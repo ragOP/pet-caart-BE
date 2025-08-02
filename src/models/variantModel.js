@@ -42,8 +42,8 @@ const VariantSchema = new mongoose.Schema(
       trim: true,
     },
     weight: {
-      type: String,
-      trim: true,
+      type: Number,
+      default: 0,
     },
     images: {
       type: [String],

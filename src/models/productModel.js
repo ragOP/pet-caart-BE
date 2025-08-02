@@ -16,6 +16,10 @@ const ProductSchema = new mongoose.Schema(
     tags: [String],
     images: [String],
     attributes: mongoose.Schema.Types.Mixed,
+    weight: {
+      type: Number,
+      default: 0,
+    },
     // TODO:Weight, Dimensions,
     ratings: {
       average: { type: Number, default: 0 },

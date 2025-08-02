@@ -47,6 +47,10 @@ const cartSchema = new mongoose.Schema(
           type: mongoose.Schema.Types.ObjectId,
           ref: 'Variant',
         },
+        weight: {
+          type: Number,
+          default: 0,
+        },
       },
     ],
     total_price: {

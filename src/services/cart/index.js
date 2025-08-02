@@ -87,10 +87,13 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
   }
 
   let productPrice = 0;
+  let weight = 0;
   if (variantData) {
     productPrice = variantData.salePrice;
+    weight = variantData.weight;
   } else {
     productPrice = productData.salePrice;
+    weight = productData.weight;
   }
 
   if (!cart) {
@@ -105,6 +108,7 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
             price: productPrice,
             total: productPrice * quantity,
             addedAt: new Date(),
+            weight: weight,
           },
         ],
         total_price: productPrice * quantity,
@@ -134,6 +138,7 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
       cart.items[existingItemIndex].quantity = quantity;
       cart.items[existingItemIndex].price = productPrice;
       cart.items[existingItemIndex].total = productPrice * quantity;
+      cart.items[existingItemIndex].weight = weight;
     } else {
       cart.items.splice(existingItemIndex, 1);
     }
@@ -145,6 +150,7 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
       total: productPrice * quantity,
       variantId: variantData ? variantData._id : null,
       addedAt: new Date(),
+      weight: weight,
     });
   }
 

@@ -7,6 +7,7 @@ const {
   getAllOrders,
   getOrderByIdAdmin,
   updateOrderStatus,
+  createShipRocketOrder,
 } = require('../../controllers/orders');
 const { validateRequest } = require('../../middleware/validateRequest');
 const { isUser, isAdmin } = require('../../middleware/auth/adminMiddleware');
@@ -195,5 +196,51 @@ router.route('/:id').get(isUser, validateRequest, getOrderById);
  *         description: Internal server error
  */
 router.route('/:id/update-status').put(isAdmin, validateRequest, updateOrderStatus);
+
+/**
+ * @swagger
+ * /api/orders/{id}/create-shiprocket-order:
+ *   post:
+ *     summary: Create a shiprocket order
+ *     description: Creates a shiprocket order by its ID
+ *     tags: [Orders]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the order to create a shiprocket order for
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               length:
+ *                 type: number
+ *                 description: The length of the package
+ *               width:
+ *                 type: number
+ *                 description: The width of the package
+ *               height:
+ *                 type: number
+ *                 description: The height of the package
+ *     responses:
+ *       200:
+ *         description: Shiprocket order created successfully
+ *       400:
+ *         description: Bad request
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Forbidden
+ *       404:
+ *         description: Order not found
+ *       500:
+ *         description: Internal server error
+ */
+router.route('/:id/create-shiprocket-order').post(isAdmin, validateRequest, createShipRocketOrder);
 
 module.exports = router;

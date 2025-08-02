@@ -36,6 +36,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
     tags,
     attributes,
     ratings,
+    weight,
   } = req.body;
 
   // Parse all incoming data
@@ -86,6 +87,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
     attributes: parsedAttributes,
     ratings: parsedRatings,
     hsnCode,
+    weight,
   };
 
   const result = await createProduct(productPayload);
@@ -210,6 +212,7 @@ exports.handleUpdateProduct = asyncHandler(async (req, res) => {
     attributes: parsedAttributes,
     ratings: parsedRatings,
     hsnCode: body.hsnCode,
+    weight: body.weight,
   };
 
   // update product

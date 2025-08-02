@@ -3,6 +3,7 @@ const addressModel = require('../../models/addressModel');
 const cartModel = require('../../models/cartModel');
 const Coupon = require('../../models/couponModel');
 const { getTaxForItem } = require('../../utils/getTaxRate');
+const { getEstimatedPrice } = require('../../utils/shipRocket');
 const { validateId } = require('../../utils/validateId');
 
 exports.createPaymentService = async (payload, user) => {
@@ -50,6 +51,22 @@ exports.createPaymentService = async (payload, user) => {
   }
 
   const state = address.state_code;
+  const pincode = address.zip;
+
+  let weight = 0;
+  cart.items.forEach(item => {
+    weight += item.weight * item.quantity;
+  });
+
+  weight = weight / 1000;
+
+  const estimatedPrice = await getEstimatedPrice(pincode, weight);
+  const shippingDetails = estimatedPrice.data.data.available_courier_companies;
+
+  const shippingCost =
+    shippingDetails[0].rate +
+    shippingDetails[0].coverage_charges +
+    shippingDetails[0].other_charges;
 
   let subtotal = 0;
   let discountAmount = 0;
@@ -131,8 +148,7 @@ exports.createPaymentService = async (payload, user) => {
     total += baseAmount + totalTax;
   });
 
-  const finalAmount = Math.round(total * 100);
-
+  const finalAmount = Math.round((total + shippingCost) * 100);
   // Create Razorpay order
   const razorpayOrder = await razorpay.orders.create({
     amount: finalAmount,

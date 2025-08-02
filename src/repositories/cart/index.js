@@ -2,6 +2,7 @@ const addressModel = require('../../models/addressModel');
 const cartModel = require('../../models/cartModel');
 const Coupon = require('../../models/couponModel');
 const { getTaxForItem } = require('../../utils/getTaxRate');
+const { getEstimatedPrice } = require('../../utils/shipRocket');
 
 exports.getCart = async () => {
   return await Cart.find({});
@@ -45,6 +46,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
   }
 
   let state = null;
+  let pincode = null;
   if (address_id) {
     const address = await addressModel.findById(address_id);
     if (!address) {
@@ -56,6 +58,30 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
       };
     }
     state = address.state_code;
+    pincode = address.zip;
+  }
+
+  let weight = 0;
+  cart.items.forEach(item => {
+    weight += item.weight * item.quantity;
+  });
+
+  weight = weight / 1000;
+
+  let shippingDetails = {};
+  if (pincode) {
+    const estimatedPrice = await getEstimatedPrice(pincode, weight);
+    const couriers = estimatedPrice.data.data.available_courier_companies;
+
+    shippingDetails = {
+      name: couriers[0].courier_name,
+      totalCost:
+        couriers[0].rate +
+        couriers[0].coverage_charges +
+        couriers[0].other_charges,
+      estimatedDays: couriers[0].estimated_delivery_days,
+      estimatedDate: couriers[0].etd,
+    };
   }
 
   // 1. Base subtotal
@@ -155,11 +181,14 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
     };
   });
 
+  total += shippingDetails.totalCost;
+
   return {
     ...cart.toObject(),
     items: finalItems,
     total_price: parseFloat(total.toFixed(2)),
     is_active: cart.is_active,
+    shippingDetails,
   };
 };
 

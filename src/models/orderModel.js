@@ -47,6 +47,8 @@ const OrderSchema = new mongoose.Schema(
     totalAmount: { type: Number, required: true },
     couponCode: { type: String },
     note: { type: String },
+    shipRocketOrderId: { type: String, default: null },
+    weight: { type: Number, required: true },
   },
   { timestamps: true }
 );

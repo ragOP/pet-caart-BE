@@ -9,6 +9,11 @@ const productModel = require('../../models/productModel');
 const variantModel = require('../../models/variantModel');
 const transcationModel = require('../../models/transcationModel');
 const { validateId } = require('../../utils/validateId');
+const {
+  createOrder,
+  generateShiprocketPickup,
+  getEstimatedPrice,
+} = require('../../utils/shipRocket');
 
 exports.createOrderService = async (payload, user) => {
   const session = await mongoose.startSession();
@@ -69,6 +74,7 @@ exports.createOrderService = async (payload, user) => {
 
     const addressPayload = {};
     let state = null;
+    let pincode = null;
     if (addressId) {
       const address = await addressModel.findById(addressId).session(session);
       if (!address) {
@@ -89,6 +95,22 @@ exports.createOrderService = async (payload, user) => {
       addressPayload.state = address.state;
       addressPayload.country = address.country;
       addressPayload.pincode = address.zip;
+      pincode = address.zip;
+    }
+
+    let weight = 0;
+    cart.items.forEach(item => {
+      weight += item.weight * item.quantity;
+    });
+
+    weight = weight / 1000;
+
+    let shippingCost = 0;
+    if (pincode) {
+      const estimatedPrice = await getEstimatedPrice(pincode, weight);
+      const couriers = estimatedPrice.data.data.available_courier_companies;
+
+      shippingCost = couriers[0].rate + couriers[0].coverage_charges + couriers[0].other_charges;
     }
 
     let subtotal = 0;
@@ -216,9 +238,10 @@ exports.createOrderService = async (payload, user) => {
       discountedAmount: totalDiscountedAmount,
       discountedAmountAfterCoupon: subtotal,
       amountAfterTax: total,
-      totalAmount: total,
+      totalAmount: total + shippingCost,
       couponCode: couponCode,
       note: payload.note || '',
+      weight: weight,
     };
 
     const order = await orderModel.create([orderPayload], { session });
@@ -273,7 +296,7 @@ exports.createOrderService = async (payload, user) => {
       userId: _id,
       type: 'order',
       paymentMethod: 'razorpay',
-      amount: total,
+      amount: total + shippingCost,
       status: 'pending',
       transactionId: null,
     };
@@ -286,10 +309,12 @@ exports.createOrderService = async (payload, user) => {
         message: 'Failed to create transcation',
       };
     }
-    await session.commitTransaction();
-    session.endSession();
 
     // TODO: Send email to user about order success
+
+    // Commit transaction
+    await session.commitTransaction();
+    session.endSession();
 
     return {
       statusCode: 201,
@@ -477,17 +502,53 @@ exports.getOrderByIdServiceAdmin = async id => {
 };
 
 exports.updateOrderStatusService = async (id, payload) => {
-  const { status } = payload;
-  const order = await orderModel.findByIdAndUpdate(id, { status }, { new: true });
-  if (!order) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { status } = payload;
+    const order = await orderModel.findByIdAndUpdate(id, { status }, { new: true });
+    if (!order) {
+      return {
+        statusCode: 404,
+        data: null,
+        success: false,
+        message: 'Order not found',
+      };
+    }
+
+    const transcation = await transcationModel.findOne({ orderId: order._id });
+
+    if (status === 'confirmed' && order.shipRocketOrderId) {
+      const generatePickup = await generateShiprocketPickup(order.shipRocketOrderId);
+      if (!generatePickup.success) {
+        await session.abortTransaction();
+        session.endSession();
+        return {
+          statusCode: 500,
+          data: {
+            ...order.toObject(),
+            transcation,
+          },
+          success: false,
+          message: 'Failed to generate pickup',
+        };
+      }
+    }
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+
     return {
-      statusCode: 404,
+      statusCode: 500,
       data: null,
       success: false,
-      message: 'Order not found',
+      message: error.message || 'Transaction failed',
     };
   }
-  const transcation = await transcationModel.findOne({ orderId: order._id });
+  await session.commitTransaction();
+  session.endSession();
+
   return {
     statusCode: 200,
     data: {
@@ -496,5 +557,76 @@ exports.updateOrderStatusService = async (id, payload) => {
     },
     success: true,
     message: 'Order status updated successfully',
+  };
+};
+
+exports.createShipRocketOrderService = async (id, length, width, height) => {
+  const order = await orderModel.findById(id).populate('items.productId').populate('items.variantId');
+  if (!order) {
+    return {
+      statusCode: 404,
+      data: null,
+      success: false,
+      message: 'Order not found',
+    };
+  }
+
+  // Create Shiprocket order
+  const shipRocketPayload = {
+    order_id: order._id,
+    order_date: new Date(order.createdAt).toISOString().slice(0, 16).replace('T', ' '),
+    pickup_location: process.env.SHIPROCKET_PICKUP_LOCATION,
+
+    billing_customer_name: order.address.name,
+    billing_last_name: '',
+    billing_address: order.address.address,
+    billing_city: order.address.city,
+    billing_pincode: order.address.pincode,
+    billing_state: order.address.state,
+    billing_country: order.address.country,
+    billing_email: order.address.email,
+    billing_phone: order.address.mobile,
+
+    shipping_is_billing: true,
+    channel_id: process.env.SHIPROCKET_CHANNEL_ID,
+
+    order_items: order.items.map(item => ({
+      name: item.productId.title || 'Product Name',
+      sku: item.variantId.sku|| item.productId._id.toString(),
+      units: item.quantity,
+      selling_price: item.price,
+      discount: item.couponDiscount || 0,
+      tax: item.taxAmount || 0,
+    })),
+
+    payment_method: 'Prepaid',
+    sub_total: order.rawPrice,
+    total_discount: order.discountedAmountAfterCoupon,
+    total: order.totalAmount.toFixed(2),
+    weight: order.weight,
+    length,
+    breadth: width,
+    height,
+  };
+
+  const shipRocketResponse = await createOrder(shipRocketPayload);
+  if (shipRocketResponse.success) {
+    await orderModel.findByIdAndUpdate(order._id, {
+      shipRocketOrderId: shipRocketResponse.data.order_id,
+    });
+  } else {
+    return {
+      statusCode: 500,
+      data: null,
+      success: false,
+      message: 'Failed to create shiprocket order',
+    };
+  }
+
+  return {
+    statusCode: 200,
+    data: shipRocketResponse,
+    success: true,
+    message: 'Shiprocket order created successfully',
   };
 };

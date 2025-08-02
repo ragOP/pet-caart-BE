@@ -78,6 +78,9 @@ const upload = multer({ storage: storage });
  *               hsnCode:
  *                 type: string
  *                 description: The hsn code of the product
+ *               weight:
+ *                 type: number
+ *                 description: The weight of the product
  *     responses:
  *       201:
  *         description: Product created successfully
