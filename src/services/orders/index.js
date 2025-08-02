@@ -14,6 +14,7 @@ const {
   generateShiprocketPickup,
   getEstimatedPrice,
 } = require('../../utils/shipRocket');
+const { generateOrderBill } = require('../../utils/generateOrderBill');
 
 exports.createOrderService = async (payload, user) => {
   const session = await mongoose.startSession();
@@ -309,18 +310,26 @@ exports.createOrderService = async (payload, user) => {
         message: 'Failed to create transcation',
       };
     }
-
-    // TODO: Send email to user about order success
-
     // Commit transaction
     await session.commitTransaction();
     session.endSession();
+
+    // TODO: Send email to user about order success
+    let emailSent = false;
+
+    const orderBill = await generateOrderBill(order[0], user, addressPayload);
+
+    if (orderBill.success) {
+      emailSent = true;
+    }
 
     return {
       statusCode: 201,
       data: order[0],
       success: true,
-      message: 'Order created successfully',
+      message: emailSent
+        ? 'Order created successfully'
+        : 'Order created successfully but email not sent',
     };
   } catch (error) {
     await session.abortTransaction();
@@ -561,7 +570,10 @@ exports.updateOrderStatusService = async (id, payload) => {
 };
 
 exports.createShipRocketOrderService = async (id, length, width, height) => {
-  const order = await orderModel.findById(id).populate('items.productId').populate('items.variantId');
+  const order = await orderModel
+    .findById(id)
+    .populate('items.productId')
+    .populate('items.variantId');
   if (!order) {
     return {
       statusCode: 404,
@@ -592,7 +604,7 @@ exports.createShipRocketOrderService = async (id, length, width, height) => {
 
     order_items: order.items.map(item => ({
       name: item.productId.title || 'Product Name',
-      sku: item.variantId.sku|| item.productId._id.toString(),
+      sku: item.variantId.sku || item.productId._id.toString(),
       units: item.quantity,
       selling_price: item.price,
       discount: item.couponDiscount || 0,

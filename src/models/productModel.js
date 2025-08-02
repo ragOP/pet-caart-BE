@@ -20,7 +20,6 @@ const ProductSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
-    // TODO:Weight, Dimensions,
     ratings: {
       average: { type: Number, default: 0 },
       count: { type: Number, default: 0 },

@@ -78,7 +78,7 @@ exports.generateShiprocketPickup = async shipmentId => {
   try {
     const token = await getShiprocketToken();
     const response = await axios.post(
-      'https://apiv2.shiprocket.in/v1/external/courier/generate/pickup',
+      'https://apiv2.shiprocket.in/v1/external/courier/generate/pickup/adhoc',
       { shipment_id: [shipmentId] },
       {
         headers: {
