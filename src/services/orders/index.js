@@ -317,11 +317,11 @@ exports.createOrderService = async (payload, user) => {
     // TODO: Send email to user about order success
     let emailSent = false;
 
-    const orderBill = await generateOrderBill(order[0], user, addressPayload);
+    // const orderBill = await generateOrderBill(order[0], user, addressPayload);
 
-    if (orderBill.success) {
-      emailSent = true;
-    }
+    // if (orderBill.success) {
+    //   emailSent = true;
+    // }
 
     return {
       statusCode: 201,

@@ -6,7 +6,6 @@ const PICKUP_PINCODE = '400001';
 exports.getEstimatedPrice = async (pincode, weight) => {
   try {
     const token = await getShiprocketToken();
-    console.log(token, '<--- token');
 
     const response = await axios.get(
       'https://apiv2.shiprocket.in/v1/external/courier/serviceability/',
