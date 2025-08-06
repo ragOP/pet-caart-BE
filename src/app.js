@@ -65,6 +65,7 @@ app.use('/api/featured-blog-products', require('./routes/featured_blog_products/
 app.use('/api/news-letter', require('./routes/news_letter/index'));
 app.use('/api/razorpay', require('./routes/payment/index'));
 app.use('/api/otp', require('./routes/otp/index'));
+app.use('/api/delivery', require('./routes/expected_delivery/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {

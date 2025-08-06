@@ -85,6 +85,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
   }
 
   // 1. Base subtotal
+  let discountAmount = 0;
   let subtotal = 0;
   const updatedItems = cart.items.map(item => {
     const itemTotal = item.price * item.quantity;
@@ -124,8 +125,6 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
           cart,
         };
       }
-
-      let discountAmount = 0;
       if (coupon.discountType === 'percentage') {
         discountAmount = (subtotal * coupon.discountValue) / 100;
         if (coupon.maxDiscount) {
@@ -186,6 +185,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
   return {
     ...cart.toObject(),
     items: finalItems,
+    discount_amount: discountAmount,
     total_price: parseFloat(total.toFixed(2)),
     is_active: cart.is_active,
     shippingDetails,

@@ -70,7 +70,6 @@ exports.createPaymentService = async (payload, user) => {
 
   let subtotal = 0;
   let discountAmount = 0;
-  let couponCode = '';
   const updatedItems = [];
 
   cart.items.forEach(item => {
@@ -85,58 +84,58 @@ exports.createPaymentService = async (payload, user) => {
 
   if (couponId) {
     const coupon = await Coupon.findById(couponId);
+    const now = new Date();
+
     if (!coupon) {
       return {
-        status: 404,
-        success: false,
         message: 'Coupon not found',
-        data: null,
+        status: 400,
+        success: false,
+        cart,
       };
     }
 
-    const now = new Date();
     if (
-      !coupon.active ||
-      coupon.startDate > now ||
-      coupon.endDate < now ||
-      coupon.totalUseLimit <= 0
+      coupon.active &&
+      coupon.startDate <= now &&
+      coupon.endDate >= now &&
+      coupon.totalUseLimit > 0
     ) {
+      if (subtotal < coupon.minPurchase) {
+        return {
+          message: 'Minimum purchase amount is not met',
+          status: 400,
+          success: false,
+          cart,
+        };
+      }
+      if (coupon.discountType === 'percentage') {
+        discountAmount = (subtotal * coupon.discountValue) / 100;
+        if (coupon.maxDiscount) {
+          discountAmount = Math.min(discountAmount, coupon.maxDiscount);
+        }
+      } else {
+        discountAmount = coupon.discountValue;
+      }
+
+      // Distribute discount proportionally
+      const ratio = discountAmount / subtotal;
+      updatedItems.forEach(item => {
+        const totalItemPrice = item.price * item.quantity;
+        const discountedTotal = totalItemPrice - totalItemPrice * ratio;
+        const perUnit = discountedTotal / item.quantity;
+        item.discounted_price = parseFloat(perUnit.toFixed(2));
+      });
+
+      subtotal -= discountAmount;
+    } else {
       return {
-        status: 400,
-        success: false,
         message: 'Coupon is expired or inactive',
-        data: null,
-      };
-    }
-
-    if (subtotal < coupon.minPurchase) {
-      return {
         status: 400,
         success: false,
-        message: 'Minimum purchase amount not met',
-        data: null,
+        cart,
       };
     }
-
-    couponCode = coupon.code;
-    discountAmount =
-      coupon.discountType === 'percentage'
-        ? (subtotal * coupon.discountValue) / 100
-        : coupon.discountValue;
-
-    if (coupon.maxDiscount) {
-      discountAmount = Math.min(discountAmount, coupon.maxDiscount);
-    }
-
-    const ratio = discountAmount / subtotal;
-    updatedItems.forEach(item => {
-      const totalItemPrice = item.price * item.quantity;
-      const discountedTotal = totalItemPrice * (1 - ratio);
-      const perUnit = discountedTotal / item.quantity;
-      item.discounted_price = parseFloat(perUnit.toFixed(2));
-    });
-
-    subtotal -= discountAmount;
   }
 
   let total = 0;
@@ -149,6 +148,8 @@ exports.createPaymentService = async (payload, user) => {
   });
 
   const finalAmount = Math.round((total + shippingCost) * 100);
+  console.log(finalAmount, 'finalAmount');
+  console.log(discountAmount, 'discountAmount');
   // Create Razorpay order
   const razorpayOrder = await razorpay.orders.create({
     amount: finalAmount,

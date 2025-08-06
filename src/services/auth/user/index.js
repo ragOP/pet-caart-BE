@@ -9,8 +9,16 @@ const jwt = require('jsonwebtoken');
 const otpModel = require('../../../models/otpModel');
 
 exports.registerUser = async (phoneNumber, otp) => {
+  let existingUser = await checkUserExists(phoneNumber);
+  if (existingUser) {
+    return {
+      statusCode: 409,
+      message: 'User already exists, Please login',
+      data: null,
+    };
+  }
+
   const otpData = await otpModel.findOne({ phoneNumber, otp });
-  console.log(otpData, 'otpData');
   if (!otpData) {
     return {
       statusCode: 401,
@@ -29,15 +37,6 @@ exports.registerUser = async (phoneNumber, otp) => {
 
   otpData.isVerified = true;
   await otpData.save();
-
-  let existingUser = await checkUserExists(phoneNumber);
-  if (existingUser) {
-    return {
-      statusCode: 409,
-      message: 'User already exists',
-      data: null,
-    };
-  }
 
   const user = await createUser(phoneNumber);
   if (!user) {
