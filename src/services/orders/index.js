@@ -544,6 +544,18 @@ exports.updateOrderStatusService = async (id, payload) => {
         };
       }
     }
+    await session.commitTransaction();
+    session.endSession();
+
+    return {
+      statusCode: 200,
+      data: {
+        ...order.toObject(),
+        transcation,
+      },
+      success: true,
+      message: 'Order status updated successfully',
+    };
   } catch (error) {
     await session.abortTransaction();
     session.endSession();
@@ -555,18 +567,6 @@ exports.updateOrderStatusService = async (id, payload) => {
       message: error.message || 'Transaction failed',
     };
   }
-  await session.commitTransaction();
-  session.endSession();
-
-  return {
-    statusCode: 200,
-    data: {
-      ...order.toObject(),
-      transcation,
-    },
-    success: true,
-    message: 'Order status updated successfully',
-  };
 };
 
 exports.createShipRocketOrderService = async (id, length, width, height) => {
