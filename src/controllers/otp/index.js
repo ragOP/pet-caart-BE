@@ -13,5 +13,5 @@ exports.sendOtp = asyncHandler(async (req, res) => {
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, null, result.message));
+    .json(new ApiResponse(result.statusCode, result.data.data, result.message));
 });
