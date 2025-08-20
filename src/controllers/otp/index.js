@@ -9,9 +9,9 @@ exports.sendOtp = asyncHandler(async (req, res) => {
   }
   const result = await sendOtp(phoneNumber, origin);
   if (result.success) {
-    return res.status(200).json(new ApiResponse(200, result.data, result.message));
+    return res.status(200).json(new ApiResponse(200, result.data.data, result.message));
   }
   return res
     .status(result.statusCode)
-    .json(new ApiResponse(result.statusCode, result.data.data, result.message));
+    .json(new ApiResponse(result.statusCode, result.data, result.message));
 });

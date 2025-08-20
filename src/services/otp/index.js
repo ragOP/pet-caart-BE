@@ -10,6 +10,7 @@ exports.sendOtp = async (phoneNumber, origin) => {
         statusCode: 400,
         message: 'User not found, Please signup first',
         data: null,
+        success: false,
       };
     }
   }
@@ -19,6 +20,7 @@ exports.sendOtp = async (phoneNumber, origin) => {
         statusCode: 400,
         message: 'User already exists, Please login',
         data: null,
+        success: false,
       };
     }
   }
@@ -30,6 +32,7 @@ exports.sendOtp = async (phoneNumber, origin) => {
         statusCode: 400,
         message: 'You can only request an OTP once every 60 seconds',
         data: null,
+        success: false,
       };
     }
   }
@@ -40,9 +43,6 @@ exports.sendOtp = async (phoneNumber, origin) => {
     message: 'OTP sent successfully',
     data: otp,
   };
-
-  console.log(result, 'result');
-  
   // const result = await sendOtpFast2SMS(phoneNumber, otp);
   if (result.statusCode === 200) {
     if (existingOtp) {
@@ -53,11 +53,13 @@ exports.sendOtp = async (phoneNumber, origin) => {
       statusCode: 200,
       message: 'OTP sent successfully',
       data: result,
+      success: true,
     };
   }
   return {
     statusCode: 500,
     message: 'Failed to send SMS',
     data: null,
+    success: false,
   };
 };
