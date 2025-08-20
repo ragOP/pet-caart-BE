@@ -103,3 +103,32 @@ exports.generateShiprocketPickup = async shipmentId => {
     };
   }
 };
+
+exports.trackDelivery = async awbId => {
+  try {
+    const token = await getShiprocketToken();
+    const response = await axios.get(
+      `https://apiv2.shiprocket.in/v1/external/courier/track/awb/${awbId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      }
+    );
+    return {
+      statusCode: 200,
+      message: 'Delivery tracked successfully',
+      data: response.data,
+      success: true,
+    };
+  } catch (error) {
+    console.error('Shiprocket API Error:', error.response?.data || error.message);
+    return {
+      statusCode: error.response?.status || 500,
+      message: 'Shiprocket API Error',
+      data: error.response?.data || null,
+      success: false,
+    };
+  }
+};
