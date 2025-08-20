@@ -605,7 +605,7 @@ exports.createShipRocketOrderService = async (id, length, width, height) => {
 
     order_items: order.items.map(item => ({
       name: item.productId.title || 'Product Name',
-      sku: item.variantId.sku || item.productId._id.toString(),
+      sku: item?.variantId?.sku || item?.productId?._id?.toString(),
       units: item.quantity,
       selling_price: item.price,
       discount: item.couponDiscount || 0,
