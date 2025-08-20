@@ -6,7 +6,7 @@ const { validateRequest } = require('../../middleware/validateRequest');
 
 /**
  * @swagger
- * /delivery/check:
+ * /api/delivery/check:
  *   post:
  *     summary: Check expected delivery
  *     description: Check expected delivery
@@ -20,7 +20,7 @@ const { validateRequest } = require('../../middleware/validateRequest');
  *           schema:
  *             type: object
  *             properties:
- *               pin_code:
+ *               pincode:
  *                 type: string
  *                 description: The pin code of the expected delivery
  *     responses:
