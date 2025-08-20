@@ -446,7 +446,8 @@ exports.getAllOrdersService = async (
     .populate('items.productId')
     .populate('items.variantId')
     .skip(skip)
-    .limit(limit);
+    .limit(limit)
+    .sort({ createdAt: -1 });
 
   if (!orders || orders.length === 0) {
     return {

@@ -196,7 +196,7 @@ exports.updateProduct = async (id, productPayload) => {
     // 7. Update existing variants
     let updatedVariantDocs = [];
     if (updatedVariants.length > 0) {
-      updatedVariantDocs = await updateManyVariants(updatedVariants);
+      updatedVariantDocs = await updateManyVariants(updatedVariants, availableVariants);
     }
 
     // 8. Create new variants
