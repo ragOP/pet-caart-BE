@@ -67,6 +67,7 @@ app.use('/api/razorpay', require('./routes/payment/index'));
 app.use('/api/otp', require('./routes/otp/index'));
 app.use('/api/delivery', require('./routes/expected_delivery/index'));
 app.use('/api/reviews', require('./routes/reviews/index'));
+app.use('/api/home-config', require('./routes/home_config/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {
