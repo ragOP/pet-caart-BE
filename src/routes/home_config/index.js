@@ -20,6 +20,8 @@ const upload = multer({ storage: storage });
  *     summary: Create a new home section configuration
  *     description: This route allows admin users to create a new home section configuration.
  *     tags: [HomeConfig]
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -68,6 +70,7 @@ const upload = multer({ storage: storage });
  */
 
 router.route('/create').post(
+  isAdmin,
   upload.fields([
     { name: 'backgroundImage', maxCount: 1 },
     { name: 'bannerImage', maxCount: 1 },
@@ -121,6 +124,8 @@ router.route('/get-one-grid/:id').get(validateRequest, handleGetOneGridConfig);
  *     summary: Delete a grid configuration
  *     description: This route allows admin users to delete a grid configuration by ID.
  *     tags: [HomeConfig]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -134,7 +139,7 @@ router.route('/get-one-grid/:id').get(validateRequest, handleGetOneGridConfig);
  *       500:
  *         description: Failed to delete grid configuration
  */
-router.route('/delete-grid/:id').delete(validateRequest, handleDeleteGridConfig);
+router.route('/delete-grid/:id').delete(isAdmin, validateRequest, handleDeleteGridConfig);
 
 /**
  * @swagger
@@ -143,6 +148,8 @@ router.route('/delete-grid/:id').delete(validateRequest, handleDeleteGridConfig)
  *     summary: Update a grid configuration
  *     description: This route allows admin users to update a grid configuration by ID.
  *     tags: [HomeConfig]
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -197,6 +204,6 @@ router.route('/delete-grid/:id').delete(validateRequest, handleDeleteGridConfig)
  *         description: Failed to update grid configuration
  */
 
-router.route('/update-grid/:id').put(validateRequest, handleUpdateGridConfig);
+router.route('/update-grid/:id').put(isAdmin, validateRequest, handleUpdateGridConfig);
 
 module.exports = router;
