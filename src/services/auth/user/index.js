@@ -8,7 +8,7 @@ const {
 const jwt = require('jsonwebtoken');
 const otpModel = require('../../../models/otpModel');
 
-exports.registerUser = async (phoneNumber, otp) => {
+exports.registerUser = async (phoneNumber, otp, fcmToken, apnToken) => {
   let existingUser = await checkUserExists(phoneNumber);
   if (existingUser) {
     return {
@@ -38,7 +38,7 @@ exports.registerUser = async (phoneNumber, otp) => {
   otpData.isVerified = true;
   await otpData.save();
 
-  const user = await createUser(phoneNumber);
+  const user = await createUser(phoneNumber, fcmToken, apnToken);
   if (!user) {
     return {
       statusCode: 500,
@@ -59,7 +59,7 @@ exports.registerUser = async (phoneNumber, otp) => {
   };
 };
 
-exports.loginUser = async (phoneNumber, otp) => {
+exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken) => {
   const otpData = await otpModel.findOne({ phoneNumber, otp });
   if (!otpData) {
     return {
@@ -81,6 +81,9 @@ exports.loginUser = async (phoneNumber, otp) => {
   await otpData.save();
 
   let user = await checkUserExists(phoneNumber);
+  user.fcmToken = fcmToken;
+  user.apnToken = apnToken;
+  await user.save();
   if (!user) {
     return {
       statusCode: 404,

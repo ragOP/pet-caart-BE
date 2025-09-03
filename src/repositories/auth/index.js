@@ -6,8 +6,8 @@ exports.checkUserExists = async phoneNumber => {
   return null;
 };
 
-exports.createUser = async phoneNumber => {
-  const newUser = await User.create({ phoneNumber });
+exports.createUser = async (phoneNumber, fcmToken, apnToken) => {
+  const newUser = await User.create({ phoneNumber, fcmToken, apnToken });
   return newUser;
 };
 

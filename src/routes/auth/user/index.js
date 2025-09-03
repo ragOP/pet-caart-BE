@@ -28,6 +28,12 @@ const router = express.Router();
  *               otp:
  *                 type: string
  *                 example: '123456'
+ *               fcmToken:
+ *                 type: string
+ *                 example: 'fcm_token_example'
+ *               apnToken:
+ *                 type: string
+ *                 example: 'apn_token_example'
  *     responses:
  *       201:
  *         description: User registered successfully
@@ -53,6 +59,12 @@ router.route('/register').post(validateMobileAndOTP, validateRequest, handleUser
  *               otp:
  *                 type: string
  *                 example: '123456'
+ *               fcmToken:
+ *                 type: string
+ *                 example: 'fcm_token_example'
+ *               apnToken:
+ *                 type: string
+ *                 example: 'apn_token_example'
  *     responses:
  *       201:
  *         description: User login successfully

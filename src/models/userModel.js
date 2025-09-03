@@ -8,6 +8,8 @@ const UserSchema = new mongoose.Schema(
     name: { type: String, default: '' },
     email: { type: String, unique: true, sparse: true },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
+    fcmToken: { type: String, default: '' },
+    apnToken: { type: String, default: '' },
     lastLogin: { type: Date, default: Date.now },
   },
   { timestamps: true }
