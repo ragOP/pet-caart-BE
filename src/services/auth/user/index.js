@@ -59,7 +59,7 @@ const otpModel = require('../../../models/otpModel');
 //   };
 // };
 
-exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken, email) => {
+exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken) => {
   const otpData = await otpModel.findOne({ phoneNumber, otp });
   if (!otpData) {
     return {
@@ -83,7 +83,7 @@ exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken, email) => {
   let isExisitinguser = false;
   let user = await checkUserExists(phoneNumber);
   if (!user) {
-    user = await createUser(phoneNumber, fcmToken, apnToken, email);
+    user = await createUser(phoneNumber, fcmToken, apnToken);
   } else if (user.role !== 'user') {
     return {
       statusCode: 401,

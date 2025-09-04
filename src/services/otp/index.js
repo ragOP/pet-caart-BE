@@ -3,27 +3,27 @@ const otpModel = require('../../models/otpModel');
 const userModel = require('../../models/userModel');
 
 exports.sendOtp = async (phoneNumber, origin) => {
-  const existingUser = await userModel.findOne({ phoneNumber });
-  if (origin === 'login') {
-    if (!existingUser) {
-      return {
-        statusCode: 400,
-        message: 'User not found, Please signup first',
-        data: null,
-        success: false,
-      };
-    }
-  }
-  if (origin === 'register') {
-    if (existingUser) {
-      return {
-        statusCode: 400,
-        message: 'User already exists, Please login',
-        data: null,
-        success: false,
-      };
-    }
-  }
+  // const existingUser = await userModel.findOne({ phoneNumber });
+  // if (origin === 'login') {
+  //   if (!existingUser) {
+  //     return {
+  //       statusCode: 400,
+  //       message: 'User not found, Please signup first',
+  //       data: null,
+  //       success: false,
+  //     };
+  //   }
+  // }
+  // if (origin === 'register') {
+  //   if (existingUser) {
+  //     return {
+  //       statusCode: 400,
+  //       message: 'User already exists, Please login',
+  //       data: null,
+  //       success: false,
+  //     };
+  //   }
+  // }
   const existingOtp = await otpModel.findOne({ phoneNumber });
   if (existingOtp) {
     const timeDiff = (Date.now() - new Date(existingOtp.requestedAt).getTime()) / 1000;
