@@ -8,56 +8,56 @@ const {
 const jwt = require('jsonwebtoken');
 const otpModel = require('../../../models/otpModel');
 
-exports.registerUser = async (phoneNumber, otp, fcmToken, apnToken) => {
-  let existingUser = await checkUserExists(phoneNumber);
-  if (existingUser) {
-    return {
-      statusCode: 409,
-      message: 'User already exists, Please login',
-      data: null,
-    };
-  }
+// exports.registerUser = async (phoneNumber, otp, fcmToken, apnToken) => {
+//   let existingUser = await checkUserExists(phoneNumber);
+//   if (existingUser) {
+//     return {
+//       statusCode: 409,
+//       message: 'User already exists, Please login',
+//       data: null,
+//     };
+//   }
 
-  const otpData = await otpModel.findOne({ phoneNumber, otp });
-  if (!otpData) {
-    return {
-      statusCode: 401,
-      message: 'You have entered an invalid OTP',
-      data: null,
-    };
-  }
-  
-  if (otpData.isVerified) {
-    return {
-      statusCode: 401,
-      message: 'You have entered an expired OTP',
-      data: null,
-    };
-  }
+//   const otpData = await otpModel.findOne({ phoneNumber, otp });
+//   if (!otpData) {
+//     return {
+//       statusCode: 401,
+//       message: 'You have entered an invalid OTP',
+//       data: null,
+//     };
+//   }
 
-  otpData.isVerified = true;
-  await otpData.save();
+//   if (otpData.isVerified) {
+//     return {
+//       statusCode: 401,
+//       message: 'You have entered an expired OTP',
+//       data: null,
+//     };
+//   }
 
-  const user = await createUser(phoneNumber, fcmToken, apnToken);
-  if (!user) {
-    return {
-      statusCode: 500,
-      message: 'Failed to create user',
-      data: null,
-    };
-  }
+//   otpData.isVerified = true;
+//   await otpData.save();
 
-  const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
-  await otpModel.deleteOne({ _id: otpData._id });
-  return {
-    statusCode: 201,
-    message: 'User registered successfully',
-    data: {
-      user,
-      token,
-    },
-  };
-};
+//   const user = await createUser(phoneNumber, fcmToken, apnToken);
+//   if (!user) {
+//     return {
+//       statusCode: 500,
+//       message: 'Failed to create user',
+//       data: null,
+//     };
+//   }
+
+//   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
+//   await otpModel.deleteOne({ _id: otpData._id });
+//   return {
+//     statusCode: 201,
+//     message: 'User registered successfully',
+//     data: {
+//       user,
+//       token,
+//     },
+//   };
+// };
 
 exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken) => {
   const otpData = await otpModel.findOne({ phoneNumber, otp });
@@ -76,28 +76,25 @@ exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken) => {
       data: null,
     };
   }
- 
+
   otpData.isVerified = true;
   await otpData.save();
 
+  let isExisitinguser = false;
   let user = await checkUserExists(phoneNumber);
-  user.fcmToken = fcmToken;
-  user.apnToken = apnToken;
-  await user.save();
   if (!user) {
-    return {
-      statusCode: 404,
-      message: 'User not found',
-      data: null,
-    };
-  }
-
-  if (user.role !== 'user') {
+    user = await createUser(phoneNumber, fcmToken, apnToken);
+  } else if (user.role !== 'user') {
     return {
       statusCode: 401,
-      message: 'User is not a user',
+      message: 'Unauthorized: Not a user account.',
       data: null,
     };
+  } else {
+    user.fcmToken = fcmToken;
+    user.apnToken = apnToken;
+    await user.save();
+    isExisitinguser = true;
   }
 
   const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET);
@@ -110,6 +107,7 @@ exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken) => {
     data: {
       user,
       token,
+      isExisitinguser,
     },
   };
 };

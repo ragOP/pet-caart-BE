@@ -9,18 +9,18 @@ const {
 const { asyncHandler } = require('../../../utils/asyncHandler');
 const ApiResponse = require('../../../utils/apiResponse/index');
 
-exports.handleUserRegister = asyncHandler(async (req, res) => {
-  const { phoneNumber, otp, fcmToken='', apnToken='' } = req.body;
+// exports.handleUserRegister = asyncHandler(async (req, res) => {
+//   const { phoneNumber, otp, fcmToken='', apnToken='' } = req.body;
 
-  if (!phoneNumber || !otp) {
-    return res.status(400).json(new ApiResponse(400, null, 'Phone number and OTP are required'));
-  }
+//   if (!phoneNumber || !otp) {
+//     return res.status(400).json(new ApiResponse(400, null, 'Phone number and OTP are required'));
+//   }
 
-  const result = await registerUser(phoneNumber, otp, fcmToken, apnToken);
-  const { statusCode, message, data } = result;
+//   const result = await registerUser(phoneNumber, otp, fcmToken, apnToken);
+//   const { statusCode, message, data } = result;
 
-  return res.status(200).json(new ApiResponse(statusCode, data, message));
-});
+//   return res.status(200).json(new ApiResponse(statusCode, data, message));
+// });
 
 exports.handleUserLogin = asyncHandler(async (req, res) => {
   const { phoneNumber, otp, fcmToken='', apnToken='' } = req.body;

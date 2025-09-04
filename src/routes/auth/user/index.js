@@ -11,40 +11,9 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/auth/user/register:
- *   post:
- *     summary: Register a new user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               phoneNumber:
- *                 type: string
- *                 example: '1234567890'
- *               otp:
- *                 type: string
- *                 example: '123456'
- *               fcmToken:
- *                 type: string
- *                 example: 'fcm_token_example'
- *               apnToken:
- *                 type: string
- *                 example: 'apn_token_example'
- *     responses:
- *       201:
- *         description: User registered successfully
- */
-router.route('/register').post(validateMobileAndOTP, validateRequest, handleUserRegister);
-
-/**
- * @swagger
  * /api/auth/user/login:
  *   post:
- *     summary: Login a user
+ *     summary: Login/Signup a user
  *     tags: [Auth]
  *     requestBody:
  *       required: true
