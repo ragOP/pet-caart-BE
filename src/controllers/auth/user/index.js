@@ -23,13 +23,13 @@ const ApiResponse = require('../../../utils/apiResponse/index');
 // });
 
 exports.handleUserLogin = asyncHandler(async (req, res) => {
-  const { phoneNumber, otp, fcmToken='', apnToken='' } = req.body;
+  const { phoneNumber, otp, fcmToken='', apnToken='', email } = req.body;
 
   if (!phoneNumber || !otp) {
     return res.status(400).json(new ApiResponse(400, null, 'Phone number and OTP are required'));
   }
 
-  const result = await loginUser(phoneNumber, otp, fcmToken, apnToken);
+  const result = await loginUser(phoneNumber, otp, fcmToken, apnToken, email);
   const { statusCode, message, data } = result;
 
   return res.status(200).json(new ApiResponse(statusCode, data, message));
