@@ -3,7 +3,8 @@ const {
   GetAllGridConfig,
   GetOneGridConfig,
   DeleteGridConfig,
-  UpdateGridConfig
+  UpdateGridConfig,
+  UpdateGridConfigPosition
 } = require('../../services/home_config');
 const ApiResponse = require('../../utils/apiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
@@ -18,6 +19,8 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
     position = 0,
     backgroundImage = '',
     bannerImage = '',
+    mobileGrid,
+    keyword = '',
   } = req.body;
 
   // Creating the home section record
@@ -29,7 +32,9 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
     isActive,
     position,
     backgroundImage,
-    bannerImage
+    bannerImage,
+    mobileGrid,
+    keyword
   );
 
   if (!response.success) {
@@ -44,7 +49,8 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
 });
 
 exports.handleGetAllGridConfig = asyncHandler(async (req, res) => {
-  const response = await GetAllGridConfig();
+  const { keyword } = req.query;
+  const response = await GetAllGridConfig(keyword);
   if (!response.success) {
     return res
       .status(200)
@@ -93,6 +99,8 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
     position = 0,
     backgroundImage = '',
     bannerImage = '',
+    mobileGrid,
+    keyword = '',
   } = req.body;
 
   const response = await UpdateGridConfig(
@@ -104,7 +112,9 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
     isActive,
     position,
     backgroundImage,
-    bannerImage
+    bannerImage,
+    mobileGrid,
+    keyword
   );
 
   if (!response.success) {
@@ -115,5 +125,19 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
       );
   }
 
+  return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
+});
+
+exports.handleUpdateGridConfigPosition = asyncHandler(async (req, res) => {
+  const { newPosition, oldPosition } = req.body;
+
+  const response = await UpdateGridConfigPosition(req.params.id, newPosition, oldPosition);
+  if (!response.success) {
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(response.statusCode, response.data, response.message, response.success)
+      );
+  }
   return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
 });

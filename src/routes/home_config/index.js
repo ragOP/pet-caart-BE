@@ -8,7 +8,8 @@ const {
   handleGetAllGridConfig,
   handleGetOneGridConfig,
   handleDeleteGridConfig,
-  handleUpdateGridConfig
+  handleUpdateGridConfig,
+  handleUpdateGridConfigPosition,
 } = require('../../controllers/home_config/index.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
@@ -19,7 +20,8 @@ const upload = multer({ storage: storage });
  *   post:
  *     summary: Create a new home section configuration
  *     description: This route allows admin users to create a new home section configuration.
- *     tags: [HomeConfig]
+ *     tags:
+ *       - HomeConfig
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -52,6 +54,13 @@ const upload = multer({ storage: storage });
  *                     type: integer
  *                   rows:
  *                     type: integer
+ *               mobileGrid:
+ *                 type: object
+ *                 properties:
+ *                   columns:
+ *                     type: integer
+ *                   rows:
+ *                     type: integer
  *               isActive:
  *                 type: boolean
  *               position:
@@ -62,10 +71,13 @@ const upload = multer({ storage: storage });
  *               bannerImage:
  *                 type: string
  *                 description: URL of the banner image
+ *               keyword:
+ *                 type: string
+ *                 description: Keyword for the home section
  *     responses:
- *       200:
+ *       '200':
  *         description: Home section created successfully
- *       500:
+ *       '500':
  *         description: Failed to create home section
  */
 
@@ -85,13 +97,22 @@ router.route('/create').post(
  *   get:
  *     summary: Get all grid configurations
  *     description: This route allows admin users to retrieve all grid configurations.
- *     tags: [HomeConfig]
+ *     tags:
+ *       - HomeConfig
+ *     parameters:
+ *       - in: query
+ *         name: keyword
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Keyword to filter grid configurations
  *     responses:
- *       200:
+ *       '200':
  *         description: Grid configurations retrieved successfully
- *       500:
+ *       '500':
  *         description: Failed to retrieve grid configurations
  */
+
 
 router.route('/get-all-grid').get(validateRequest, handleGetAllGridConfig);
 
@@ -147,7 +168,8 @@ router.route('/delete-grid/:id').delete(isAdmin, validateRequest, handleDeleteGr
  *   put:
  *     summary: Update a grid configuration
  *     description: This route allows admin users to update a grid configuration by ID.
- *     tags: [HomeConfig]
+ *     tags:
+ *       - HomeConfig
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -187,6 +209,13 @@ router.route('/delete-grid/:id').delete(isAdmin, validateRequest, handleDeleteGr
  *                     type: integer
  *                   rows:
  *                     type: integer
+ *               mobileGrid:
+ *                 type: object
+ *                 properties:
+ *                   columns:
+ *                     type: integer
+ *                   rows:
+ *                     type: integer
  *               isActive:
  *                 type: boolean
  *               position:
@@ -197,13 +226,56 @@ router.route('/delete-grid/:id').delete(isAdmin, validateRequest, handleDeleteGr
  *               bannerImage:
  *                 type: string
  *                 description: URL of the banner image
+ *               keyword:
+ *                 type: string
+ *                 description: Keyword for the home section
  *     responses:
- *       200:
+ *       '200':
  *         description: Grid configuration updated successfully
- *       500:
+ *       '500':
  *         description: Failed to update grid configuration
  */
 
 router.route('/update-grid/:id').put(isAdmin, validateRequest, handleUpdateGridConfig);
+
+/**
+ * @swagger
+ * /api/home-config/update-grid-position/{id}:
+ *   put:
+ *     summary: Update the position of a grid configuration
+ *     description: This route allows admin users to update the position of a grid configuration by ID.
+ *     tags:
+ *       - HomeConfig
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the grid configuration to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               newPosition:
+ *                 type: integer
+ *                 description: The new position for the grid configuration
+ *               oldPosition:
+ *                 type: integer
+ *                 description: The old position of the grid configuration
+ *     responses:
+ *       '200':
+ *         description: Grid configuration position updated successfully
+ *       '500':
+ *         description: Failed to update grid configuration position
+ */
+
+
+router.route('/update-grid-position/:id').put(isAdmin, validateRequest, handleUpdateGridConfigPosition);
 
 module.exports = router;

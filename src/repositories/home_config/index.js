@@ -16,12 +16,22 @@ exports.remove = async id => {
   return response;
 };
 
-exports.getAll = async () => {
-  const response = await homeSectionModel.find().populate('contentItems.itemId');
+exports.getAll = async keyword => {
+  const payload = {};
+  if (keyword && keyword.length > 0) {
+    payload.keyword = { $regex: keyword, $options: 'i' };
+  }
+  const response = await homeSectionModel.find(payload).populate('contentItems.itemId');
   return response;
 };
 
 exports.get = async id => {
   const response = await homeSectionModel.findById(id).populate('contentItems.itemId');
+  return response;
+};
+
+exports.update_many = async (id, filter, update, newPosition) => {
+  const response = await homeSectionModel.updateMany(filter, update);
+  await homeSectionModel.findByIdAndUpdate(id, { position: newPosition }, { new: true });
   return response;
 };

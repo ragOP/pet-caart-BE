@@ -26,6 +26,12 @@ const homeSectionSchema = new mongoose.Schema(
       rows: { type: Number, required: true },
       columns: { type: Number, required: true },
     },
+    mobileGrid: {
+      rows: { type: Number, required: true },
+      columns: { type: Number, required: true },
+    },
+    keyword: { type: String, required: true },
+    isFeatured: { type: Boolean, default: false },
     isActive: { type: Boolean, default: true },
     position: { type: Number, default: 0 },
   },

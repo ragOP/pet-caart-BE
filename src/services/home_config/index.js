@@ -1,5 +1,12 @@
 const { contentTypeMapping } = require('../../constants/content_mapping');
-const { create, getAll, get, remove, update } = require('../../repositories/home_config');
+const {
+  create,
+  getAll,
+  get,
+  remove,
+  update,
+  update_many,
+} = require('../../repositories/home_config');
 
 exports.CreateNewHomeSection = async (
   title,
@@ -9,7 +16,9 @@ exports.CreateNewHomeSection = async (
   isActive,
   position,
   backgroundImage,
-  bannerImage
+  bannerImage,
+  mobileGrid,
+  keyword
 ) => {
   const payload = {};
   if (title.length > 0) payload.title = title;
@@ -20,6 +29,8 @@ exports.CreateNewHomeSection = async (
   if (position) payload.position = position;
   if (backgroundImage.length > 0) payload.backgroundImage = backgroundImage;
   if (bannerImage.length > 0) payload.bannerImage = bannerImage;
+  if (mobileGrid) payload.mobileGrid = mobileGrid;
+  if (keyword.length > 0) payload.keyword = keyword;
 
   // Creating Mapping for Content Type Reference
   let contentTypeRef = contentTypeMapping[contentType];
@@ -43,8 +54,8 @@ exports.CreateNewHomeSection = async (
   };
 };
 
-exports.GetAllGridConfig = async () => {
-  const response = await getAll();
+exports.GetAllGridConfig = async keyword => {
+  const response = await getAll(keyword);
   if (!response) {
     return {
       statusCode: 500,
@@ -106,7 +117,9 @@ exports.UpdateGridConfig = async (
   isActive,
   position,
   backgroundImage,
-  bannerImage
+  bannerImage,
+  mobileGrid,
+  keyword
 ) => {
   const payload = {};
   if (title.length > 0) payload.title = title;
@@ -117,6 +130,8 @@ exports.UpdateGridConfig = async (
   if (position) payload.position = position;
   if (backgroundImage) payload.backgroundImage = backgroundImage;
   if (bannerImage) payload.bannerImage = bannerImage;
+  if (mobileGrid) payload.mobileGrid = mobileGrid;
+  if (keyword.length > 0) payload.keyword = keyword;
 
   let contentTypeRef = contentTypeMapping[contentType];
 
@@ -135,6 +150,46 @@ exports.UpdateGridConfig = async (
     statusCode: 200,
     data: response,
     message: 'Grid configuration updated successfully',
+    success: true,
+  };
+};
+
+exports.UpdateGridConfigPosition = async (id, newPosition, oldPosition) => {
+  if (newPosition === oldPosition) {
+    return {
+      statusCode: 200,
+      data: null,
+      message: 'No position change detected',
+      success: true,
+    };
+  }
+
+  const filter = {};
+  let response;
+
+  if (newPosition > oldPosition) {
+    filter.position = { $gt: oldPosition, $lte: newPosition };
+    filter._id = { $ne: id };
+    response = await update_many(id, filter, { $inc: { position: -1 } }, newPosition);
+  }
+
+  if (newPosition < oldPosition) {
+    filter.position = { $lt: oldPosition, $gte: newPosition };
+    filter._id = { $ne: id };
+    response = await update_many(id, filter, { $inc: { position: 1 } }, newPosition);
+  }
+  if (!response) {
+    return {
+      statusCode: 500,
+      data: null,
+      message: 'Failed to update grid configuration position',
+      success: false,
+    };
+  }
+  return {
+    statusCode: 200,
+    data: response,
+    message: 'Grid configuration position updated successfully',
     success: true,
   };
 };
