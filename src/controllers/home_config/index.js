@@ -19,7 +19,6 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
     position = 0,
     backgroundImage = '',
     bannerImage = '',
-    mobileGrid,
     keyword = '',
   } = req.body;
 
@@ -33,7 +32,6 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
     position,
     backgroundImage,
     bannerImage,
-    mobileGrid,
     keyword
   );
 
@@ -99,7 +97,6 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
     position = 0,
     backgroundImage = '',
     bannerImage = '',
-    mobileGrid,
     keyword = '',
   } = req.body;
 
@@ -113,7 +110,6 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
     position,
     backgroundImage,
     bannerImage,
-    mobileGrid,
     keyword
   );
 

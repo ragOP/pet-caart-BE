@@ -54,12 +54,9 @@ const upload = multer({ storage: storage });
  *                     type: integer
  *                   rows:
  *                     type: integer
- *               mobileGrid:
- *                 type: object
- *                 properties:
- *                   columns:
+ *                   mobileColumns:
  *                     type: integer
- *                   rows:
+ *                   mobileRows:
  *                     type: integer
  *               isActive:
  *                 type: boolean
@@ -209,12 +206,9 @@ router.route('/delete-grid/:id').delete(isAdmin, validateRequest, handleDeleteGr
  *                     type: integer
  *                   rows:
  *                     type: integer
- *               mobileGrid:
- *                 type: object
- *                 properties:
- *                   columns:
+ *                   mobileColumns:
  *                     type: integer
- *                   rows:
+ *                   mobileRows:
  *                     type: integer
  *               isActive:
  *                 type: boolean

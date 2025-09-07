@@ -25,10 +25,8 @@ const homeSectionSchema = new mongoose.Schema(
     grid: {
       rows: { type: Number, required: true },
       columns: { type: Number, required: true },
-    },
-    mobileGrid: {
-      rows: { type: Number, required: true },
-      columns: { type: Number, required: true },
+      mobileColumns: { type: Number, required: true },
+      mobileRows: { type: Number, required: true },
     },
     keyword: { type: String, required: true },
     isFeatured: { type: Boolean, default: false },

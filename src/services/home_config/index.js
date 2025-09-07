@@ -17,7 +17,6 @@ exports.CreateNewHomeSection = async (
   position,
   backgroundImage,
   bannerImage,
-  mobileGrid,
   keyword
 ) => {
   const payload = {};
@@ -29,7 +28,6 @@ exports.CreateNewHomeSection = async (
   if (position) payload.position = position;
   if (backgroundImage.length > 0) payload.backgroundImage = backgroundImage;
   if (bannerImage.length > 0) payload.bannerImage = bannerImage;
-  if (mobileGrid) payload.mobileGrid = mobileGrid;
   if (keyword.length > 0) payload.keyword = keyword;
 
   // Creating Mapping for Content Type Reference
@@ -118,7 +116,6 @@ exports.UpdateGridConfig = async (
   position,
   backgroundImage,
   bannerImage,
-  mobileGrid,
   keyword
 ) => {
   const payload = {};
@@ -130,7 +127,6 @@ exports.UpdateGridConfig = async (
   if (position) payload.position = position;
   if (backgroundImage) payload.backgroundImage = backgroundImage;
   if (bannerImage) payload.bannerImage = bannerImage;
-  if (mobileGrid) payload.mobileGrid = mobileGrid;
   if (keyword.length > 0) payload.keyword = keyword;
 
   let contentTypeRef = contentTypeMapping[contentType];
