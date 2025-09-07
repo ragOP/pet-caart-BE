@@ -23,10 +23,10 @@ exports.CreateNewHomeSection = async (
   if (contentType) payload.contentType = contentType;
   if (contentItems.length > 0) payload.contentItems = contentItems;
   if (grid) payload.grid = grid;
-  if (isActive) payload.isActive = isActive;
   if (backgroundImage) payload.backgroundImage = backgroundImage;
   if (bannerImage) payload.bannerImage = bannerImage;
   if (keyword) payload.keyword = keyword;
+  payload.isActive = isActive;
 
   // Creating Mapping for Content Type Reference
   let contentTypeRef = contentTypeMapping[contentType];
@@ -137,14 +137,14 @@ exports.UpdateGridConfig = async (
   keyword
 ) => {
   const payload = {};
-  if (title) payload.title = title;
   if (contentType) payload.contentType = contentType;
   if (contentItems.length > 0) payload.contentItems = contentItems;
   if (grid) payload.grid = grid;
-  if (isActive) payload.isActive = isActive;
-  if (backgroundImage) payload.backgroundImage = backgroundImage;
-  if (bannerImage) payload.bannerImage = bannerImage;
   if (keyword) payload.keyword = keyword;
+  payload.isActive = isActive;
+  payload.title = title;
+  payload.backgroundImage = backgroundImage;
+  payload.bannerImage = bannerImage;
 
   let contentTypeRef = contentTypeMapping[contentType];
 

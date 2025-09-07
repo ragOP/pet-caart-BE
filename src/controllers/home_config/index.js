@@ -15,7 +15,7 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
     contentType,
     contentItems = [],
     grid,
-    isActive = false,
+    isActive = true,
     backgroundImage = '',
     bannerImage = '',
     keyword = '',
