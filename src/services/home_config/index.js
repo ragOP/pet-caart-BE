@@ -34,7 +34,7 @@ exports.CreateNewHomeSection = async (
   if (contentTypeRef) payload.contentTypeRef = contentTypeRef;
 
   const checkNumberOfRecordsAvailable = await getAll(keyword);
-  payload.position = checkNumberOfRecordsAvailable.length + 1;
+  payload.position = checkNumberOfRecordsAvailable.length;
 
   const response = await create(payload);
   if (!response) {
