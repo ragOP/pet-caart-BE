@@ -32,6 +32,8 @@ exports.get = async id => {
 
 exports.update_many = async (id, filter, update, newPosition) => {
   const response = await homeSectionModel.updateMany(filter, update);
-  await homeSectionModel.findByIdAndUpdate(id, { position: newPosition }, { new: true });
+  if (id) {
+    await homeSectionModel.findByIdAndUpdate(id, { position: newPosition }, { new: true });
+  }
   return response;
 };

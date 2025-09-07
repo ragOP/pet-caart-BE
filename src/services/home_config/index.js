@@ -14,7 +14,6 @@ exports.CreateNewHomeSection = async (
   contentItems,
   grid,
   isActive,
-  position,
   backgroundImage,
   bannerImage,
   keyword
@@ -25,7 +24,6 @@ exports.CreateNewHomeSection = async (
   if (contentItems.length > 0) payload.contentItems = contentItems;
   if (grid) payload.grid = grid;
   if (isActive) payload.isActive = isActive;
-  if (position) payload.position = position;
   if (backgroundImage) payload.backgroundImage = backgroundImage;
   if (bannerImage) payload.bannerImage = bannerImage;
   if (keyword) payload.keyword = keyword;
@@ -34,6 +32,9 @@ exports.CreateNewHomeSection = async (
   let contentTypeRef = contentTypeMapping[contentType];
 
   if (contentTypeRef) payload.contentTypeRef = contentTypeRef;
+
+  const checkNumberOfRecordsAvailable = await getAll(keyword);
+  payload.position = checkNumberOfRecordsAvailable.length + 1;
 
   const response = await create(payload);
   if (!response) {
@@ -89,7 +90,25 @@ exports.GetOneGridConfig = async id => {
 };
 
 exports.DeleteGridConfig = async id => {
+  const responseCheck = await get(id);
+  if (!responseCheck) {
+    return {
+      statusCode: 404,
+      data: null,
+      message: 'Grid configuration not found',
+      success: false,
+    };
+  }
+  // Store the position of the record to be deleted
+  const positionToBeDeleted = responseCheck.position;
+  // Delete the record
   const response = await remove(id);
+
+  // Decrement positions of records with position greater than the deleted record's position
+  const filter = {};
+  filter.position = { $gt: positionToBeDeleted };
+  filter._id = { $ne: id };
+  await update_many(null, filter, { $inc: { position: -1 } });
   if (!response) {
     return {
       statusCode: 500,
@@ -113,7 +132,6 @@ exports.UpdateGridConfig = async (
   contentItems,
   grid,
   isActive,
-  position,
   backgroundImage,
   bannerImage,
   keyword
@@ -124,7 +142,6 @@ exports.UpdateGridConfig = async (
   if (contentItems.length > 0) payload.contentItems = contentItems;
   if (grid) payload.grid = grid;
   if (isActive) payload.isActive = isActive;
-  if (position) payload.position = position;
   if (backgroundImage) payload.backgroundImage = backgroundImage;
   if (bannerImage) payload.bannerImage = bannerImage;
   if (keyword) payload.keyword = keyword;

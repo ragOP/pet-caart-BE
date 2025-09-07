@@ -60,8 +60,6 @@ const upload = multer({ storage: storage });
  *                     type: integer
  *               isActive:
  *                 type: boolean
- *               position:
- *                 type: integer
  *               backgroundImage:
  *                 type: string
  *                 description: URL of the background image
@@ -212,8 +210,6 @@ router.route('/delete-grid/:id').delete(isAdmin, validateRequest, handleDeleteGr
  *                     type: integer
  *               isActive:
  *                 type: boolean
- *               position:
- *                 type: integer
  *               backgroundImage:
  *                 type: string
  *                 description: URL of the background image

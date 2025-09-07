@@ -16,7 +16,6 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
     contentItems = [],
     grid,
     isActive = false,
-    position = 0,
     backgroundImage = '',
     bannerImage = '',
     keyword = '',
@@ -29,7 +28,6 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
     contentItems,
     grid,
     isActive,
-    position,
     backgroundImage,
     bannerImage,
     keyword
@@ -94,7 +92,6 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
     contentItems = [],
     grid,
     isActive = false,
-    position = 0,
     backgroundImage = '',
     bannerImage = '',
     keyword = '',
@@ -107,7 +104,6 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
     contentItems,
     grid,
     isActive,
-    position,
     backgroundImage,
     bannerImage,
     keyword
