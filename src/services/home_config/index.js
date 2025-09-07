@@ -180,9 +180,20 @@ exports.UpdateGridConfigPosition = async (id, newPosition, oldPosition) => {
   const filter = {};
   let response;
 
+  const checkExisitngRecord = await get(id);
+  if (!checkExisitngRecord) {
+    return {
+      statusCode: 404,
+      data: null,
+      message: 'Grid configuration not found',
+      success: false,
+    };
+  }
+
   if (newPosition > oldPosition) {
     filter.position = { $gt: oldPosition, $lte: newPosition };
     filter._id = { $ne: id };
+    filter.keyword = { $eq: checkExisitngRecord.keyword };
     response = await update_many(id, filter, { $inc: { position: -1 } }, newPosition);
   }
 
