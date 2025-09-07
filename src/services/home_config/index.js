@@ -200,6 +200,7 @@ exports.UpdateGridConfigPosition = async (id, newPosition, oldPosition) => {
   if (newPosition < oldPosition) {
     filter.position = { $lt: oldPosition, $gte: newPosition };
     filter._id = { $ne: id };
+    filter.keyword = { $eq: checkExisitngRecord.keyword };
     response = await update_many(id, filter, { $inc: { position: 1 } }, newPosition);
   }
   if (!response) {
