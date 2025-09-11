@@ -30,7 +30,6 @@
  *         description: Internal server error
  */
 
-
 /**
  * @swagger
  * /api/delivery/track:

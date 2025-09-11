@@ -2,10 +2,10 @@ const puppeteer = require('puppeteer');
 const { sendEmail } = require('../nodeMailer');
 
 exports.generateOrderBill = async (order, user, address) => {
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+   const browser = await puppeteer.launch();
+   const page = await browser.newPage();
 
-  const htmlContent = `
+   const htmlContent = `
     <!DOCTYPE html>
 <html>
   <head>
@@ -163,39 +163,39 @@ exports.generateOrderBill = async (order, user, address) => {
 
   `;
 
-  await page.setContent(htmlContent);
-  const pdfBuffer = await page.pdf({ format: 'A4' });
+   await page.setContent(htmlContent);
+   const pdfBuffer = await page.pdf({ format: 'A4' });
 
-  await browser.close();
+   await browser.close();
 
-  const emailOptions = {
-    from: `"Petcaart 🐾" <${process.env.EMAIL_USER}>`,
-    to: user.email,
-    subject: `Order Received - ${order._id}`,
-    html: htmlContent,
-    attachments: [
-      {
-        filename: `order-${order._id}.pdf`,
-        content: pdfBuffer,
-        contentType: 'application/pdf',
-      },
-    ],
-  };
+   const emailOptions = {
+      from: `"Petcaart 🐾" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: `Order Received - ${order._id}`,
+      html: htmlContent,
+      attachments: [
+         {
+            filename: `order-${order._id}.pdf`,
+            content: pdfBuffer,
+            contentType: 'application/pdf',
+         },
+      ],
+   };
 
-  const emailSent = await sendEmail(emailOptions);
-  if (emailSent.accepted.length > 0) {
-    return {
-      success: true,
-      message: 'Email sent successfully',
+   const emailSent = await sendEmail(emailOptions);
+   if (emailSent.accepted.length > 0) {
+      return {
+         success: true,
+         message: 'Email sent successfully',
+         data: emailSent,
+         statusCode: 200,
+      };
+   }
+
+   return {
+      success: false,
+      message: 'Email not sent',
       data: emailSent,
-      statusCode: 200,
-    };
-  }
-
-  return {
-    success: false,
-    message: 'Email not sent',
-    data: emailSent,
-    statusCode: 500,
-  };
+      statusCode: 500,
+   };
 };

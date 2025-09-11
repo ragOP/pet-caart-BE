@@ -2,9 +2,9 @@ const express = require('express');
 const { isAdmin } = require('../../middleware/auth/adminMiddleware');
 const { validateRequest } = require('../../middleware/validateRequest');
 const {
-  handleContactUs,
-  handleGetAllContactUs,
-  handleUpdateContactUs,
+   handleContactUs,
+   handleGetAllContactUs,
+   handleUpdateContactUs,
 } = require('../../controllers/contactUs');
 const router = express.Router();
 

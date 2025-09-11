@@ -1,8 +1,8 @@
 const express = require('express');
 const {
-  handleUserRegister,
-  handleUserLogin,
-  handleUpdateProfile,
+   handleUserRegister,
+   handleUserLogin,
+   handleUpdateProfile,
 } = require('../../../controllers/auth/user/index');
 const { isAdmin, isUser } = require('../../../middleware/auth/adminMiddleware');
 const { validateMobileAndOTP } = require('../../../validators/auth/index');

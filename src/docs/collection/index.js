@@ -50,7 +50,6 @@
  *         description: Collections fetched successfully
  */
 
-
 /**
  * @swagger
  * /api/collection/{id}:

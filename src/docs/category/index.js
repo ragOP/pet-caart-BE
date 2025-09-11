@@ -79,7 +79,6 @@
  *         description: Category fetched successfully
  */
 
-
 /**
  * @swagger
  * /api/category/{id}:

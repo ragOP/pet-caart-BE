@@ -3,13 +3,13 @@ const multer = require('multer');
 const { storage } = require('../../config/multer.js');
 const { isAdmin } = require('../../middleware/auth/adminMiddleware.js');
 const {
-  handleCreateBlog,
-  handleGetAllBlogs,
-  handleGetSingleBlog,
-  handleDeleteBlog,
-  handleUpdateBlog,
-  handleYouMayLike,
-  handleGetLatestBlogs
+   handleCreateBlog,
+   handleGetAllBlogs,
+   handleGetSingleBlog,
+   handleDeleteBlog,
+   handleUpdateBlog,
+   handleYouMayLike,
+   handleGetLatestBlogs,
 } = require('../../controllers/blog/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index.js');
 const router = express.Router();

@@ -2,9 +2,9 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  handleSubscribe,
-  handleUnsubscribe,
-  handleGetAllSubscribers,
+   handleSubscribe,
+   handleUnsubscribe,
+   handleGetAllSubscribers,
 } = require('../../controllers/news_letter/index.js');
 
 const { isAdmin } = require('../../middleware/auth/adminMiddleware');

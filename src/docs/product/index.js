@@ -71,7 +71,6 @@
  *         description: Product created successfully
  */
 
-
 /**
  * @swagger
  * /api/product:
@@ -201,7 +200,6 @@
  *                     $ref: '#/components/schemas/Product'
  */
 
-
 /**
  * @swagger
  * /api/product/{id}:
@@ -218,7 +216,6 @@
  *       200:
  *         description: Product fetched successfully
  */
-
 
 /**
  * @swagger

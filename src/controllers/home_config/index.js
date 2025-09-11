@@ -1,135 +1,135 @@
 const {
-  CreateNewHomeSection,
-  GetAllGridConfig,
-  GetOneGridConfig,
-  DeleteGridConfig,
-  UpdateGridConfig,
-  UpdateGridConfigPosition
+   CreateNewHomeSection,
+   GetAllGridConfig,
+   GetOneGridConfig,
+   DeleteGridConfig,
+   UpdateGridConfig,
+   UpdateGridConfigPosition,
 } = require('../../services/home_config');
 const ApiResponse = require('../../utils/apiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
 
 exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
-  const {
-    title = '',
-    contentType,
-    contentItems = [],
-    grid,
-    isActive = true,
-    backgroundImage = '',
-    bannerImage = '',
-    keyword = '',
-  } = req.body;
+   const {
+      title = '',
+      contentType,
+      contentItems = [],
+      grid,
+      isActive = true,
+      backgroundImage = '',
+      bannerImage = '',
+      keyword = '',
+   } = req.body;
 
-  // Creating the home section record
-  const response = await CreateNewHomeSection(
-    title,
-    contentType,
-    contentItems,
-    grid,
-    isActive,
-    backgroundImage,
-    bannerImage,
-    keyword
-  );
+   // Creating the home section record
+   const response = await CreateNewHomeSection(
+      title,
+      contentType,
+      contentItems,
+      grid,
+      isActive,
+      backgroundImage,
+      bannerImage,
+      keyword
+   );
 
-  if (!response.success) {
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(response.statusCode, response.data, response.message, response.success)
-      );
-  }
+   if (!response.success) {
+      return res
+         .status(200)
+         .json(
+            new ApiResponse(response.statusCode, response.data, response.message, response.success)
+         );
+   }
 
-  return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
+   return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
 });
 
 exports.handleGetAllGridConfig = asyncHandler(async (req, res) => {
-  const { keyword, isActive } = req.query;
-  const response = await GetAllGridConfig(keyword, isActive);
-  if (!response.success) {
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(response.statusCode, response.data, response.message, response.success)
-      );
-  }
+   const { keyword, isActive } = req.query;
+   const response = await GetAllGridConfig(keyword, isActive);
+   if (!response.success) {
+      return res
+         .status(200)
+         .json(
+            new ApiResponse(response.statusCode, response.data, response.message, response.success)
+         );
+   }
 
-  return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
+   return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
 });
 
 exports.handleGetOneGridConfig = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const response = await GetOneGridConfig(id);
-  if (!response.success) {
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(response.statusCode, response.data, response.message, response.success)
-      );
-  }
+   const { id } = req.params;
+   const response = await GetOneGridConfig(id);
+   if (!response.success) {
+      return res
+         .status(200)
+         .json(
+            new ApiResponse(response.statusCode, response.data, response.message, response.success)
+         );
+   }
 
-  return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
+   return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
 });
 
 exports.handleDeleteGridConfig = asyncHandler(async (req, res) => {
-  const { id } = req.params;
-  const response = await DeleteGridConfig(id);
-  if (!response.success) {
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(response.statusCode, response.data, response.message, response.success)
-      );
-  }
-  return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
+   const { id } = req.params;
+   const response = await DeleteGridConfig(id);
+   if (!response.success) {
+      return res
+         .status(200)
+         .json(
+            new ApiResponse(response.statusCode, response.data, response.message, response.success)
+         );
+   }
+   return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
 });
 
 exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
-  const {
-    title = '',
-    contentType,
-    contentItems = [],
-    grid,
-    isActive = false,
-    backgroundImage = '',
-    bannerImage = '',
-    keyword = '',
-  } = req.body;
+   const {
+      title = '',
+      contentType,
+      contentItems = [],
+      grid,
+      isActive = false,
+      backgroundImage = '',
+      bannerImage = '',
+      keyword = '',
+   } = req.body;
 
-  const response = await UpdateGridConfig(
-    req.params.id,
-    title,
-    contentType,
-    contentItems,
-    grid,
-    isActive,
-    backgroundImage,
-    bannerImage,
-    keyword
-  );
+   const response = await UpdateGridConfig(
+      req.params.id,
+      title,
+      contentType,
+      contentItems,
+      grid,
+      isActive,
+      backgroundImage,
+      bannerImage,
+      keyword
+   );
 
-  if (!response.success) {
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(response.statusCode, response.data, response.message, response.success)
-      );
-  }
+   if (!response.success) {
+      return res
+         .status(200)
+         .json(
+            new ApiResponse(response.statusCode, response.data, response.message, response.success)
+         );
+   }
 
-  return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
+   return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
 });
 
 exports.handleUpdateGridConfigPosition = asyncHandler(async (req, res) => {
-  const { newPosition, oldPosition } = req.body;
+   const { newPosition, oldPosition } = req.body;
 
-  const response = await UpdateGridConfigPosition(req.params.id, newPosition, oldPosition);
-  if (!response.success) {
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(response.statusCode, response.data, response.message, response.success)
-      );
-  }
-  return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
+   const response = await UpdateGridConfigPosition(req.params.id, newPosition, oldPosition);
+   if (!response.success) {
+      return res
+         .status(200)
+         .json(
+            new ApiResponse(response.statusCode, response.data, response.message, response.success)
+         );
+   }
+   return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
 });

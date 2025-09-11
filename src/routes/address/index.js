@@ -1,10 +1,10 @@
 const express = require('express');
 const { isUser } = require('../../middleware/auth/adminMiddleware');
 const {
-  handleCreateAddress,
-  handleUpdateAddress,
-  handleDeleteAddress,
-  handleGetAllSavedAddresses,
+   handleCreateAddress,
+   handleUpdateAddress,
+   handleDeleteAddress,
+   handleGetAllSavedAddresses,
 } = require('../../controllers/address');
 const { validateRequest } = require('../../middleware/validateRequest');
 const router = express.Router();

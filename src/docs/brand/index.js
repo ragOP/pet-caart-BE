@@ -71,7 +71,6 @@
  *         description: Brand fetched successfully
  */
 
-
 /**
  * @swagger
  * /api/brand/{id}:

@@ -1,9 +1,9 @@
 const express = require('express');
 const {
-  handleCreateProduct,
-  handleGetAllProducts,
-  handleGetSingleProduct,
-  handleUpdateProduct,
+   handleCreateProduct,
+   handleGetAllProducts,
+   handleGetSingleProduct,
+   handleUpdateProduct,
 } = require('../../controllers/product/index.js');
 const { validateCreateProduct } = require('../../validators/product/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index');
@@ -14,24 +14,24 @@ const router = express.Router();
 const upload = multer({ storage: storage });
 
 router.route('/').post(
-  isAdmin,
-  upload.fields([
-    { name: 'images', maxCount: 20 },
-    { name: 'variantImages', maxCount: 100 },
-  ]),
-  validateRequest,
-  handleCreateProduct
+   isAdmin,
+   upload.fields([
+      { name: 'images', maxCount: 20 },
+      { name: 'variantImages', maxCount: 100 },
+   ]),
+   validateRequest,
+   handleCreateProduct
 );
 router.route('/').get(handleGetAllProducts);
 router.route('/:id').get(handleGetSingleProduct);
 router.route('/:id').put(
-  upload.fields([
-    { name: 'images', maxCount: 20 },
-    { name: 'variantImages', maxCount: 100 },
-  ]),
-  isAdmin,
-  validateRequest,
-  handleUpdateProduct
+   upload.fields([
+      { name: 'images', maxCount: 20 },
+      { name: 'variantImages', maxCount: 100 },
+   ]),
+   isAdmin,
+   validateRequest,
+   handleUpdateProduct
 );
 
 module.exports = router;

@@ -97,7 +97,6 @@
  *         description: Internal server error
  */
 
-
 /**
  * @swagger
  * /api/blog/get-single-blog/{id}:
@@ -122,7 +121,6 @@
  *       404:
  *         description: Blog not found
  */
-
 
 /**
  * @swagger
@@ -150,7 +148,6 @@
  *       404:
  *         description: Blog not found
  */
-
 
 /**
  * @swagger

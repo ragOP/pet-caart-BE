@@ -7,11 +7,11 @@ const { PORT, MONGODB_URI } = process.env;
 
 // Check if required environment variables are set
 if (!PORT || !MONGODB_URI) {
-  console.error('Missing required environment variables: PORT, MONGODB_URI', {
-    PORT,
-    MONGODB_URI,
-  });
-  process.exit(1);
+   console.error('Missing required environment variables: PORT, MONGODB_URI', {
+      PORT,
+      MONGODB_URI,
+   });
+   process.exit(1);
 }
 
 // Connect to MongoDB
@@ -21,5 +21,5 @@ connectToDatabase(MONGODB_URI);
 const server = http.createServer(app);
 
 server.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+   console.log(`Server is running on port ${PORT}`);
 });

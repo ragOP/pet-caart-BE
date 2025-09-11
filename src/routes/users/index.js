@@ -1,8 +1,8 @@
 const express = require('express');
 const {
-  handleAllUsers,
-  handleGetUserById,
-  handleUpdateUser,
+   handleAllUsers,
+   handleGetUserById,
+   handleUpdateUser,
 } = require('../../controllers/auth/user/index');
 const { isAdmin } = require('../../middleware/auth/adminMiddleware');
 const { validateRequest } = require('../../middleware/validateRequest/index');

@@ -32,7 +32,6 @@
  *         description: Notification sent successfully
  */
 
-
 /**
  * @swagger
  * /api/ios:

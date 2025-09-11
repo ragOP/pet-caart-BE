@@ -2,8 +2,8 @@ const express = require('express');
 const router = express.Router();
 
 const {
-  checkExpectedDelivery,
-  handleTrackDelivery,
+   checkExpectedDelivery,
+   handleTrackDelivery,
 } = require('../../controllers/expected_delivery/index');
 const { validateRequest } = require('../../middleware/validateRequest');
 

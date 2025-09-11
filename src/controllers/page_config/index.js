@@ -3,7 +3,7 @@ const {
    CreateNewPageConfig,
    GetAllPageConfigs,
    GetGridByKey,
-   UpdatePageConfig
+   UpdatePageConfig,
 } = require('../../services/page_config');
 const { asyncHandler } = require('../../utils/asyncHandler');
 

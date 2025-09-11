@@ -3,9 +3,9 @@ const multer = require('multer');
 const { storage } = require('../../../config/multer.js');
 const { isAdmin } = require('../../../middleware/auth/adminMiddleware.js');
 const {
-  handleCreateProductBanner,
-  handleGetProductBanner,
-  handleUpdateProductBanner,
+   handleCreateProductBanner,
+   handleGetProductBanner,
+   handleUpdateProductBanner,
 } = require('../../../controllers/configuration/productBanner/index.js');
 const router = express.Router();
 const upload = multer({ storage: storage });

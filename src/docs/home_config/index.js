@@ -60,7 +60,6 @@
  *         description: Failed to create home section
  */
 
-
 /**
  * @swagger
  * /api/home-config/get-all-grid:

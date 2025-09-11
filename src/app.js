@@ -19,25 +19,25 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Set up logging with Morgan
 if (process.env.NODE_ENV === 'development') {
-  app.use(morgan('dev'));
+   app.use(morgan('dev'));
 } else {
-  const logDir = path.join(__dirname, 'logs');
-  if (!fs.existsSync(logDir)) {
-    fs.mkdirSync(logDir);
-  }
-  const accessLogStream = logrotate({
-    file: path.join(logDir, 'access.log'),
-    size: '10M',
-    keep: 3,
-    compress: true,
-  });
+   const logDir = path.join(__dirname, 'logs');
+   if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir);
+   }
+   const accessLogStream = logrotate({
+      file: path.join(logDir, 'access.log'),
+      size: '10M',
+      keep: 3,
+      compress: true,
+   });
 
-  app.use(morgan('combined', { stream: accessLogStream }));
+   app.use(morgan('combined', { stream: accessLogStream }));
 }
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('Welcome to the Pet Caart API');
+   res.send('Welcome to the Pet Caart API');
 });
 
 app.use('/api/users', require('./routes/users/index'));
@@ -74,9 +74,9 @@ app.use('/api/page-config', require('./routes/page_config/index'));
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {
-  return res
-    .status(200)
-    .json(new ApiResponse(404, null, `Route ${req.originalUrl} not found`, null));
+   return res
+      .status(200)
+      .json(new ApiResponse(404, null, `Route ${req.originalUrl} not found`, null));
 });
 
 module.exports = app;

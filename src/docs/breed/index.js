@@ -47,8 +47,8 @@
  */
 
 router
-  .route('/')
-  .post(isAdmin, upload.array('images'), validateCreateBreed, validateRequest, handleCreateBreed);
+   .route('/')
+   .post(isAdmin, upload.array('images'), validateCreateBreed, validateRequest, handleCreateBreed);
 
 /**
  * @swagger
@@ -88,7 +88,6 @@ router
  *         description: Breeds fetched successfully
  */
 
-
 /**
  * @swagger
  * /api/breed/{id}:
@@ -107,7 +106,6 @@ router
  *       200:
  *         description: Breed fetched successfully
  */
-
 
 /**
  * @swagger

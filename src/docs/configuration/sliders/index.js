@@ -32,7 +32,6 @@
  *         description: Slider created successfully
  */
 
-
 /**
  * @swagger
  * /api/sliders/slider:
@@ -53,7 +52,6 @@
  *       200:
  *         description: Sliders fetched successfully
  */
-
 
 /**
  * @swagger
@@ -93,7 +91,6 @@
  *         description: Slider updated successfully
  */
 
-
 /**
  * @swagger
  * /api/sliders/slider/{id}:
@@ -129,7 +126,6 @@
  *       200:
  *         description: Slider deleted successfully
  */
-
 
 /**
  * @swagger

@@ -104,7 +104,6 @@
  *         description: Internal server error
  */
 
-
 /**
  * @swagger
  * /api/page-config/update-page-config/{id}:

@@ -1,13 +1,13 @@
 const express = require('express');
 const router = express.Router();
 const {
-  createOrder,
-  getOrderById,
-  getAllUserOrders,
-  getAllOrders,
-  getOrderByIdAdmin,
-  updateOrderStatus,
-  createShipRocketOrder,
+   createOrder,
+   getOrderById,
+   getAllUserOrders,
+   getAllOrders,
+   getOrderByIdAdmin,
+   updateOrderStatus,
+   createShipRocketOrder,
 } = require('../../controllers/orders');
 const { validateRequest } = require('../../middleware/validateRequest');
 const { isUser, isAdmin } = require('../../middleware/auth/adminMiddleware');

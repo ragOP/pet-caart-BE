@@ -1,9 +1,9 @@
 const express = require('express');
 const {
-  handleCreateCollection,
-  handleGetAllCollections,
-  handleGetSingleCollection,
-  handleUpdateCollection,
+   handleCreateCollection,
+   handleGetAllCollections,
+   handleGetSingleCollection,
+   handleUpdateCollection,
 } = require('../../controllers/collection/index.js');
 const { validateCreateCollection } = require('../../validators/collection/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index');
@@ -14,14 +14,14 @@ const router = express.Router();
 
 const upload = multer({ storage: storage });
 router
-  .route('/')
-  .post(
-    isAdmin,
-    upload.array('images'),
-    validateCreateCollection,
-    validateRequest,
-    handleCreateCollection
-  );
+   .route('/')
+   .post(
+      isAdmin,
+      upload.array('images'),
+      validateCreateCollection,
+      validateRequest,
+      handleCreateCollection
+   );
 router.route('/').get(handleGetAllCollections);
 router.route('/:id').get(isAdmin, handleGetSingleCollection);
 router.route('/:id').put(isAdmin, upload.single('images'), handleUpdateCollection);

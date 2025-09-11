@@ -1,7 +1,7 @@
 const express = require('express');
 const {
-  sendNotificationtoAllUsers,
-  sendNotificationToIosUser,
+   sendNotificationtoAllUsers,
+   sendNotificationToIosUser,
 } = require('../../controllers/send_notification');
 const { isAdmin } = require('../../middleware/auth/adminMiddleware');
 const router = express.Router();
