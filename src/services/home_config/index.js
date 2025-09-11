@@ -34,7 +34,7 @@ exports.CreateNewHomeSection = async (
 
    if (contentTypeRef) payload.contentTypeRef = contentTypeRef;
 
-   const checkNumberOfRecordsAvailable = await getAll(keyword);
+   const checkNumberOfRecordsAvailable = await getAll({ keyword });
    payload.position = checkNumberOfRecordsAvailable.length;
 
    const response = await create(payload);
@@ -133,7 +133,7 @@ exports.DeleteGridConfig = async id => {
       const existingHomeSetting = await getByPageKey(responseCheck.keyword);
       if (existingHomeSetting) {
          existingHomeSetting.sections = existingHomeSetting.sections.filter(
-            section => section.id !== id
+            section => section.id !== null
          );
          await existingHomeSetting.save();
       }
@@ -260,15 +260,24 @@ exports.UpdateGridConfigStatus = async (id, isActive) => {
       };
    }
    const response = await update(id, payload);
+
    // Remove the section from PageConfig if it exists and is being deactivated
-   if (response) {
-      const existingHomeSetting = await getByPageKey(checkExisitngRecord.keyword);
-      if (existingHomeSetting) {
-         existingHomeSetting.sections = existingHomeSetting.sections.filter(
-            section => section.id !== id
-         );
-         await existingHomeSetting.save();
-      }
+   const existingHomeSetting = await getByPageKey(checkExisitngRecord.keyword);
+   if (isActive === false && response && existingHomeSetting) {
+      existingHomeSetting.sections = existingHomeSetting.sections.filter(
+         section => section.id !== null
+      );
+      await existingHomeSetting.save();
+   } else if (isActive === true && response && existingHomeSetting) {
+      const newSection = {
+         id: response._id,
+         type: 'grid',
+         key: 'grid',
+         position: existingHomeSetting.sections.length + 1,
+      };
+      const updatedSections = [...existingHomeSetting.sections, newSection];
+      existingHomeSetting.sections = updatedSections;
+      await existingHomeSetting.save();
    }
    if (!response) {
       return {
