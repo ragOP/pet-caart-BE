@@ -53,8 +53,12 @@ exports.CreateNewHomeSection = async (
   };
 };
 
-exports.GetAllGridConfig = async keyword => {
-  const response = await getAll(keyword);
+exports.GetAllGridConfig = async (keyword, isActive) => {
+  const filter = {};
+  if (keyword) filter.keyword = keyword;
+  if (isActive) filter.isActive = isActive;
+
+  const response = await getAll(filter);
   if (!response) {
     return {
       statusCode: 500,

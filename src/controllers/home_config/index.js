@@ -45,8 +45,8 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
 });
 
 exports.handleGetAllGridConfig = asyncHandler(async (req, res) => {
-  const { keyword } = req.query;
-  const response = await GetAllGridConfig(keyword);
+  const { keyword, isActive } = req.query;
+  const response = await GetAllGridConfig(keyword, isActive);
   if (!response.success) {
     return res
       .status(200)

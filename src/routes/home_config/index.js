@@ -101,6 +101,11 @@ router.route('/create').post(
  *         schema:
  *           type: string
  *         description: Keyword to filter grid configurations
+ *       - in: query
+ *         name: isActive
+ *         required: false
+ *         schema:
+ *           type: boolean
  *     responses:
  *       '200':
  *         description: Grid configurations retrieved successfully
