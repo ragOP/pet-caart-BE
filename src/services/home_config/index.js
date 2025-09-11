@@ -7,6 +7,7 @@ const {
    update,
    update_many,
 } = require('../../repositories/home_config');
+const { getByPageKey } = require('../../repositories/page_config');
 
 exports.CreateNewHomeSection = async (
    title,
@@ -44,6 +45,19 @@ exports.CreateNewHomeSection = async (
          message: 'Failed to create home section',
          success: false,
       };
+   }
+   // Add the new section to PageConfig
+   const existingHomeSetting = await getByPageKey(keyword);
+   if (existingHomeSetting) {
+      const newSection = {
+         id: response._id,
+         type: 'grid',
+         key: 'grid',
+         position: existingHomeSetting.sections.length + 1,
+      };
+      const updatedSections = [...existingHomeSetting.sections, newSection];
+      existingHomeSetting.sections = updatedSections;
+      await existingHomeSetting.save();
    }
    return {
       statusCode: 200,
@@ -113,6 +127,17 @@ exports.DeleteGridConfig = async id => {
    filter.position = { $gt: positionToBeDeleted };
    filter._id = { $ne: id };
    await update_many(null, filter, { $inc: { position: -1 } });
+
+   // Remove the section from PageConfig if it exists
+   if (response) {
+      const existingHomeSetting = await getByPageKey(responseCheck.keyword);
+      if (existingHomeSetting) {
+         existingHomeSetting.sections = existingHomeSetting.sections.filter(
+            section => section.id !== id
+         );
+         await existingHomeSetting.save();
+      }
+   }
    if (!response) {
       return {
          statusCode: 500,
@@ -219,6 +244,44 @@ exports.UpdateGridConfigPosition = async (id, newPosition, oldPosition) => {
       statusCode: 200,
       data: response,
       message: 'Grid configuration position updated successfully',
+      success: true,
+   };
+};
+
+exports.UpdateGridConfigStatus = async (id, isActive) => {
+   const payload = { isActive };
+   const checkExisitngRecord = await get(id);
+   if (!checkExisitngRecord) {
+      return {
+         statusCode: 404,
+         data: null,
+         message: 'Grid configuration not found',
+         success: false,
+      };
+   }
+   const response = await update(id, payload);
+   // Remove the section from PageConfig if it exists and is being deactivated
+   if (response) {
+      const existingHomeSetting = await getByPageKey(checkExisitngRecord.keyword);
+      if (existingHomeSetting) {
+         existingHomeSetting.sections = existingHomeSetting.sections.filter(
+            section => section.id !== id
+         );
+         await existingHomeSetting.save();
+      }
+   }
+   if (!response) {
+      return {
+         statusCode: 500,
+         data: null,
+         message: 'Failed to update grid configuration status',
+         success: false,
+      };
+   }
+   return {
+      statusCode: 200,
+      data: response,
+      message: 'Grid configuration status updated successfully',
       success: true,
    };
 };

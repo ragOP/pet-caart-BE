@@ -10,6 +10,7 @@ const {
    handleDeleteGridConfig,
    handleUpdateGridConfig,
    handleUpdateGridConfigPosition,
+   handleUpdateGridConfigStatus,
 } = require('../../controllers/home_config/index.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
@@ -31,5 +32,6 @@ router.route('/update-grid/:id').put(isAdmin, validateRequest, handleUpdateGridC
 router
    .route('/update-grid-position/:id')
    .put(isAdmin, validateRequest, handleUpdateGridConfigPosition);
+router.route('/update-status/:id').put(isAdmin, validateRequest, handleUpdateGridConfigStatus);
 
 module.exports = router;

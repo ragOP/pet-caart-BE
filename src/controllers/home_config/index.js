@@ -5,6 +5,7 @@ const {
    DeleteGridConfig,
    UpdateGridConfig,
    UpdateGridConfigPosition,
+   UpdateGridConfigStatus,
 } = require('../../services/home_config');
 const ApiResponse = require('../../utils/apiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
@@ -124,6 +125,21 @@ exports.handleUpdateGridConfigPosition = asyncHandler(async (req, res) => {
    const { newPosition, oldPosition } = req.body;
 
    const response = await UpdateGridConfigPosition(req.params.id, newPosition, oldPosition);
+   if (!response.success) {
+      return res
+         .status(200)
+         .json(
+            new ApiResponse(response.statusCode, response.data, response.message, response.success)
+         );
+   }
+   return res.status(200).json(new ApiResponse(200, response.data, response.message, true));
+});
+
+exports.handleUpdateGridConfigStatus = asyncHandler(async (req, res) => {
+   const { isActive } = req.body;
+   const { id } = req.params;
+
+   const response = await UpdateGridConfigStatus(id, isActive);
    if (!response.success) {
       return res
          .status(200)

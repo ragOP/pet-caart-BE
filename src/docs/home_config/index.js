@@ -236,3 +236,38 @@
  *       '500':
  *         description: Failed to update grid configuration position
  */
+
+/**
+ * @swagger
+ * /api/home-config/update-status/{id}:
+ *   put:
+ *     summary: Update the active status of a grid configuration
+ *     description: This route allows admin users to update the active status of a grid configuration by ID.
+ *     tags:
+ *       - HomeConfig
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the grid configuration to update.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isActive:
+ *                 type: boolean
+ *                 description: The new active status for the grid configuration
+ *     responses:
+ *       '200':
+ *         description: Grid configuration status updated successfully
+ *
+ *       '500':
+ *         description: Failed to update grid configuration status
+ */
