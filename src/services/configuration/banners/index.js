@@ -13,34 +13,36 @@ exports.createBanner = async (type, image) => {
          data: null,
       };
    }
+   
+   // Removed image dimension validation temporarily as per request
+   
+   // const resolutionMap = {
+   //    web: { width: 1448, height: 250 },
+   //    app: { width: 343, height: 120 },
+   //    mobile: { width: 343, height: 120 },
+   //    tablet: { width: 696, height: 200 },
+   // };
 
-   const resolutionMap = {
-      web: { width: 1448, height: 250 },
-      app: { width: 343, height: 120 },
-      mobile: { width: 343, height: 120 },
-      tablet: { width: 696, height: 200 },
-   };
+   // const expected = resolutionMap[type];
 
-   const expected = resolutionMap[type];
+   // if (!expected) {
+   //    return {
+   //       success: false,
+   //       message: 'Invalid banner type',
+   //       data: null,
+   //    };
+   // }
 
-   if (!expected) {
-      return {
-         success: false,
-         message: 'Invalid banner type',
-         data: null,
-      };
-   }
+   // const buffer = fs.readFileSync(image.path);
+   // const { width, height } = imageSize(buffer);
 
-   const buffer = fs.readFileSync(image.path);
-   const { width, height } = imageSize(buffer);
-
-   if (width !== expected.width || height !== expected.height) {
-      return {
-         success: false,
-         message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
-         data: null,
-      };
-   }
+   // if (width !== expected.width || height !== expected.height) {
+   //    return {
+   //       success: false,
+   //       message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
+   //       data: null,
+   //    };
+   // }
 
    const checkExistingBanner = await bannerModel.findOne({ type });
    if (checkExistingBanner) {
@@ -80,33 +82,33 @@ exports.updateBanner = async (type, image, id) => {
       };
    }
 
-   const resolutionMap = {
-      web: { width: 1448, height: 250 },
-      app: { width: 343, height: 120 },
-      mobile: { width: 343, height: 120 },
-      tablet: { width: 696, height: 200 },
-   };
+   // const resolutionMap = {
+   //    web: { width: 1448, height: 250 },
+   //    app: { width: 343, height: 120 },
+   //    mobile: { width: 343, height: 120 },
+   //    tablet: { width: 696, height: 200 },
+   // };
 
-   const expected = resolutionMap[type];
+   // const expected = resolutionMap[type];
 
-   if (!expected) {
-      return {
-         success: false,
-         message: 'Invalid banner type',
-         data: null,
-      };
-   }
+   // if (!expected) {
+   //    return {
+   //       success: false,
+   //       message: 'Invalid banner type',
+   //       data: null,
+   //    };
+   // }
 
-   const buffer = fs.readFileSync(image.path);
-   const { width, height } = imageSize(buffer);
+   // const buffer = fs.readFileSync(image.path);
+   // const { width, height } = imageSize(buffer);
 
-   if (width !== expected.width || height !== expected.height) {
-      return {
-         success: false,
-         message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
-         data: null,
-      };
-   }
+   // if (width !== expected.width || height !== expected.height) {
+   //    return {
+   //       success: false,
+   //       message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
+   //       data: null,
+   //    };
+   // }
 
    const imageUrl = await uploadSingleFile(image.path);
    const banner = await bannerModel.findOne({
