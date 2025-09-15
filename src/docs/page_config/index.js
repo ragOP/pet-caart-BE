@@ -37,6 +37,10 @@
  *                       type: string
  *                       description: Section key (validated against PAGE_ALLOWED_KEYS for the given pageKey)
  *                       example: main_banner
+ *                     label:
+ *                       type: string
+ *                       description: Optional label for the section
+ *                       example: "Main Banner"
  *                     type:
  *                       type: string
  *                       enum: [static, grid]
@@ -144,6 +148,10 @@
  *                     key:
  *                       type: string
  *                       example: main_banner
+ *                     label:
+ *                       type: string
+ *                       description: Optional label for the section
+ *                       example: "Main Banner"
  *                     type:
  *                       type: string
  *                       enum: [static, grid]

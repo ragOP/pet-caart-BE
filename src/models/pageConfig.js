@@ -14,6 +14,7 @@ const SectionSchema = new mongoose.Schema({
          message: props => `${props.value} is not allowed for page type ${props.instance.pageKey}`,
       },
    },
+   label: { type: String },
    type: {
       type: String,
       enum: ['static', 'grid'],

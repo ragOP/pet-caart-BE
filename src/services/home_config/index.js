@@ -7,7 +7,7 @@ const {
    update,
    update_many,
 } = require('../../repositories/home_config');
-const { getByPageKey } = require('../../repositories/page_config');
+const { getByPageKey, getByPageKeyWithoutPopulate } = require('../../repositories/page_config');
 
 exports.CreateNewHomeSection = async (
    title,
@@ -53,6 +53,7 @@ exports.CreateNewHomeSection = async (
          id: response._id,
          type: 'grid',
          key: 'grid',
+         label: response.title || `Grid Section ${existingHomeSetting.sections.length + 1}`,
          position: existingHomeSetting.sections.length + 1,
       };
       const updatedSections = [...existingHomeSetting.sections, newSection];
@@ -119,6 +120,13 @@ exports.DeleteGridConfig = async id => {
    }
    // Store the position of the record to be deleted
    const positionToBeDeleted = responseCheck.position;
+   // Get existing home setting to update sections later
+   let existingHomeSetting = await getByPageKeyWithoutPopulate(responseCheck.keyword);
+   // Find the position of the section to be deleted
+   const pagePositionToBeDeleted = existingHomeSetting.sections.find(
+      section => section?.id == id
+   )?.position;
+
    // Delete the record
    const response = await remove(id);
 
@@ -129,14 +137,23 @@ exports.DeleteGridConfig = async id => {
    await update_many(null, filter, { $inc: { position: -1 } });
 
    // Remove the section from PageConfig if it exists
-   if (response) {
-      const existingHomeSetting = await getByPageKey(responseCheck.keyword);
-      if (existingHomeSetting) {
-         existingHomeSetting.sections = existingHomeSetting.sections.filter(
-            section => section.id !== null
-         );
-         await existingHomeSetting.save();
-      }
+   if (response && existingHomeSetting) {
+      existingHomeSetting.sections = existingHomeSetting.sections.filter(
+         section => section.id != id
+      );
+      // Save the updated sections first to get the correct length
+      existingHomeSetting = await existingHomeSetting.save();
+
+      // Update the remaining sections' positions
+      const updatedSections = existingHomeSetting.sections.map(section => {
+         if (section.position > pagePositionToBeDeleted) {
+            return { ...section.toObject(), position: section.position - 1 };
+         }
+         return section;
+      });
+
+      existingHomeSetting.sections = updatedSections;
+      await existingHomeSetting.save();
    }
    if (!response) {
       return {
@@ -148,7 +165,7 @@ exports.DeleteGridConfig = async id => {
    }
    return {
       statusCode: 200,
-      data: response,
+      data: 'ok',
       message: 'Grid configuration deleted successfully',
       success: true,
    };
@@ -273,6 +290,7 @@ exports.UpdateGridConfigStatus = async (id, isActive) => {
          id: response._id,
          type: 'grid',
          key: 'grid',
+         label: response.title || `Grid Section ${existingHomeSetting.sections.length + 1}`,
          position: existingHomeSetting.sections.length + 1,
       };
       const updatedSections = [...existingHomeSetting.sections, newSection];

@@ -20,6 +20,11 @@ exports.getByPageKey = async pageKey => {
    return response;
 };
 
+exports.getByPageKeyWithoutPopulate = async pageKey => {
+   const response = await pageConfig.findOne({ pageKey });
+   return response;
+};
+
 exports.getAll = async () => {
    const response = await pageConfig.find().populate('sections.id');
    return response;
