@@ -12,33 +12,33 @@ exports.createSlider = async (image, link, isActive, type) => {
       };
    }
 
-   const resolutionMap = {
-      web: { width: 450, height: 250 },
-      app: { width: 144, height: 80 },
-      mobile: { width: 144, height: 80 },
-      tablet: { width: 324, height: 180 },
-   };
+   // const resolutionMap = {
+   //    web: { width: 450, height: 250 },
+   //    app: { width: 144, height: 80 },
+   //    mobile: { width: 144, height: 80 },
+   //    tablet: { width: 324, height: 180 },
+   // };
 
-   const expected = resolutionMap[type];
+   // const expected = resolutionMap[type];
 
-   if (!expected) {
-      return {
-         success: false,
-         message: 'Invalid banner type',
-         data: null,
-      };
-   }
+   // if (!expected) {
+   //    return {
+   //       success: false,
+   //       message: 'Invalid banner type',
+   //       data: null,
+   //    };
+   // }
 
-   const buffer = fs.readFileSync(image.path);
-   const { width, height } = imageSize(buffer);
+   // const buffer = fs.readFileSync(image.path);
+   // const { width, height } = imageSize(buffer);
 
-   if (width !== expected.width || height !== expected.height) {
-      return {
-         success: false,
-         message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
-         data: null,
-      };
-   }
+   // if (width !== expected.width || height !== expected.height) {
+   //    return {
+   //       success: false,
+   //       message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
+   //       data: null,
+   //    };
+   // }
 
    const imageUrl = await uploadSingleFile(image.path);
    const slider = await sliderModel.findOne({});
@@ -106,35 +106,35 @@ exports.updateSlider = async (body, image, id) => {
       };
    }
 
-   if (image) {
-      const resolutionMap = {
-         web: { width: 450, height: 250 },
-         app: { width: 144, height: 80 },
-         mobile: { width: 144, height: 80 },
-         tablet: { width: 324, height: 180 },
-      };
+   // if (image) {
+   //    const resolutionMap = {
+   //       web: { width: 450, height: 250 },
+   //       app: { width: 144, height: 80 },
+   //       mobile: { width: 144, height: 80 },
+   //       tablet: { width: 324, height: 180 },
+   //    };
 
-      const expected = resolutionMap[body.type];
+   //    const expected = resolutionMap[body.type];
 
-      if (!expected) {
-         return {
-            success: false,
-            message: 'Invalid banner type',
-            data: null,
-         };
-      }
+   //    if (!expected) {
+   //       return {
+   //          success: false,
+   //          message: 'Invalid banner type',
+   //          data: null,
+   //       };
+   //    }
 
-      const buffer = fs.readFileSync(image.path);
-      const { width, height } = imageSize(buffer);
+   //    const buffer = fs.readFileSync(image.path);
+   //    const { width, height } = imageSize(buffer);
 
-      if (width !== expected.width || height !== expected.height) {
-         return {
-            success: false,
-            message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
-            data: null,
-         };
-      }
-   }
+   //    if (width !== expected.width || height !== expected.height) {
+   //       return {
+   //          success: false,
+   //          message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
+   //          data: null,
+   //       };
+   //    }
+   // }
 
    const slider = await sliderModel.findOne({});
    if (!slider) {
