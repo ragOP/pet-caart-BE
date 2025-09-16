@@ -13,7 +13,6 @@ const homeSectionSchema = new mongoose.Schema(
             itemId: {
                type: mongoose.Schema.Types.ObjectId,
                refPath: 'contentTypeRef',
-               required: true,
             },
             link: { type: String, required: true },
             imageUrl: { type: String, required: true },
