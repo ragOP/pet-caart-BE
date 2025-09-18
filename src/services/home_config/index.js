@@ -11,6 +11,7 @@ const { getByPageKey, getByPageKeyWithoutPopulate } = require('../../repositorie
 
 exports.CreateNewHomeSection = async (
    title,
+   isTitleShow,
    contentType,
    contentItems,
    grid,
@@ -28,6 +29,7 @@ exports.CreateNewHomeSection = async (
    if (bannerImage) payload.bannerImage = bannerImage;
    if (keyword) payload.keyword = keyword;
    payload.isActive = isActive;
+   payload.isTitleShow = isTitleShow;
 
    // Creating Mapping for Content Type Reference
    let contentTypeRef = contentTypeMapping[contentType];
@@ -174,6 +176,7 @@ exports.DeleteGridConfig = async id => {
 exports.UpdateGridConfig = async (
    id,
    title,
+   isTitleShow,
    contentType,
    contentItems,
    grid,
@@ -191,6 +194,7 @@ exports.UpdateGridConfig = async (
    payload.title = title;
    payload.backgroundImage = backgroundImage;
    payload.bannerImage = bannerImage;
+   payload.isTitleShow = isTitleShow;
 
    let contentTypeRef = contentTypeMapping[contentType];
 

@@ -17,6 +17,8 @@
  *             properties:
  *               title:
  *                 type: string
+ *               isTitleShow:
+ *                 type: boolean
  *               contentType:
  *                 type: string
  *                 enum: [product, category, subCategory, collection]
@@ -157,6 +159,8 @@
  *             properties:
  *               title:
  *                 type: string
+ *               isTitleShow:
+ *                 type: boolean
  *               contentType:
  *                 type: string
  *                 enum: [product, category, subCategory, collection]

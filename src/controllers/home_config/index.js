@@ -13,6 +13,7 @@ const { asyncHandler } = require('../../utils/asyncHandler');
 exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
    const {
       title = '',
+      isTitleShow = true,
       contentType,
       contentItems = [],
       grid,
@@ -25,6 +26,7 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
    // Creating the home section record
    const response = await CreateNewHomeSection(
       title,
+      isTitleShow,
       contentType,
       contentItems,
       grid,
@@ -89,6 +91,7 @@ exports.handleDeleteGridConfig = asyncHandler(async (req, res) => {
 exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
    const {
       title = '',
+      isTitleShow = true,
       contentType,
       contentItems = [],
       grid,
@@ -101,6 +104,7 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
    const response = await UpdateGridConfig(
       req.params.id,
       title,
+      isTitleShow,
       contentType,
       contentItems,
       grid,

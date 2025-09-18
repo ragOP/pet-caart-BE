@@ -3,6 +3,7 @@ const { mongoose } = require('mongoose');
 const homeSectionSchema = new mongoose.Schema(
    {
       title: { type: String },
+      isTitleShow: { type: Boolean, default: true },
       contentType: {
          type: String,
          enum: ['product', 'category', 'subCategory', 'collection'],
