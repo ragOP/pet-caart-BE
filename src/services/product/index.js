@@ -50,10 +50,11 @@ exports.getAllProducts = async ({
    startDate,
    endDate,
    maxPrice,
-   isEverydayEssential,
+   isVeg,
+   lifeStage,
+   breedSize,
+   productType,
    isBestSeller,
-   newleyLaunched,
-   isAddToCart,
    categorySlug,
    subCategorySlug,
    brandSlug,
@@ -83,20 +84,24 @@ exports.getAllProducts = async ({
       filters.price = { $lt: maxPrice };
    }
 
-   if (isEverydayEssential) {
-      filters.isEverydayEssential = isEverydayEssential;
+   if( isVeg) {
+      filters.isVeg = isVeg;
+   }
+
+   if(lifeStage) {
+      filters.lifeStage = lifeStage;
+   }
+
+   if(breedSize) {
+      filters.breedSize = breedSize;
+   }
+
+   if(productType) {
+      filters.productType = productType;
    }
 
    if (isBestSeller) {
       filters.isBestSeller = isBestSeller;
-   }
-
-   if (newleyLaunched) {
-      filters.newleyLaunched = newleyLaunched;
-   }
-
-   if (isAddToCart) {
-      filters.isAddToCart = isAddToCart;
    }
 
    if (collectionSlug) {

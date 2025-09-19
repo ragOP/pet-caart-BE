@@ -29,10 +29,11 @@ const ProductSchema = new mongoose.Schema(
          ref: 'HSNCode',
          required: true,
       },
-      isEverydayEssential: { type: Boolean, default: false },
-      newleyLaunched: { type: Boolean, default: false },
       isBestSeller: { type: Boolean, default: false },
-      isAddToCart: { type: Boolean, default: false },
+      isVeg: { type: Boolean, default: false },
+      lifeStage: { type: String, enum: ['Puppy', 'Adult', 'Starter', 'Kitten'], default: 'Adult' },
+      breedSize: { type: String, enum: ['Mini', 'Medium', 'Large', 'Giant'], default: 'Medium' },
+      productType: {type: String, enum: ['Wet Food', 'Dry Food', 'Food Toppers', 'Treat'], default: 'Dry Food'},
    },
    { timestamps: true }
 );
