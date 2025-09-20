@@ -10,7 +10,7 @@ exports.getAllCategories = async (search, page, limit, start_date, end_date) => 
    }
    query.isVisible = true;
    const categories = await Category.find(query)
-      .sort({ createdAt: -1 })
+      .sort({ createdAt: 1 })
       .skip((page - 1) * limit)
       .limit(limit)
       .populate('createdBy', 'name')

@@ -25,6 +25,21 @@
  *               price:
  *                 type: number
  *                 description: The price of the product
+ *               salePrice:
+ *                 type: number
+ *                 description: The sale price of the product
+ *               stock:
+ *                 type: number
+ *                 description: The stock of the product
+ *               sku:
+ *                 type: string
+ *                 description: The SKU of the product
+ *               importedBy:
+ *                 type: string
+ *                 description: The name of the person or entity that imported the product
+ *               countryOfOrigin:
+ *                 type: string
+ *                 description: The country of origin of the product
  *               images:
  *                 type: array
  *                 description: The images of the product
@@ -250,6 +265,21 @@
  *               price:
  *                 type: number
  *                 description: The price of the product
+ *              salePrice:
+ *                 type: number
+ *                 description: The sale price of the product
+ *              stock:
+ *                 type: number
+ *                 description: The stock of the product
+ *              sku:
+ *                type: string
+ *                description: The SKU of the product
+ *             importedBy:
+ *               type: string
+ *               description: The name of the person or entity that imported the product
+ *            countryOfOrigin:
+ *               type: string
+ *               description: The country of origin of the product
  *               images:
  *                 type: array
  *                 description: The images of the product
