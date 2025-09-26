@@ -46,7 +46,18 @@ exports.handleDeleteAddress = asyncHandler(async (req, res) => {
 
 exports.handleGetAllSavedAddresses = asyncHandler(async (req, res) => {
    const user = req.user;
-   const result = await getAllSavedAddresses(user);
+   const result = await getAllSavedAddresses(user._id);
+   if (!result.success) {
+      return res.status(400).json(new ApiResponse(400, null, result.message, false));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(200, result.data, 'All saved addresses retrieved successfully', true));
+});
+
+exports.handleGetAllSavedAddressesAdmin = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+   const result = await getAllSavedAddresses(id);
    if (!result.success) {
       return res.status(400).json(new ApiResponse(400, null, result.message, false));
    }

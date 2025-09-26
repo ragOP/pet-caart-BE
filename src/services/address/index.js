@@ -144,8 +144,8 @@ exports.deleteAddressService = async (user, id) => {
    };
 };
 
-exports.getAllSavedAddresses = async user => {
-   const addresses = await addressModel.find({ user: user._id }).sort({ createdAt: -1 });
+exports.getAllSavedAddresses = async id => {
+   const addresses = await addressModel.find({ user: id }).sort({ createdAt: -1 });
    if (!addresses) {
       return {
          success: false,
