@@ -15,6 +15,9 @@ const VariantSchema = new mongoose.Schema(
          trim: true,
          uppercase: true,
       },
+      variantName: {
+         type: String,
+      },
       price: {
          type: Number,
          required: true,

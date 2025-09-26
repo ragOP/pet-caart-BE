@@ -9,10 +9,11 @@ const {
 const ApiResponse = require('../../utils/apiResponse/index');
 
 exports.handleCreateProduct = asyncHandler(async (req, res) => {
-   const { images = [], variantImages = [] } = req.files;
+   const { images = [], variantImages = [], commonImages = [] } = req.files;
 
    const imageUrls = await uploadMultipleFiles(images);
    const uploadedVariantImages = await uploadMultipleFiles(variantImages);
+   const uploadedCommonImages = await uploadMultipleFiles(commonImages);
 
    const {
       title,
@@ -90,6 +91,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
       breedSize,
       productType,
       images: imageUrls,
+      commonImages: uploadedCommonImages,
       variants: enrichedVariants,
       tags: parsedTags,
       attributes: parsedAttributes,
@@ -165,12 +167,14 @@ exports.handleGetSingleProduct = asyncHandler(async (req, res) => {
 exports.handleUpdateProduct = asyncHandler(async (req, res) => {
    const { id } = req.params;
    const { body } = req;
-   const { images = [], variantImages = [] } = req.files;
+   const { images = [], variantImages = [], commonImages = [] } = req.files;
 
    // upload Images
    const imageUrls = await uploadMultipleFiles(images);
    const uploadedVariantImages = await uploadMultipleFiles(variantImages);
+   const uploadedCommonImages = await uploadMultipleFiles(commonImages);
    body.images = imageUrls;
+   body.commonImages = uploadedCommonImages;
 
    // parse variants
    const variantImageMap = body.variantImageMap;
@@ -222,6 +226,7 @@ exports.handleUpdateProduct = asyncHandler(async (req, res) => {
       breedSize: body.breedSize,
       productType: body.productType,
       images: imageUrls,
+      commonImages: uploadedCommonImages,
       variants: enrichedVariants,
       tags: parsedTags,
       attributes: parsedAttributes,

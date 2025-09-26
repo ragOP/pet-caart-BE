@@ -18,6 +18,7 @@ router.route('/').post(
    upload.fields([
       { name: 'images', maxCount: 20 },
       { name: 'variantImages', maxCount: 100 },
+      { name: 'commonImages', maxCount: 20 }
    ]),
    validateRequest,
    handleCreateProduct
@@ -28,6 +29,7 @@ router.route('/:id').put(
    upload.fields([
       { name: 'images', maxCount: 20 },
       { name: 'variantImages', maxCount: 100 },
+      { name: 'commonImages', maxCount: 20 }
    ]),
    isAdmin,
    validateRequest,

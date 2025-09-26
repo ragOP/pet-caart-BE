@@ -9,7 +9,7 @@ const ApiResponse = require('../../utils/apiResponse/index');
 const { uploadSingleFile } = require('../../utils/upload/index');
 
 exports.handleCreateBrand = asyncHandler(async (req, res) => {
-   const { name, slug, description, active } = req.body;
+   const { name, slug, description, active, countryOfOrigin, importedBy } = req.body;
    const createdBy = req.admin?._id;
    if (!name || !slug) {
       return res.status(400).json(new ApiResponse(400, null, 'Name and slug fields are required'));
@@ -22,7 +22,7 @@ exports.handleCreateBrand = asyncHandler(async (req, res) => {
 
    const imageUrl = await uploadSingleFile(image[0].path);
 
-   const result = await createBrand({ name, slug, description, logo: imageUrl, active, createdBy });
+   const result = await createBrand({ name, slug, description, logo: imageUrl, active, createdBy, countryOfOrigin, importedBy });
    return res.status(201).json(new ApiResponse(201, result, 'Brand created successfully', true));
 });
 

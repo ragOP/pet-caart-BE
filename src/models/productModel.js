@@ -18,6 +18,7 @@ const ProductSchema = new mongoose.Schema(
       isActive: { type: Boolean, default: true },
       tags: [String],
       images: [String],
+      commonImages: [String],
       attributes: mongoose.Schema.Types.Mixed,
       weight: {
          type: Number,
