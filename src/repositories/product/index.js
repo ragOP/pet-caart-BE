@@ -14,8 +14,7 @@ exports.getSingleProduct = async id => {
       .populate({ path: 'categoryId', select: 'name _id slug' })
       .populate({ path: 'subCategoryId', select: 'name _id slug' })
       .populate({ path: 'brandId', select: 'name _id slug' })
-      .populate({ path: 'breedId', select: 'name _id slug' })
-      .populate({ path: 'hsnCode', select: 'hsn_code description _id' });
+      .populate({ path: 'breedId', select: 'name _id slug' });
    return product;
 };
 
@@ -62,8 +61,7 @@ exports.getAllProducts = async (
          .populate({ path: 'categoryId', select: 'name _id slug' })
          .populate({ path: 'subCategoryId', select: 'name _id slug' })
          .populate({ path: 'brandId', select: 'name _id slug' })
-         .populate({ path: 'breedId', select: 'name _id' })
-         .populate({ path: 'hsnCode', select: 'name _id' }),
+         .populate({ path: 'breedId', select: 'name _id' }),
       Product.countDocuments(filters),
    ]);
 

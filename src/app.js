@@ -56,7 +56,7 @@ app.use('/api/cat-life-banner', require('./routes/configuration/catLifeBanner/in
 app.use('/api/product-banner', require('./routes/configuration/productBanner/index'));
 app.use('/api/address', require('./routes/address/index'));
 app.use('/api/contact-us', require('./routes/contactUs/index'));
-app.use('/api/hsn-code', require('./routes/hsn_code/index'));
+// app.use('/api/hsn-code', require('./routes/hsn_code/index'));
 app.use('/api/coupon', require('./routes/coupon/index'));
 app.use('/api/cart', require('./routes/cart/index'));
 app.use('/api/orders', require('./routes/orders/index'));

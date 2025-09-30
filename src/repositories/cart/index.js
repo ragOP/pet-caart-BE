@@ -11,7 +11,6 @@ exports.getCart = async () => {
 exports.getCartForUser = async ({ user_id }) => {
    return await cartModel.findOne({ userId: user_id }).populate({
       path: 'items.productId',
-      populate: { path: 'hsnCode' },
    });
 };
 
@@ -29,11 +28,9 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
       .findOne({ userId: user_id })
       .populate({
          path: 'items.productId',
-         populate: { path: 'hsnCode' },
       })
       .populate({
          path: 'items.variantId',
-         populate: { path: 'productId' },
       });
 
    if (!cart) {
@@ -45,7 +42,6 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
       };
    }
 
-   let state = null;
    let pincode = null;
    if (address_id) {
       const address = await addressModel.findById(address_id);
@@ -84,6 +80,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
    // 1. Base subtotal
    let discountAmount = 0;
    let subtotal = 0;
+   let totalMrp = 0;
    const updatedItems = cart.items.map(item => {
       const itemTotal = item.price * item.quantity;
       subtotal += itemTotal;
@@ -93,6 +90,8 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
          quantity: item.quantity,
       };
    });
+
+   totalMrp = subtotal;
 
    // 2. Apply coupon
    if (coupon_id) {
@@ -151,39 +150,14 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
       }
    }
 
-   // 3. Tax calculation on discounted prices
-   let total = 0;
-   const finalItems = updatedItems.map(item => {
-      const hsn = item.productId.hsnCode;
-      const quantity = item.quantity;
-      const { cgst, sgst, igst, totalTax, cess } = getTaxForItem(
-         item.discounted_price,
-         hsn,
-         state,
-         quantity
-      );
-
-      const baseAmount = item.discounted_price * quantity;
-      const total_price = parseFloat((baseAmount + totalTax).toFixed(2));
-      total += total_price;
-
-      return {
-         ...item,
-         cgst,
-         sgst,
-         igst,
-         cess,
-         total_price,
-      };
-   });
-
-   total += shippingDetails.totalCost;
+   const total =  subtotal + Math.min(shippingDetails.totalCost, 150);
+   shippingDetails.totalCost = Math.min(shippingDetails.totalCost, 150);
 
    return {
       ...cart.toObject(),
-      items: finalItems,
+      items: updatedItems,
       discount_amount: discountAmount,
-      total_price: parseFloat(total.toFixed(2)),
+      total_price_with_shipping_and_discount: parseFloat(total.toFixed(2)),
       is_active: cart.is_active,
       shippingDetails,
    };

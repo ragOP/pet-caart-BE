@@ -75,9 +75,6 @@
  *               isAddToCart:
  *                 type: boolean
  *                 description: The is add to cart of the product
- *               hsnCode:
- *                 type: string
- *                 description: The hsn code of the product
  *               weight:
  *                 type: number
  *                 description: The weight of the product
@@ -343,9 +340,6 @@
  *                           type: string
  *                     isActive:
  *                       type: boolean
- *               hsnCode:
- *                 type: string
- *                 description: The hsn code of the product
  *     responses:
  *       200:
  *         description: Product updated successfully

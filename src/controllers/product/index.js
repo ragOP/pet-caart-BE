@@ -23,7 +23,6 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
       subCategoryId,
       breedId,
       brandId,
-      hsnCode,
       variants,
       variantImageMap,
       price,
@@ -96,7 +95,6 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
       tags: parsedTags,
       attributes: parsedAttributes,
       ratings: parsedRatings,
-      hsnCode,
       weight,
    };
 
@@ -231,7 +229,6 @@ exports.handleUpdateProduct = asyncHandler(async (req, res) => {
       tags: parsedTags,
       attributes: parsedAttributes,
       ratings: parsedRatings,
-      hsnCode: body.hsnCode,
       weight: body.weight,
    };
 

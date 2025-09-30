@@ -23,12 +23,6 @@ exports.getCart = async ({ user_id, address_id, coupon_id }) => {
       success: true,
       data: cart.status === 400 ? cart.cart : cart,
    };
-   // return {
-   //   message: 'Cart fetched successfully',
-   //   status: 200,
-   //   success: true,
-   //   data: cart,
-   // }
 };
 
 exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
@@ -119,7 +113,6 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
       }
       cart = await cartModel.findOne({ userId: user_id }).populate({
          path: 'items.productId',
-         populate: { path: 'hsnCode' },
       });
       return {
          message: 'Cart created successfully',
@@ -139,6 +132,7 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
          cart.items[existingItemIndex].price = productPrice;
          cart.items[existingItemIndex].total = productPrice * quantity;
          cart.items[existingItemIndex].weight = weight;
+         cart.items[existingItemIndex].variantId = variantData ? variantData._id : null;
       } else {
          cart.items.splice(existingItemIndex, 1);
       }
@@ -163,7 +157,6 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
 
    cart = await cartModel.findOne({ userId: user_id }).populate({
       path: 'items.productId',
-      populate: { path: 'hsnCode' },
    });
 
    return {
