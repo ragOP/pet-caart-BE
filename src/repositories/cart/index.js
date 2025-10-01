@@ -118,7 +118,14 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
                message: 'Minimum purchase amount is not met',
                status: 400,
                success: false,
-               cart,
+               cart: {
+                  ...cart.toObject(),
+                  items: updatedItems,
+                  discount_amount: 0,
+                  total_price_with_shipping_and_discount: subtotal + Math.min(shippingDetails.totalCost, 150),
+                  is_active: cart.is_active,
+                  shippingDetails,
+               },
             };
          }
          if (coupon.discountType === 'percentage') {
@@ -129,7 +136,6 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
          } else {
             discountAmount = coupon.discountValue;
          }
-
          // Distribute discount proportionally
          const ratio = discountAmount / subtotal;
          updatedItems.forEach(item => {
@@ -145,13 +151,21 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
             message: 'Coupon is expired or inactive',
             status: 400,
             success: false,
-            cart,
+            cart: {
+               ...cart.toObject(),
+               items: updatedItems,
+               discount_amount: 0,
+               total_price_with_shipping_and_discount: subtotal + Math.min(shippingDetails.totalCost, 150),
+               is_active: cart.is_active,
+               shippingDetails,
+            },
          };
       }
    }
 
-   const total =  subtotal + Math.min(shippingDetails.totalCost, 150);
-   shippingDetails.totalCost = Math.min(shippingDetails.totalCost, 150);
+   const total =  subtotal != 0 ? subtotal + Math.min(shippingDetails.totalCost, 150) : 0;
+   shippingDetails.totalCost = subtotal != 0 ? Math.min(shippingDetails.totalCost, 150) : 0;
+   shippingDetails.estimatedDays = Math.min(shippingDetails.estimatedDays, 4);
 
    return {
       ...cart.toObject(),

@@ -60,7 +60,6 @@ exports.createOrderService = async (payload, user) => {
          .findById(cartId)
          .populate({
             path: 'items.productId',
-            populate: { path: 'hsnCode' },
          })
          .session(session);
 
@@ -74,7 +73,6 @@ exports.createOrderService = async (payload, user) => {
       }
 
       const addressPayload = {};
-      let state = null;
       let pincode = null;
       if (addressId) {
          const address = await addressModel.findById(addressId).session(session);
@@ -123,6 +121,7 @@ exports.createOrderService = async (payload, user) => {
             ...item.toObject(),
             discounted_price: item.price,
             quantity: item.quantity,
+            total_price: itemTotal,
          };
       });
 
@@ -172,6 +171,7 @@ exports.createOrderService = async (payload, user) => {
                const discountedTotal = totalItemPrice - totalItemPrice * ratio;
                const perUnit = discountedTotal / item.quantity;
                item.discounted_price = parseFloat(perUnit.toFixed(2));
+               item.total_price = parseFloat(discountedTotal.toFixed(2));
             });
 
             totalDiscountedAmount = discountAmount;
@@ -186,41 +186,10 @@ exports.createOrderService = async (payload, user) => {
          }
       }
 
-      let total = 0;
-      const finalItems = updatedItems.map(item => {
-         const hsn = item.productId.hsnCode;
-         const quantity = item.quantity;
-         const { cgst, sgst, igst, totalTax, cess } = getTaxForItem(
-            item.discounted_price,
-            hsn,
-            state,
-            quantity
-         );
-
-         const baseAmount = item.discounted_price * quantity;
-         const total_price = parseFloat((baseAmount + totalTax).toFixed(2));
-         total += total_price;
-
-         return {
-            ...item,
-            cgst,
-            sgst,
-            igst,
-            cess,
-            total_price,
-         };
-      });
-
-      const orderItemPayload = finalItems.map(item => ({
+      const orderItemPayload = updatedItems.map(item => ({
          productId: item.productId._id,
          variantId: item.variantId,
          quantity: item.quantity,
-         taxType: item.igst ? 'igst' : 'cgst & sgst',
-         taxAmount: item.igst ? item.igst : item.cgst + item.sgst,
-         cgstAmount: item.cgst ? item.cgst : null,
-         sgstAmount: item.sgst ? item.sgst : null,
-         igstAmount: item.igst ? item.igst : null,
-         cessAmount: item.cess,
          couponDiscount: item.discounted_price,
          price: item.price,
          total: item.total_price,
@@ -238,8 +207,7 @@ exports.createOrderService = async (payload, user) => {
          rawPrice: subtotal + totalDiscountedAmount,
          discountedAmount: totalDiscountedAmount,
          discountedAmountAfterCoupon: subtotal,
-         amountAfterTax: total,
-         totalAmount: total + shippingCost,
+         totalAmount: subtotal + Math.min(shippingCost, 150),
          couponCode: couponCode,
          note: payload.note || '',
          weight: weight,
@@ -263,11 +231,11 @@ exports.createOrderService = async (payload, user) => {
       if (cart.isVariant) {
          await variantModel.updateMany(
             {
-               _id: { $in: finalItems.map(item => item.selectedVariant) },
+               _id: { $in: updatedItems.map(item => item.selectedVariant) },
             },
             {
                $inc: {
-                  stock: -finalItems.reduce((acc, item) => acc + item.quantity, 0),
+                  stock: -updatedItems.reduce((acc, item) => acc + item.quantity, 0),
                },
             },
             { session }
@@ -275,11 +243,11 @@ exports.createOrderService = async (payload, user) => {
       } else {
          await productModel.updateMany(
             {
-               _id: { $in: finalItems.map(item => item.productId) },
+               _id: { $in: updatedItems.map(item => item.productId) },
             },
             {
                $inc: {
-                  stock: -finalItems.reduce((acc, item) => acc + item.quantity, 0),
+                  stock: -updatedItems.reduce((acc, item) => acc + item.quantity, 0),
                },
             },
             { session }
@@ -297,7 +265,7 @@ exports.createOrderService = async (payload, user) => {
          userId: _id,
          type: 'order',
          paymentMethod: 'razorpay',
-         amount: total + shippingCost,
+         amount: subtotal + shippingCost,
          status: 'pending',
          transactionId: null,
       };

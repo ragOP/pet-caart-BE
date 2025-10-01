@@ -29,7 +29,7 @@ exports.createPaymentService = async (payload, user) => {
 
    const cart = await cartModel
       .findById(cartId)
-      .populate({ path: 'items.productId', populate: { path: 'hsnCode' } });
+      .populate({ path: 'items.productId' });
 
    if (!cart || cart.items.length === 0 || cart.items.some(item => item.quantity === 0)) {
       return {
@@ -50,7 +50,6 @@ exports.createPaymentService = async (payload, user) => {
       };
    }
 
-   const state = address.state_code;
    const pincode = address.zip;
 
    let weight = 0;
@@ -140,17 +139,13 @@ exports.createPaymentService = async (payload, user) => {
 
    let total = 0;
    updatedItems.forEach(item => {
-      const hsn = item.productId.hsnCode;
       const quantity = item.quantity;
-      const { totalTax } = getTaxForItem(item.discounted_price, hsn, state, quantity);
       const baseAmount = item.discounted_price * quantity;
-      total += baseAmount + totalTax;
+      total += baseAmount;
    });
 
-   const finalAmount = Math.round((total + shippingCost) * 100);
-   console.log(finalAmount, 'finalAmount');
-   console.log(discountAmount, 'discountAmount');
-   // Create Razorpay order
+   const finalAmount = Math.round((total + Math.min(shippingCost, 150)) * 100);
+
    const razorpayOrder = await razorpay.orders.create({
       amount: finalAmount,
       currency: 'INR',
