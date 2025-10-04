@@ -9,8 +9,6 @@ const CollectionSchema = new mongoose.Schema({
    productIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Product' }],
    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
    updatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-   // type: { type: String, enum: ['manual', 'auto'], default: 'manual' },
-   // filters: mongoose.Schema.Types.Mixed
 });
 
 module.exports = mongoose.model('Collection', CollectionSchema);
