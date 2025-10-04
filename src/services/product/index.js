@@ -18,14 +18,17 @@ exports.createProduct = async productPayload => {
    // Step 1: Create Product
    const product = await createProduct(productData);
 
-   // Step 2: Add productId to each variant
-   const enrichedVariants = variants.map(variant => ({
-      ...variant,
-      productId: product._id,
-   }));
+   let createdVariants = [];
 
-   // Step 3: Bulk insert variants
-   const createdVariants = await createManyVariants(enrichedVariants);
+   if (Array.isArray(variants) && variants.length > 0) {
+      // Step 2: Add productId to each variant
+      const enrichedVariants = variants.map(variant => ({
+         ...variant,
+         productId: product._id,
+      }));
+      // Step 3: Bulk insert variants
+      createdVariants = await createManyVariants(enrichedVariants);
+   }
 
    return {
       product,

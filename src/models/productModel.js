@@ -13,7 +13,6 @@ const ProductSchema = new mongoose.Schema(
       salePrice: Number,
       stock: Number,
       sku: { type: String, unique: true },
-      parentSku: { type: String, unique: true },
       importedBy: String,
       countryOfOrigin: String,
       isActive: { type: Boolean, default: true },
