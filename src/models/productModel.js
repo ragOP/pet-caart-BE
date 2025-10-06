@@ -32,7 +32,7 @@ const ProductSchema = new mongoose.Schema(
       isVeg: { type: Boolean, default: false },
       lifeStage: { type: String, enum: ['Puppy', 'Adult', 'Starter', 'Kitten'], default: 'Adult' },
       breedSize: { type: String, enum: ['Mini', 'Medium', 'Large', 'Giant'], default: 'Medium' },
-      productType: {type: String, enum: ['Wet Food', 'Dry Food', 'Food Toppers', 'Treat'], default: 'Dry Food'},
+      productType: {type: String, enum: ['Wet Food', 'Dry Food', 'Food Toppers', 'Treat', 'Toys','Accessories', 'Clothes'], default: 'Dry Food'},
    },
    { timestamps: true }
 );
