@@ -5,6 +5,7 @@ const ProductSchema = new mongoose.Schema(
       title: { type: String, required: true },
       slug: { type: String, unique: true },
       description: String,
+      productLabel: String,
       categoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'Category' },
       subCategoryId: { type: mongoose.Schema.Types.ObjectId, ref: 'SubCategory' },
       breedId: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Breed' }],
