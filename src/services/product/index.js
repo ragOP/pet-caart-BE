@@ -71,10 +71,13 @@ exports.getAllProducts = async ({
    let filters = {};
 
    if (search) {
-      filters.$or = [
-         { name: { $regex: search, $options: 'i' } },
-         { slug: { $regex: search, $options: 'i' } },
-      ];
+      const searchWords = search.trim().split(/\s+/);
+      filters.$and = searchWords.map(word => ({
+         $or: [
+            { name: { $regex: word, $options: 'i' } },
+            { slug: { $regex: word, $options: 'i' } },
+         ],
+      }));
    }
 
    if (startDate || endDate) {
