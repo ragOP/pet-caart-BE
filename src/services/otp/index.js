@@ -38,12 +38,12 @@ exports.sendOtp = async (phoneNumber, origin) => {
    }
    const otp = Math.floor(100000 + Math.random() * 900000);
 
-   const result = {
-      statusCode: 200,
-      message: 'OTP sent successfully',
-      data: otp,
-   };
-   // const result = await sendOtpFast2SMS(phoneNumber, otp);
+   // const result = {
+   //    statusCode: 200,
+   //    message: 'OTP sent successfully',
+   //    data: otp,
+   // };
+   const result = await sendOtpFast2SMS(phoneNumber, otp);
    if (result.statusCode === 200) {
       if (existingOtp) {
          await otpModel.deleteOne({ _id: existingOtp._id });
