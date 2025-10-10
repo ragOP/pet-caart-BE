@@ -9,11 +9,12 @@ const {
 const ApiResponse = require('../../utils/apiResponse/index');
 
 exports.handleCreateProduct = asyncHandler(async (req, res) => {
-   const { images = [], variantImages = [], commonImages = [] } = req.files;
+   const { images = [], variantImages = [], commonImages = [] } = req.files || {};
 
-   const imageUrls = await uploadMultipleFiles(images);
-   const uploadedVariantImages = await uploadMultipleFiles(variantImages);
-   const uploadedCommonImages = await uploadMultipleFiles(commonImages);
+   // Upload only if files are provided
+   const imageUrls = images.length ? await uploadMultipleFiles(images) : [];
+   const uploadedVariantImages = variantImages.length ? await uploadMultipleFiles(variantImages) : [];
+   const uploadedCommonImages = commonImages.length ? await uploadMultipleFiles(commonImages) : [];
 
    const {
       title,
@@ -44,32 +45,51 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
       weight,
    } = req.body;
 
-   // Parse all incoming data
-   const parsedVariants = Array.isArray(variants)
-      ? variants.map(v => JSON.parse(v))
-      : [JSON.parse(variants)];
-   const parsedBreedIds = typeof breedId === 'string' ? JSON.parse(breedId) : breedId;
-   const parsedTags = typeof tags === 'string' ? JSON.parse(tags) : tags;
-   const parsedAttributes = typeof attributes === 'string' ? JSON.parse(attributes) : attributes;
-   const parsedRatings = typeof ratings === 'string' ? JSON.parse(ratings) : ratings;
-   const parsedVariantImageMap = JSON.parse(variantImageMap || '[]');
-
-   // Group variant images by variant index
-   const variantImageGroups = {};
-   parsedVariantImageMap.forEach((item, idx) => {
-      const index = item.index;
-      if (!variantImageGroups[index]) {
-         variantImageGroups[index] = [];
+   // Safe JSON parser
+   const safeJSONParse = (val, fallback = []) => {
+      try {
+         return typeof val === 'string' ? JSON.parse(val) : val || fallback;
+      } catch {
+         return fallback;
       }
-      variantImageGroups[index].push(uploadedVariantImages[idx]);
-   });
+   };
 
-   // Inject images into variants
-   const enrichedVariants = parsedVariants.map((variant, index) => ({
-      ...variant,
-      images: variantImageGroups[index] || [],
-   }));
+   // Parse safely
+   const parsedVariantsRaw = variants ? safeJSONParse(variants, []) : [];
+   const parsedVariants = Array.isArray(parsedVariantsRaw)
+      ? parsedVariantsRaw
+      : [parsedVariantsRaw].filter(Boolean);
 
+   const parsedBreedIds = safeJSONParse(breedId, []);
+   const parsedTags = safeJSONParse(tags, []);
+   const parsedAttributes = safeJSONParse(attributes, []);
+   const parsedRatings = safeJSONParse(ratings, []);
+   const parsedVariantImageMap = safeJSONParse(variantImageMap, []);
+
+   let enrichedVariants = [];
+
+   // Only process if we actually have variants and variant images
+   if (parsedVariants.length > 0 && uploadedVariantImages.length > 0 && parsedVariantImageMap.length > 0) {
+      const variantImageGroups = {};
+
+      parsedVariantImageMap.forEach((item, idx) => {
+         const index = item.index;
+         if (!variantImageGroups[index]) {
+            variantImageGroups[index] = [];
+         }
+         variantImageGroups[index].push(uploadedVariantImages[idx]);
+      });
+
+      // Inject images into corresponding variants
+      enrichedVariants = parsedVariants.map((variant, index) => ({
+         ...variant,
+         images: variantImageGroups[index] || [],
+      }));
+   } else {
+      enrichedVariants = parsedVariants;
+   }
+
+   // Construct product payload
    const productPayload = {
       title,
       slug,
@@ -85,9 +105,9 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
       countryOfOrigin,
       productLabel,
       stock,
-      isActive,
-      isVeg: isVeg === 'true' ? true : false,
-      isBestSeller: isBestSeller === 'true' ? true : false,
+      isActive: isActive === 'true' || isActive === true,
+      isVeg: isVeg === 'true' || isVeg === true,
+      isBestSeller: isBestSeller === 'true' || isBestSeller === true,
       lifeStage,
       breedSize,
       productType,
@@ -104,7 +124,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
 
    return res
       .status(201)
-      .json(new ApiResponse(201, result, 'Product with variants created successfully', true));
+      .json(new ApiResponse(201, result, 'Product created successfully', true));
 });
 
 exports.handleGetAllProducts = asyncHandler(async (req, res) => {
@@ -169,42 +189,58 @@ exports.handleUpdateProduct = asyncHandler(async (req, res) => {
    const { body } = req;
    const { images = [], variantImages = [], commonImages = [] } = req.files;
 
-   // upload Images
-   const imageUrls = await uploadMultipleFiles(images);
-   const uploadedVariantImages = await uploadMultipleFiles(variantImages);
-   const uploadedCommonImages = await uploadMultipleFiles(commonImages);
+   const imageUrls = images.length ? await uploadMultipleFiles(images) : [];
+   const uploadedVariantImages = variantImages.length
+      ? await uploadMultipleFiles(variantImages)
+      : [];
+   const uploadedCommonImages = commonImages.length ? await uploadMultipleFiles(commonImages) : [];
+
    body.images = imageUrls;
    body.commonImages = uploadedCommonImages;
 
-   // parse variants
-   const variantImageMap = body.variantImageMap;
-   const parsedVariants = Array.isArray(body.variants)
-      ? body.variants.map(v => JSON.parse(v))
-      : [JSON.parse(body.variants)];
-   const parsedBreedIds =
-      typeof body.breedId === 'string' ? JSON.parse(body.breedId) : body.breedId;
-   const parsedTags = typeof body.tags === 'string' ? JSON.parse(body.tags) : body.tags;
-   const parsedAttributes =
-      typeof body.attributes === 'string' ? JSON.parse(body.attributes) : body.attributes;
-   const parsedRatings = typeof body.ratings === 'string' ? JSON.parse(body.ratings) : body.ratings;
-   const parsedVariantImageMap = JSON.parse(variantImageMap || '[]');
-   const variantImageGroups = {};
-   parsedVariantImageMap.forEach((item, idx) => {
-      const index = item.index;
-      if (!variantImageGroups[index]) {
-         variantImageGroups[index] = [];
+   // Safe parse helpers
+   const safeJSONParse = (val, fallback = []) => {
+      try {
+         return typeof val === 'string' ? JSON.parse(val) : val || fallback;
+      } catch {
+         return fallback;
       }
-      variantImageGroups[index].push(uploadedVariantImages[idx]);
-   });
+   };
 
-   // inject images into variants
-   const enrichedVariants = parsedVariants.map((variant, index) => ({
-      ...variant,
-      images: variantImageGroups[index] || [],
-   }));
-   body.variants = enrichedVariants;
+   // Parse data safely
+   const parsedVariantsRaw = body.variants ? safeJSONParse(body.variants, []) : [];
+   const parsedVariants = Array.isArray(parsedVariantsRaw)
+      ? parsedVariantsRaw
+      : [parsedVariantsRaw];
 
-   // create product payload
+   const parsedBreedIds = safeJSONParse(body.breedId, []);
+   const parsedTags = safeJSONParse(body.tags, []);
+   const parsedAttributes = safeJSONParse(body.attributes, []);
+   const parsedRatings = safeJSONParse(body.ratings, []);
+   const parsedVariantImageMap = safeJSONParse(body.variantImageMap, []);
+
+   let enrichedVariants = [];
+
+   if (
+      parsedVariants.length > 0 &&
+      uploadedVariantImages.length > 0 &&
+      parsedVariantImageMap.length > 0
+   ) {
+      const variantImageGroups = {};
+      parsedVariantImageMap.forEach((item, idx) => {
+         const index = item.index;
+         if (!variantImageGroups[index]) variantImageGroups[index] = [];
+         variantImageGroups[index].push(uploadedVariantImages[idx]);
+      });
+      enrichedVariants = parsedVariants.map((variant, index) => ({
+         ...variant,
+         images: variantImageGroups[index] || [],
+      }));
+   } else {
+      enrichedVariants = parsedVariants;
+   }
+
+   // Create product payload
    const productPayload = {
       title: body.title,
       slug: body.slug,
@@ -235,10 +271,11 @@ exports.handleUpdateProduct = asyncHandler(async (req, res) => {
       weight: body.weight,
    };
 
-   // update product
+   // Update product
    const result = await updateProduct(id, productPayload);
    if (!result) {
       return res.status(404).json(new ApiResponse(404, null, 'Product not found'));
    }
+
    return res.status(200).json(new ApiResponse(200, result, 'Product updated successfully', true));
 });
