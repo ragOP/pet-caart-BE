@@ -52,8 +52,8 @@ exports.handleUpdateBrand = asyncHandler(async (req, res) => {
    if (!id) {
       return res.status(400).json(new ApiResponse(400, null, 'Brand id is required'));
    }
-   const images = req.files;
-   const result = await updateBrand(id, req.body, images, req.admin?._id);
+   const image = req.file;
+   const result = await updateBrand(id, req.body, image, req.admin?._id);
    if (!result) {
       return res.status(404).json(new ApiResponse(404, null, 'Brand not found'));
    }

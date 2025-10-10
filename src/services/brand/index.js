@@ -62,7 +62,7 @@ exports.updateBrand = async (id, data, image, userId) => {
 
    if (image) {
       const imageUrl = await uploadSingleFile(image.path);
-      brandData.image = imageUrl;
+      brandData.logo = imageUrl;
    }
 
    const updatedBrand = await updateBrand(id, brandData);
