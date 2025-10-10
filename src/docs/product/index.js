@@ -44,15 +44,14 @@
  *                 type: array
  *                 description: The images of the product
  *                 items:
- *                   type: file
+ *                   type: string
  *                   format: binary
  *                   description: The image of the product
- *                   required: true
  *               variantImages:
  *                 type: array
  *                 description: The variant images of the product
  *                 items:
- *                   type: file
+ *                   type: string
  *                   format: binary
  *                   description: The variant image of the product
  *               category:
@@ -66,15 +65,16 @@
  *                 description: The breed of the product
  *               isEverydayEssential:
  *                 type: boolean
- *                 description: The is everyday essential of the product
+ *                 description: Whether the product is an everyday essential
  *               isBestSeller:
  *                 type: boolean
+ *                 description: Whether the product is a best seller
  *               isNewleyLaunched:
  *                 type: boolean
- *                 description: The is newley launched of the product
+ *                 description: Whether the product is newly launched
  *               isAddToCart:
  *                 type: boolean
- *                 description: The is add to cart of the product
+ *                 description: Whether the product can be added to cart
  *               weight:
  *                 type: number
  *                 description: The weight of the product
@@ -233,7 +233,7 @@
  * @swagger
  * /api/product/{id}:
  *   put:
- *     summary: Update a product by id
+ *     summary: Update a product by ID
  *     tags: [Product]
  *     security:
  *       - bearerAuth: []
@@ -241,8 +241,9 @@
  *       - name: id
  *         in: path
  *         required: true
- *         description: The id of the product
- *         type: string
+ *         description: The ID of the product
+ *         schema:
+ *           type: string
  *     requestBody:
  *       required: true
  *       content:
@@ -262,75 +263,92 @@
  *               price:
  *                 type: number
  *                 description: The price of the product
- *              salePrice:
+ *               salePrice:
  *                 type: number
  *                 description: The sale price of the product
- *              stock:
+ *               stock:
  *                 type: number
  *                 description: The stock of the product
- *              sku:
- *                type: string
- *                description: The SKU of the product
- *             importedBy:
- *               type: string
- *               description: The name of the person or entity that imported the product
- *            countryOfOrigin:
- *               type: string
- *               description: The country of origin of the product
+ *               sku:
+ *                 type: string
+ *                 description: The SKU of the product
+ *               importedBy:
+ *                 type: string
+ *                 description: The name of the person or entity that imported the product
+ *               countryOfOrigin:
+ *                 type: string
+ *                 description: The country of origin of the product
  *               images:
  *                 type: array
  *                 description: The images of the product
  *                 items:
- *                   type: file
+ *                   type: string
  *                   format: binary
  *                   description: The image of the product
  *               variantImages:
  *                 type: array
  *                 description: The variant images of the product
  *                 items:
- *                   type: file
+ *                   type: string
  *                   format: binary
  *                   description: The variant image of the product
  *               category:
  *                 type: string
+ *                 description: The category of the product
  *               brand:
  *                 type: string
+ *                 description: The brand of the product
  *               breed:
  *                 type: string
+ *                 description: The breed of the product
  *               isEverydayEssential:
  *                 type: boolean
+ *                 description: Whether the product is an everyday essential
  *               isBestSeller:
  *                 type: boolean
+ *                 description: Whether the product is a best seller
  *               isNewleyLaunched:
  *                 type: boolean
+ *                 description: Whether the product is newly launched
  *               isAddToCart:
  *                 type: boolean
+ *                 description: Whether the product can be added to cart
  *               variantImageMap:
  *                 type: array
+ *                 description: Mapping of variant images by index
  *                 items:
  *                   type: object
  *                   properties:
  *                     index:
  *                       type: string
+ *                       description: The index of the variant image
  *               variants:
  *                 type: array
+ *                 description: The list of product variants
  *                 items:
  *                   type: object
  *                   properties:
  *                     name:
  *                       type: string
+ *                       description: The name of the variant
  *                     price:
  *                       type: number
+ *                       description: The price of the variant
  *                     salePrice:
  *                       type: number
+ *                       description: The sale price of the variant
  *                     stock:
  *                       type: number
+ *                       description: The stock quantity of the variant
  *                     sku:
  *                       type: string
+ *                       description: The SKU of the variant
  *                     weight:
  *                       type: string
+ *                       description: The weight of the variant
  *                     attributes:
  *                       type: object
+ *                       description: The attributes of the variant
  *                       properties:
  *                         size:
  *                           type: string
@@ -340,6 +358,7 @@
  *                           type: string
  *                     isActive:
  *                       type: boolean
+ *                       description: Whether the variant is active
  *     responses:
  *       200:
  *         description: Product updated successfully
