@@ -1,4 +1,4 @@
-const { getCart, updateCart, deleteCart } = require('../../services/cart/index.js');
+const { getCart, updateCart, deleteCart, getAllAbondendCart } = require('../../services/cart/index.js');
 const ApiResponse = require('../../utils/apiResponse/index.js');
 const { asyncHandler } = require('../../utils/asyncHandler/index.js');
 
@@ -38,4 +38,16 @@ exports.deleteCart = asyncHandler(async (req, res) => {
    return res.json(
       new ApiResponse(deletedCart.status, deletedCart.data, deletedCart.message, true)
    );
+});
+
+exports.handleGetAllAbondendCart = asyncHandler(async (req, res) => {
+   const result = await getAllAbondendCart(req.user);
+   if (!result.success) {
+      return res
+         .status(200)
+         .json(new ApiResponse(result.statusCode, result.data, result.message, false));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(result.statusCode, result.data, result.message, true));
 });

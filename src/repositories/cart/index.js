@@ -122,7 +122,8 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
                   ...cart.toObject(),
                   items: updatedItems,
                   discount_amount: 0,
-                  total_price_with_shipping_and_discount: subtotal + Math.min(shippingDetails.totalCost, 150),
+                  total_price_with_shipping_and_discount:
+                     subtotal + Math.min(shippingDetails.totalCost, 150),
                   is_active: cart.is_active,
                   shippingDetails,
                },
@@ -155,7 +156,8 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
                ...cart.toObject(),
                items: updatedItems,
                discount_amount: 0,
-               total_price_with_shipping_and_discount: subtotal + Math.min(shippingDetails.totalCost, 150),
+               total_price_with_shipping_and_discount:
+                  subtotal + Math.min(shippingDetails.totalCost, 150),
                is_active: cart.is_active,
                shippingDetails,
             },
@@ -163,7 +165,7 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
       }
    }
 
-   const total =  subtotal != 0 ? subtotal + Math.min(shippingDetails.totalCost, 150) : 0;
+   const total = subtotal != 0 ? subtotal + Math.min(shippingDetails.totalCost, 150) : 0;
    shippingDetails.totalCost = subtotal != 0 ? Math.min(shippingDetails.totalCost, 150) : 0;
    shippingDetails.estimatedDays = Math.min(shippingDetails.estimatedDays, 4);
 
@@ -187,4 +189,12 @@ exports.updateCartItem = async (id, data) => {
 
 exports.deleteCartByUserId = async id => {
    return await cartModel.deleteOne({ user: id });
+};
+
+exports.getAllAbondendCarts = async query => {
+   return await cartModel
+      .find(query)
+      .populate('userId')
+      .populate('items.productId')
+      .populate('items.variantId');
 };

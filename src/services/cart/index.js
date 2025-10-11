@@ -184,3 +184,26 @@ exports.deleteCart = async user_id => {
       data: deletedCart,
    };
 };
+
+exports.getAllAbondendCart = async () => {
+   const query = {
+      is_active: true,
+      items: { $exists: true, $not: { $size: 0 } },
+      updatedAt: { $lt: new Date(Date.now() - 24 * 60 * 60 * 1000) } // 24 hours ago
+   };
+   const carts = await CartRepository.getAllAbondendCarts(query);
+   if (!carts) {
+      return {
+         message: 'No abandoned carts found',
+         status: 404,
+         success: false,
+         data: null,
+      };
+   }
+   return {
+      message: 'Abandoned carts retrieved successfully',
+      status: 200,
+      success: true,
+      data: carts,
+   };
+};

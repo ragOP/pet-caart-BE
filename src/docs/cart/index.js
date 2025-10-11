@@ -84,3 +84,18 @@
  *       404:
  *         description: Product not found
  */
+
+/**
+ * @swagger
+ * /api/cart/abandoned:
+ *   get:
+ *     summary: Get all abandoned carts (Admin only)
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Abandoned carts retrieved successfully
+ *       403:
+ *         description: Forbidden
+ */
