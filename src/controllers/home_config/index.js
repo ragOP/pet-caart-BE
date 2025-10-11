@@ -20,6 +20,7 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
       isActive = true,
       backgroundImage = '',
       bannerImage = '',
+      bannerImageMobile = '',
       keyword = '',
    } = req.body;
 
@@ -33,6 +34,7 @@ exports.handleCreateNewHomeConfig = asyncHandler(async (req, res) => {
       isActive,
       backgroundImage,
       bannerImage,
+      bannerImageMobile,
       keyword
    );
 
@@ -98,6 +100,7 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
       isActive = false,
       backgroundImage = '',
       bannerImage = '',
+      bannerImageMobile = '',
       keyword = '',
    } = req.body;
 
@@ -111,6 +114,7 @@ exports.handleUpdateGridConfig = asyncHandler(async (req, res) => {
       isActive,
       backgroundImage,
       bannerImage,
+      bannerImageMobile,
       keyword
    );
 

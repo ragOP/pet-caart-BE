@@ -27,6 +27,7 @@ exports.CreateNewHomeSection = async (
    if (grid) payload.grid = grid;
    if (backgroundImage) payload.backgroundImage = backgroundImage;
    if (bannerImage) payload.bannerImage = bannerImage;
+   if (bannerImageMobile) payload.bannerImageMobile = bannerImageMobile;
    if (keyword) payload.keyword = keyword;
    payload.isActive = isActive;
    payload.isTitleShow = isTitleShow;
@@ -183,6 +184,7 @@ exports.UpdateGridConfig = async (
    isActive,
    backgroundImage,
    bannerImage,
+   bannerImageMobile,
    keyword
 ) => {
    const payload = {};
@@ -194,6 +196,7 @@ exports.UpdateGridConfig = async (
    payload.title = title;
    payload.backgroundImage = backgroundImage;
    payload.bannerImage = bannerImage;
+   payload.bannerImageMobile = bannerImageMobile;
    payload.isTitleShow = isTitleShow;
 
    let contentTypeRef = contentTypeMapping[contentType];

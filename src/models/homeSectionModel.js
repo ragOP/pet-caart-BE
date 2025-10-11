@@ -26,6 +26,7 @@ const homeSectionSchema = new mongoose.Schema(
       },
       bannerImage: { type: String },
       backgroundImage: { type: String },
+      bannerImageMobile: { type: String },
       grid: {
          rows: { type: Number, required: true },
          columns: { type: Number, required: true },
