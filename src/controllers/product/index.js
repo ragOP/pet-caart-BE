@@ -180,7 +180,7 @@ exports.handleGetAllProducts = asyncHandler(async (req, res) => {
    });
    return res
       .status(200)
-      .json(new ApiResponse(result.statusCode, result, result.message, result.success));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
 });
 
 exports.handleGetSingleProduct = asyncHandler(async (req, res) => {
