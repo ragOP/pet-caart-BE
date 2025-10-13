@@ -5,18 +5,43 @@ const {
    getSingleProduct,
    getAllProducts,
    updateProduct,
+   findProductBySKU,
 } = require('../../repositories/product/index.js');
 const {
    createManyVariants,
    updateManyVariants,
    deleteVariantsByIds,
 } = require('../../repositories/variant/index.js');
+const { handleGenerateSlug } = require('../../utils/generate_slug/index.js');
 
 exports.createProduct = async productPayload => {
    const { variants, ...productData } = productPayload;
 
-   // Step 1: Create Product
+   // Checking for existing SKU
+   const checkExistingSku = await findProductBySKU(productData.sku);
+
+   if (checkExistingSku) {
+      return {
+         statusCode: 400,
+         success: false,
+         message: 'SKU already exists',
+         data: null,
+      };
+   }
+
+   // Additional Layer to ensure that slugs are always unique
+   productData.slug = await handleGenerateSlug(productData.slug);
+
+   // Create Product if everything is fine
    const product = await createProduct(productData);
+   if (!product) {
+      return {
+         statusCode: 500,
+         success: false,
+         message: 'Failed to create product',
+         data: null,
+      };
+   }
 
    let createdVariants = [];
 
@@ -28,11 +53,24 @@ exports.createProduct = async productPayload => {
       }));
       // Step 3: Bulk insert variants
       createdVariants = await createManyVariants(enrichedVariants);
+      if (createdVariants.length === 0) {
+         return {
+            statusCode: 500,
+            success: false,
+            message: 'Failed to create product variants',
+            data: null,
+         };
+      }
    }
 
    return {
-      product,
-      variants: createdVariants,
+      data: {
+         product,
+         variants: createdVariants,
+      },
+      message: 'Product created successfully',
+      statusCode: 201,
+      success: true,
    };
 };
 
@@ -90,19 +128,19 @@ exports.getAllProducts = async ({
       filters.price = { $lt: maxPrice };
    }
 
-   if( isVeg) {
+   if (isVeg) {
       filters.isVeg = isVeg;
    }
 
-   if(lifeStage) {
+   if (lifeStage) {
       filters.lifeStage = lifeStage;
    }
 
-   if(breedSize) {
+   if (breedSize) {
       filters.breedSize = breedSize;
    }
 
-   if(productType) {
+   if (productType) {
       filters.productType = productType;
    }
 
@@ -159,9 +197,8 @@ exports.getAllProducts = async ({
 exports.updateProduct = async (id, productPayload) => {
    const { variants, ...productData } = productPayload;
 
+   // Update Product if everything is fine
    const product = await updateProduct(id, productData);
-
-   const availableVariants = await variantModel.find({ productId: id });
 
    if (!product) {
       return {
@@ -172,8 +209,10 @@ exports.updateProduct = async (id, productPayload) => {
       };
    }
 
-   if (variants) {
+   if (Array.isArray(variants)) {
       // 1. Fetch current variants from DB
+      const availableVariants = await variantModel.find({ productId: id });
+
       const currentVariants = availableVariants || [];
       const currentVariantIds = currentVariants.map(v => v._id.toString());
 
@@ -220,10 +259,6 @@ exports.updateProduct = async (id, productPayload) => {
       if (deletedVariantIds.length > 0) {
          await deleteVariantsByIds(deletedVariantIds);
       }
-
-      // 10. Set product.variants to the up-to-date list
-      product.variants = [...updatedVariantDocs, ...createdVariantDocs];
-      await product.save();
       return {
          statusCode: 200,
          success: true,
@@ -238,3 +273,101 @@ exports.updateProduct = async (id, productPayload) => {
       product,
    };
 };
+
+exports.getRecommendedProducts = async (id, type = 'similar') => {
+   const product = await getSingleProduct(id);
+   if (!product) {
+      return {
+         statusCode: 404,
+         success: false,
+         message: 'Product not found',
+         data: null,
+      };
+   }
+
+   // Fetch candidate products from the same category (excluding current one)
+   const candidates = await getAllProducts({
+      categoryId: product.categoryId,
+      _id: { $ne: product._id },
+      isActive: true,
+   });
+
+   if (!candidates || candidates.total === 0) {
+      return {
+         statusCode: 200,
+         success: true,
+         message: 'No recommended products found',
+         data: [],
+      };
+   }
+
+   // Preprocess product attributes
+   const productCategory = product.categoryId?.toString() || null;
+   const productSubCategory = product.subCategoryId?.toString() || null;
+   const productBrand = product.brandId?.toString() || null;
+   const productBreeds = new Set((product.breedId || []).map(id => id.toString()));
+   const productPrice = Number(product.price) || 0;
+
+   const scoredProducts = candidates.products.map(candidate => {
+      let score = 0;
+
+      const candidateCategory = candidate.categoryId?.toString() || null;
+      const candidateSubCategory = candidate.subCategoryId?.toString() || null;
+      const candidateBrand = candidate.brandId?.toString() || null;
+      const candidateBreeds = new Set((candidate.breedId || []).map(id => id.toString()));
+      const candidatePrice = Number(candidate.price) || 0;
+
+      // Step 1: Shared category
+      if (candidateCategory === productCategory) score += 30;
+
+      // Step 2: Subcategory logic
+      if (type === 'similar') {
+         // Prefer same subcategory
+         if (candidateSubCategory === productSubCategory) score += 20;
+      } else if (type === 'related') {
+         // Prefer different subcategory
+         if (candidateSubCategory !== productSubCategory) score += 10;
+      }
+
+      // Step 3: Shared brand
+      if (candidateBrand === productBrand) score += 15;
+
+      // Step 4: Match type, life stage, breed size
+      if (candidate.productType === product.productType) score += 10;
+      if (candidate.lifeStage === product.lifeStage) score += 5;
+      if (candidate.breedSize === product.breedSize) score += 5;
+
+      // Step 5: Veg/Non-Veg
+      if (candidate.isVeg === product.isVeg) score += 3;
+
+      // Step 6: Breed overlap (Set-based O(n))
+      let sharedBreeds = 0;
+      for (const id of candidateBreeds) {
+         if (productBreeds.has(id)) sharedBreeds++;
+      }
+      score += sharedBreeds * 2;
+
+      // Step 7: Price proximity (within ±20%)
+      if (type === 'similar' && productPrice > 0) {
+         const lower = productPrice * 0.8;
+         const upper = productPrice * 1.2;
+         if (candidatePrice >= lower && candidatePrice <= upper) score += 5;
+      }
+
+      return { product: candidate, score };
+   });
+
+   // Sort by descending score
+   const sortedByScore = scoredProducts.sort((a, b) => b.score - a.score);
+
+   // Pick top 12
+   const topRecommended = sortedByScore.slice(0, 12).map(item => item.product);
+
+   return {
+      statusCode: 200,
+      success: true,
+      message: `Recommended (${type}) products fetched successfully`,
+      data: topRecommended,
+   };
+};
+

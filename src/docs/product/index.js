@@ -363,3 +363,37 @@
  *       200:
  *         description: Product updated successfully
  */
+
+/**
+ * @swagger
+ * /api/product/recommendations/{id}:
+ *   get:
+ *    summary: Get recommended products
+ *    tags: [Product]
+ *    parameters:
+ *      - in: path
+ *        name: id
+ *        required: true
+ *        description: The ID of the product
+ *        schema:
+ *          type: string
+ *      - in: query
+ *        name: type
+ *        description: The type of recommendation (e.g., "related", "similar")
+ *        required: false
+ *        schema:
+ *          type: string
+ *    responses:
+ *      200:
+ *        description: A list of recommended products
+ *        content:
+ *          application/json:
+ *            schema:
+ *              type: array
+ *              items:
+ *                $ref: '#/components/schemas/Product'
+ *      404:
+ *        description: Product not found
+ *      500:
+ *        description: Internal server error
+ */

@@ -89,3 +89,8 @@ exports.updateProduct = async (id, productData) => {
    const product = await Product.findByIdAndUpdate(id, productData, { new: true });
    return product;
 };
+
+exports.findProductBySKU = async sku => {
+   const product = await Product.findOne({ sku });
+   return product;
+};

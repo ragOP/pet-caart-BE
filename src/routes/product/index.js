@@ -4,6 +4,7 @@ const {
    handleGetAllProducts,
    handleGetSingleProduct,
    handleUpdateProduct,
+   handleGetRecommendedProducts,
 } = require('../../controllers/product/index.js');
 const { validateCreateProduct } = require('../../validators/product/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index');
@@ -18,7 +19,7 @@ router.route('/').post(
    upload.fields([
       { name: 'images', maxCount: 20 },
       { name: 'variantImages', maxCount: 100 },
-      { name: 'commonImages', maxCount: 20 }
+      { name: 'commonImages', maxCount: 20 },
    ]),
    validateRequest,
    handleCreateProduct
@@ -29,11 +30,12 @@ router.route('/:id').put(
    upload.fields([
       { name: 'images', maxCount: 20 },
       { name: 'variantImages', maxCount: 100 },
-      { name: 'commonImages', maxCount: 20 }
+      { name: 'commonImages', maxCount: 20 },
    ]),
    isAdmin,
    validateRequest,
    handleUpdateProduct
 );
+router.route('/recommendations/:id').get(handleGetRecommendedProducts);
 
 module.exports = router;
