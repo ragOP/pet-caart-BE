@@ -191,6 +191,9 @@ exports.getAllProducts = async ({
       total,
       page,
       perPage,
+      message: 'Products fetched successfully',
+      statusCode: 200,
+      success: true,
    };
 };
 
