@@ -397,3 +397,27 @@
  *      500:
  *        description: Internal server error
  */
+
+/**
+ * @swagger
+ * /api/product/delete/{id}:
+ *  delete:
+ *   summary: Delete a product by ID
+ *   tags: [Product]
+ *   security:
+ *     - bearerAuth: []
+ *   parameters:
+ *     - name: id
+ *       in: path
+ *       required: true
+ *       description: The ID of the product
+ *       schema:
+ *         type: string
+ * responses:
+ *   200:
+ *     description: Product deleted successfully
+ *   404:
+ *     description: Product not found
+ *   500:
+ *     description: Internal server error
+ */

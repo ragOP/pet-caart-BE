@@ -18,6 +18,15 @@ exports.getSingleProduct = async id => {
    return product;
 };
 
+exports.getProductBySlug = async slug => {
+   const product = await Product.findOne({ slug })
+      .populate({ path: 'categoryId', select: 'name _id slug' })
+      .populate({ path: 'subCategoryId', select: 'name _id slug' })
+      .populate({ path: 'brandId', select: 'name _id slug' })
+      .populate({ path: 'breedId', select: 'name _id slug' });
+   return product;
+};
+
 exports.getAllProducts = async (
    filters,
    skip = 0,

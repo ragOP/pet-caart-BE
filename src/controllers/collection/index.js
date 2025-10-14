@@ -66,6 +66,9 @@ exports.handleGetAllCollections = asyncHandler(async (req, res) => {
 
 exports.handleGetSingleCollection = asyncHandler(async (req, res) => {
    const { id } = req.params;
+   if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json(new ApiResponse(400, null, 'Collection id is required'));
+   }
    const result = await getSingleCollection(id);
    if (!result) {
       return res.status(404).json(new ApiResponse(404, null, 'Collection not found', false));
@@ -83,11 +86,25 @@ exports.handleUpdateCollection = asyncHandler(async (req, res) => {
       ...req.body,
       productIds: req.body.productIds.length > 0 ? req.body.productIds : [],
    };
-   if (!id) {
+   if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json(new ApiResponse(400, null, 'Collection id is required'));
    }
    const result = await updateCollection(id, validatedReq, image, userId);
    return res
       .status(200)
       .json(new ApiResponse(200, result, 'Collection updated successfully', true));
+});
+
+exports.handleDeleteCollection = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+   if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json(new ApiResponse(400, null, 'Collection id is required'));
+   }
+   const result = await deleteCollection(id);
+   if (!result) {
+      return res.status(404).json(new ApiResponse(404, null, 'Collection not found', false));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(200, result, 'Collection deleted successfully', true));
 });

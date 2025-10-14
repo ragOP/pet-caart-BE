@@ -113,3 +113,21 @@
  *       200:
  *         description: Collection updated successfully
  */
+
+/**
+ * @swagger
+ * /api/collection/delete/{id}:
+ *   delete:
+ *     summary: Delete a collection by id
+ *     tags: [Collection]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The id of the collection
+ *     responses:
+ *   200:
+ *     description: Collection deleted successfully
+ */

@@ -1,3 +1,4 @@
+const { default: mongoose } = require('mongoose');
 const collectionModel = require('../../models/collectionModel.js');
 const variantModel = require('../../models/variantModel.js');
 const {
@@ -6,6 +7,7 @@ const {
    getAllProducts,
    updateProduct,
    findProductBySKU,
+   getProductBySlug,
 } = require('../../repositories/product/index.js');
 const {
    createManyVariants,
@@ -75,13 +77,27 @@ exports.createProduct = async productPayload => {
 };
 
 exports.getSingleProduct = async id => {
+   // const product = await getProductBySlug(id);
    const product = await getSingleProduct(id);
-   const variants = await variantModel.find({ productId: id });
+   if (!product) {
+      return {
+         statusCode: 404,
+         success: false,
+         message: 'Product not found',
+         data: null,
+      };
+   }
+   const variants = await variantModel.find({ productId: product._id });
    const updatedProductWithVariants = {
       ...product._doc,
       variants,
    };
-   return updatedProductWithVariants;
+   return {
+      statusCode: 200,
+      success: true,
+      message: 'Product fetched successfully',
+      data: updatedProductWithVariants,
+   };
 };
 
 exports.getAllProducts = async ({
@@ -374,3 +390,35 @@ exports.getRecommendedProducts = async (id, type = 'similar') => {
    };
 };
 
+exports.deleteProduct = async id => {
+   // Started a session for transaction
+   const session = await mongoose.startSession();
+   session.startTransaction();
+
+   const product = await getSingleProduct(id);
+   if (!product) {
+      await session.abortTransaction();
+      session.endSession();
+      return {
+         statusCode: 404,
+         success: false,
+         message: 'Product not found',
+         data: null,
+      };
+   }
+   // Delete associated variants
+   await variantModel.deleteMany({ productId: id }, { session });
+   // remove the product from any collections
+   await collectionModel.updateMany({ productIds: id }, { $pull: { productIds: id } }, { session });
+   // Delete the product
+   await product.deleteOne({ session });
+   // Commit the transaction
+   await session.commitTransaction();
+   session.endSession();
+   return {
+      statusCode: 200,
+      success: true,
+      message: 'Product and associated variants deleted successfully',
+      data: null,
+   };
+};

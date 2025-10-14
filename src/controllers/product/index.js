@@ -6,6 +6,7 @@ const {
    getAllProducts,
    updateProduct,
    getRecommendedProducts,
+   deleteProduct,
 } = require('../../services/product/index');
 const ApiResponse = require('../../utils/apiResponse/index');
 
@@ -191,7 +192,7 @@ exports.handleGetSingleProduct = asyncHandler(async (req, res) => {
    const result = await getSingleProduct(id);
    return res
       .status(200)
-      .json(new ApiResponse(result.statusCode, result, result.message, result.success));
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
 });
 
 exports.handleUpdateProduct = asyncHandler(async (req, res) => {
@@ -304,6 +305,20 @@ exports.handleGetRecommendedProducts = asyncHandler(async (req, res) => {
       return res.status(400).json(new ApiResponse(400, null, 'Product id is required'));
    }
    const result = await getRecommendedProducts(id, type);
+   return res
+      .status(200)
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
+});
+
+exports.handleDeleteProduct = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+   if (!id) {
+      return res.status(400).json(new ApiResponse(400, null, 'Product id is required'));
+   }
+   const result = await deleteProduct(id);
+   if (!result) {
+      return res.status(404).json(new ApiResponse(404, null, 'Product not found'));
+   }
    return res
       .status(200)
       .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));

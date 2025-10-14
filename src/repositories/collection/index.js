@@ -46,3 +46,8 @@ exports.updateCollection = async (id, data) => {
    const updatedCollection = await Collection.findByIdAndUpdate(id, data, { new: true });
    return updatedCollection;
 };
+
+exports.deleteCollection = async id => {
+   const deletedCollection = await Collection.findByIdAndDelete(id);
+   return deletedCollection;
+};

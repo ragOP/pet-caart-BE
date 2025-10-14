@@ -4,6 +4,7 @@ const {
    getAllFilteredCollectionsBySubCategoryId,
    getSingleCollection,
    updateCollection,
+   deleteCollection,
 } = require('../../repositories/collection/index');
 const { uploadSingleFile } = require('../../utils/upload/index');
 
@@ -130,6 +131,25 @@ exports.updateCollection = async (id, data, image, userId) => {
       status: 200,
       message: 'Collection updated successfully',
       data: updatedCollection,
+      success: true,
+   };
+};
+
+exports.deleteCollection = async id => {
+   const collection = await getSingleCollection(id);
+   if (!collection) {
+      return {
+         status: 404,
+         message: 'Collection not found',
+         data: null,
+         success: false,
+      };
+   }
+   await deleteCollection(id);
+   return {
+      status: 200,
+      message: 'Collection deleted successfully',
+      data: null,
       success: true,
    };
 };
