@@ -6,6 +6,6 @@ const {
 const { isAdmin } = require('../../middleware/auth/adminMiddleware');
 const router = express.Router();
 
-router.route('/send-notification').post(isAdmin, sendNotificationtoAllUsers);
+router.route('/android').post(isAdmin, sendNotificationtoAllUsers);
 router.route('/ios').post(isAdmin, sendNotificationToIosUser);
 module.exports = router;

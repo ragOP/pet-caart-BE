@@ -1,6 +1,6 @@
 /**
  * @swagger
- * /api/send-notification:
+ * /api/send-notification/android:
  *   post:
  *     summary: Send notification to all users
  *     tags: [Notification]
@@ -34,7 +34,7 @@
 
 /**
  * @swagger
- * /api/ios:
+ * /api/send-notification/ios:
  *   post:
  *     summary: Send notification to iOS users
  *     tags: [Notification]
