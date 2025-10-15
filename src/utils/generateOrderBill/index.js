@@ -199,3 +199,162 @@ exports.generateOrderBill = async (order, user, address) => {
       statusCode: 500,
    };
 };
+
+exports.sendEmailReminder = async user => {
+   const browser = await puppeteer.launch();
+   const page = await browser.newPage();
+
+   const htmlContent = `
+  <!DOCTYPE html>
+  <html>
+    <head>
+      <meta charset="UTF-8" />
+      <title>We Miss You! 🐾 | Petcaart</title>
+      <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+        body {
+          font-family: 'Inter', sans-serif;
+          background: #f8f8fc;
+          margin: 0;
+          padding: 0;
+          color: #333;
+        }
+
+        .email-container {
+          max-width: 650px;
+          margin: 40px auto;
+          background: #ffffff;
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .email-header {
+          background: #ffe6ec;
+          padding: 24px;
+          text-align: center;
+        }
+
+        .email-header img {
+          max-width: 140px;
+          margin-bottom: 10px;
+        }
+
+        .tagline {
+          font-size: 14px;
+          color: #e91e63;
+          font-style: italic;
+        }
+
+        .email-body {
+          padding: 30px;
+        }
+
+        h2 {
+          color: #e91e63;
+          margin-bottom: 12px;
+        }
+
+        p {
+          font-size: 15px;
+          line-height: 1.6;
+          color: #555;
+        }
+
+        .cta-btn {
+          display: inline-block;
+          background-color: #e91e63;
+          color: #fff;
+          padding: 12px 24px;
+          border-radius: 8px;
+          text-decoration: none;
+          font-weight: 600;
+          margin-top: 20px;
+        }
+
+        .cta-btn:hover {
+          background-color: #d81b60;
+        }
+
+        .footer {
+          padding: 20px;
+          text-align: center;
+          font-size: 13px;
+          color: #999;
+          border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 600px) {
+          .email-body {
+            padding: 20px;
+          }
+
+          .email-header {
+            padding: 20px;
+          }
+        }
+      </style>
+    </head>
+
+    <body>
+      <div class="email-container">
+        <div class="email-header">
+          <img src="https://pet-cart-admin.vercel.app/logo-light.jpg" alt="Petcaart Logo" />
+          <div class="tagline">Your pet deserve the best</div>
+        </div>
+
+        <div class="email-body">
+          <h2>Hello, ${user.name || 'Valued Customer'} 🐾</h2>
+          <p>Looks like you left some pawsome items in your cart at <strong>PetCaart</strong>!</p>
+          <p>Don't miss out on pampering your furry friend — hurry, this special offer expires soon.</p>
+          <p>Complete your order now and make your pet’s day special. 🐶🐱</p>
+
+          <a href="https://petcaart.com/cart" class="cta-btn">🛒 Complete My Order</a>
+        </div>
+
+        <div class="footer">
+          © 2025 Petcaart. All rights reserved. <br />
+          Powered by love for pets 🐾
+        </div>
+      </div>
+    </body>
+  </html>
+  `;
+
+   await page.setContent(htmlContent);
+   const pdfBuffer = await page.pdf({ format: 'A4' });
+   await browser.close();
+
+   const emailOptions = {
+      from: `"Petcaart 🐾" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: `You left something behind, ${user.name || 'Valued Customer'}! 🐾`,
+      html: htmlContent,
+      attachments: [
+         {
+            filename: `reminder-${user.name || 'Valued Customer'}.pdf`,
+            content: pdfBuffer,
+            contentType: 'application/pdf',
+         },
+      ],
+   };
+
+   const emailSent = await sendEmail(emailOptions);
+
+   if (emailSent.accepted?.length > 0) {
+      return {
+         success: true,
+         message: 'Reminder email sent successfully',
+         data: emailSent,
+         statusCode: 200,
+      };
+   }
+
+   return {
+      success: false,
+      message: 'Failed to send reminder email',
+      data: emailSent,
+      statusCode: 500,
+   };
+};
