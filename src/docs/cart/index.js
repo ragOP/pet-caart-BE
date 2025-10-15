@@ -99,3 +99,29 @@
  *       403:
  *         description: Forbidden
  */
+
+/**
+ * @swagger
+ * /api/cart/previous-order:
+ *   post:
+ *     summary: Add items to cart from a previous order
+ *     tags: [Cart]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required:
+ *         - orderId
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               orderId:
+ *                 type: string
+ *                 description: The ID of the previous order
+ *     responses:
+ *       200:
+ *         description: Items added to cart successfully
+ *       404:
+ *         description: Previous order not found
+ */

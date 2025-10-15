@@ -2,6 +2,8 @@ const productModel = require('../../models/productModel.js');
 const variantModel = require('../../models/variantModel.js');
 const cartModel = require('../../models/cartModel.js');
 const CartRepository = require('../../repositories/cart/index.js');
+const { getOrderById } = require('../../controllers/orders/index.js');
+const orderModel = require('../../models/orderModel.js');
 
 exports.getCart = async ({ user_id, address_id, coupon_id }) => {
    const cart = await CartRepository.getCartByUserId({
@@ -189,7 +191,7 @@ exports.getAllAbondendCart = async () => {
    const query = {
       is_active: true,
       items: { $exists: true, $not: { $size: 0 } },
-      updatedAt: { $lt: new Date(Date.now() - 24 * 60 * 60 * 1000) } // 24 hours ago
+      updatedAt: { $lt: new Date(Date.now() - 24 * 60 * 60 * 1000) }, // 24 hours ago
    };
    const carts = await CartRepository.getAllAbondendCarts(query);
    if (!carts) {
@@ -205,5 +207,69 @@ exports.getAllAbondendCart = async () => {
       status: 200,
       success: true,
       data: carts,
+   };
+};
+
+exports.addToCartFromPreviousOrder = async (user_id, orderId) => {
+   const previousOrder = await orderModel.findOne({ _id: orderId, userId: user_id });
+   if (!previousOrder) {
+      return {
+         message: 'Previous order not found',
+         status: 404,
+         success: false,
+         data: null,
+      };
+   }
+   let cart = await CartRepository.getCartForUser({ user_id });
+   if (!cart) {
+      cart = await CartRepository.addToCart({
+         userId: user_id,
+         items: [],
+         total_price: 0,
+         is_active: true,
+      });
+   }
+   for (const item of previousOrder.items) {
+      const productData = await productModel.findById(item.productId);
+      if (!productData) {
+         continue;
+      }
+      let variantData = null;
+      if (item.variantId) {
+         variantData = await variantModel.findById(item.variantId);
+         if (!variantData) {
+            continue;
+         }
+      }
+      const existingItemIndex = cart.items.findIndex(
+         cartItem => cartItem.productId.toString() === item.productId.toString()
+      );
+      const productPrice = variantData ? variantData.salePrice : productData.salePrice;
+      const weight = variantData ? variantData.weight : productData.weight;
+      if (existingItemIndex !== -1) {
+         cart.items[existingItemIndex].quantity += item.quantity;
+         cart.items[existingItemIndex].total =
+            cart.items[existingItemIndex].quantity * productPrice;
+         cart.items[existingItemIndex].price = productPrice;
+         cart.items[existingItemIndex].weight = weight;
+         cart.items[existingItemIndex].variantId = variantData ? variantData._id : null;
+      } else {
+         cart.items.push({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: productPrice,
+            total: productPrice * item.quantity,
+            variantId: variantData ? variantData._id : null,
+            addedAt: new Date(),
+            weight: weight,
+         });
+      }
+   }
+   await cart.save();
+   return {
+      message: 'Items added to cart successfully',
+      status: 200,
+      success: true,
+      data: cart,
    };
 };
