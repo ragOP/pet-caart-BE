@@ -121,15 +121,10 @@ exports.handleStartAndriodPushNotificationCampaign = req =>
       campaignType: req.body.campaignType,
       contactField: 'fcmToken',
       sendFn: async user =>
-         sendPushNotification(
-            user.fcmToken,
-            user.apnToken,
-            {
-               title: 'Special Offer Just for You! 🐾',
-               body: 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
-            },
-            user._id
-         ),
+         sendPushNotification(user.fcmToken, user.apnToken, user._id, {
+            title: 'Special Offer Just for You! 🐾',
+            body: 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
+         }),
    });
 
 // iOS Push Notification Campaign
@@ -140,15 +135,15 @@ exports.handleStartiOSPushNotificationCampaign = req =>
       campaignType: req.body.campaignType,
       contactField: 'apnToken',
       sendFn: async user =>
-         sendViaAPNs(
-            user.apnToken,
-            {
+         sendViaAPNs({
+            apnToken: user.apnToken,
+            notificationData: {
                title: 'Special Offer Just for You! 🐾',
                body: 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
             },
-            user._id,
-            process.env.APN_TOPIC_OVERRIDE
-         ),
+            userId: user._id,
+            topicOverride: process.env.APN_TOPIC_OVERRIDE,
+         }),
    });
 
 exports.getAllCampaigns = async () => {
