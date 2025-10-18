@@ -21,6 +21,13 @@
  *         schema:
  *           type: string
  *           example: 6666666666666666
+ *       - name: isUsingWallet
+ *         in: query
+ *         description: Whether the user is using wallet balance
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *           example: true
  *     responses:
  *       200:
  *         description: Cart retrieved successfully

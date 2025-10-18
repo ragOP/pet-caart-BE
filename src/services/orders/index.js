@@ -15,8 +15,9 @@ const {
    getEstimatedPrice,
 } = require('../../utils/shipRocket');
 const { generateOrderBill } = require('../../utils/generateOrderBill');
+const { getUsableWalletAmount } = require('../../utils/get_usable_wallet_amount');
 
-exports.createOrderService = async (payload, user) => {
+exports.createOrderService = async (payload, user, isUsingWallet) => {
    const session = await mongoose.startSession();
    session.startTransaction();
 
@@ -186,6 +187,24 @@ exports.createOrderService = async (payload, user) => {
          }
       }
 
+      const walletDiscount = 0;
+      if (isUsingWallet) {
+         const totalWalletBalance = user.walletBalance || 0;
+         const applicableWalletAmount = getUsableWalletAmount(subtotal, totalWalletBalance);
+         subtotal -= applicableWalletAmount;
+         walletDiscount = applicableWalletAmount;
+
+         // Deduct wallet amount from user
+         const updatedWalletBalance = totalWalletBalance - applicableWalletAmount;
+         await mongoose
+            .model('User')
+            .updateOne(
+               { _id: user._id },
+               { $set: { walletBalance: updatedWalletBalance } },
+               { session }
+            );
+      }
+
       const orderItemPayload = updatedItems.map(item => ({
          productId: item.productId._id,
          variantId: item.variantId,
@@ -204,13 +223,14 @@ exports.createOrderService = async (payload, user) => {
          address: addressPayload,
          paymentMethod: 'razorpay',
          status: 'pending',
-         rawPrice: subtotal + totalDiscountedAmount,
+         rawPrice: subtotal + totalDiscountedAmount + walletDiscount,
          discountedAmount: totalDiscountedAmount,
          discountedAmountAfterCoupon: subtotal,
          totalAmount: subtotal + Math.min(shippingCost, 150),
          couponCode: couponCode,
          note: payload.note || '',
          weight: weight,
+         walletDiscount: walletDiscount,
       };
 
       const order = await orderModel.create([orderPayload], { session });

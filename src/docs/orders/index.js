@@ -7,6 +7,14 @@
  *     tags: [Orders]
  *     security:
  *       - bearerAuth: []
+ *     parameters:
+ *       - name: isUsingWallet
+ *         in: query
+ *         description: Whether the user is using wallet balance
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *           example: true
  *     requestBody:
  *       required: true
  *       content:
@@ -43,6 +51,7 @@
  *       401:
  *         description: Unauthorized
  */
+
 
 /**
  * @swagger
