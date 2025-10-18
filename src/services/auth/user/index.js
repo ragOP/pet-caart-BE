@@ -7,6 +7,7 @@ const {
 } = require('../../../repositories/auth/index');
 const jwt = require('jsonwebtoken');
 const otpModel = require('../../../models/otpModel');
+const { generateUniqueReferralCode } = require('../../../utils/generate_unique_referral_code');
 
 // exports.registerUser = async (phoneNumber, otp, fcmToken, apnToken) => {
 //   let existingUser = await checkUserExists(phoneNumber);
@@ -203,5 +204,34 @@ exports.updateProfile = async (id, data) => {
       success: true,
       message: 'User profile updated successfully',
       data: updatedUser,
+   };
+};
+
+exports.generateReferralCode = async userId => {
+   const user = await getUserById(userId);
+   if (!user) {
+      return {
+         statusCode: 404,
+         message: 'User not found',
+         data: null,
+         success: false,
+      };
+   }
+   if (user.referralCode) {
+      return {
+         statusCode: 200,
+         message: 'Referral code already exists',
+         data: { referralCode: user.referralCode },
+         success: true,
+      };
+   }
+   const referralCode = await generateUniqueReferralCode(userId);
+   user.referralCode = referralCode;
+   await user.save();
+   return {
+      statusCode: 200,
+      message: 'Referral code generated successfully',
+      data: { referralCode },
+      success: true,
    };
 };

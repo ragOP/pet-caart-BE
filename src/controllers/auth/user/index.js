@@ -5,6 +5,7 @@ const {
    getUserById,
    updateUser,
    updateProfile,
+   generateReferralCode,
 } = require('../../../services/auth/user/index');
 const { asyncHandler } = require('../../../utils/asyncHandler');
 const ApiResponse = require('../../../utils/apiResponse/index');
@@ -87,4 +88,15 @@ exports.handleUpdateProfile = asyncHandler(async (req, res) => {
    return res
       .status(200)
       .json(new ApiResponse(200, result, 'User profile updated successfully', true));
+});
+
+exports.handleGenerateReferralCode = asyncHandler(async (req, res) => {
+   const user = req.user;
+   const result = await generateReferralCode(user._id);
+   if (!result) {
+      return res.status(404).json(new ApiResponse(404, null, 'User not found', false));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(200, result.data, 'Referral code generated successfully', true));
 });

@@ -56,3 +56,18 @@
  *       200:
  *         description: User profile updated successfully
  */
+
+/**
+ * @swagger
+ * /api/auth/user/generate-referral-code:
+ *   post:
+ *     summary: Generate a unique referral code
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Referral code generated successfully
+ *       404:
+ *         description: User not found
+ */
