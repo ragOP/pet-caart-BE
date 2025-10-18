@@ -5,11 +5,12 @@ const CartRepository = require('../../repositories/cart/index.js');
 const { getOrderById } = require('../../controllers/orders/index.js');
 const orderModel = require('../../models/orderModel.js');
 
-exports.getCart = async ({ user_id, address_id, coupon_id }) => {
+exports.getCart = async ({ user_id, address_id, coupon_id, isUsingWalletAmount }) => {
    const cart = await CartRepository.getCartByUserId({
       user_id,
       address_id,
       coupon_id,
+      isUsingWalletAmount,
    });
    if (!cart) {
       return {

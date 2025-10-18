@@ -10,11 +10,13 @@ const { asyncHandler } = require('../../utils/asyncHandler/index.js');
 
 exports.getCart = asyncHandler(async (req, res) => {
    const { _id } = req.user;
+   const { isUsingWalletAmount } = req.query;
 
    const cart = await getCart({
       user_id: _id,
       address_id: req.query.address_id,
       coupon_id: req.query.coupon_id,
+      isUsingWalletAmount: isUsingWalletAmount ? true : false,
    });
 
    if (!cart.success) {
