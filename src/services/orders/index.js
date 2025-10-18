@@ -257,6 +257,30 @@ exports.createOrderService = async (payload, user) => {
       // Delete cart
       await cartModel.findByIdAndDelete(cartId, { session });
 
+      // Update if it is user's first order
+      if (!user.hasCompletedFirstOrder && user.referredBy) {
+         const referralBonus = Math.max(Number(process.env.REFERRAL_BONUS_AMOUNT) || 0, 0);
+
+         const sessionOptions = session ? { session } : {};
+
+         await Promise.all([
+            mongoose
+               .model('User')
+               .updateOne(
+                  { _id: user._id },
+                  { $set: { hasCompletedFirstOrder: true } },
+                  sessionOptions
+               ),
+            mongoose
+               .model('User')
+               .updateOne(
+                  { _id: user.referredBy },
+                  { $inc: { walletBalance: referralBonus } },
+                  sessionOptions
+               ),
+         ]);
+      }
+
       // Create transcation
       const transcationPayload = {
          orderId: order[0]._id,
@@ -282,7 +306,6 @@ exports.createOrderService = async (payload, user) => {
       await session.commitTransaction();
       session.endSession();
 
-      // TODO: Send email to user about order success
       let emailSent = false;
 
       // const orderBill = await generateOrderBill(order[0], user, addressPayload);
