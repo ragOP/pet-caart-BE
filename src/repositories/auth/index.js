@@ -29,3 +29,9 @@ exports.updateUserById = async (id, data) => {
    const user = await User.findByIdAndUpdate(id, data, { new: true });
    return user;
 };
+
+exports.checkUserExistsByReferralCode = async referralCode => {
+   const user = await User.findOne({ referralCode });
+   if (user) return user;
+   return null;
+};

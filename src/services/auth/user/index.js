@@ -4,6 +4,7 @@ const {
    getFilteredUsers,
    getUserById,
    updateUserById,
+   checkUserExistsByReferralCode,
 } = require('../../../repositories/auth/index');
 const jwt = require('jsonwebtoken');
 const otpModel = require('../../../models/otpModel');
@@ -60,7 +61,7 @@ const { generateUniqueReferralCode } = require('../../../utils/generate_unique_r
 //   };
 // };
 
-exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken) => {
+exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken, referralCode) => {
    const otpData = await otpModel.findOne({ phoneNumber, otp });
    if (!otpData) {
       return {
@@ -84,7 +85,17 @@ exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken) => {
    let isExisitinguser = false;
    let user = await checkUserExists(phoneNumber);
    if (!user) {
+      let referrer = null;
+      if (referralCode?.trim()) {
+         referrer = await checkUserExistsByReferralCode(referralCode.trim());
+      }
+
       user = await createUser(phoneNumber, fcmToken, apnToken);
+
+      if (referrer) {
+         user.referredBy = referrer._id;
+         await user.save();
+      }
    } else if (user.role !== 'user') {
       return {
          statusCode: 401,

@@ -23,6 +23,9 @@
  *               apnToken:
  *                 type: string
  *                 example: 'apn_token_example'
+ *               referralCode:
+ *                 type: string
+ *                 example: 'referral_code_example'
  *     responses:
  *       201:
  *         description: User login successfully
