@@ -10,6 +10,10 @@ const jwt = require('jsonwebtoken');
 const otpModel = require('../../../models/otpModel');
 const { generateUniqueReferralCode } = require('../../../utils/generate_unique_referral_code');
 const walletModel = require('../../../models/walletModel');
+const { check } = require('express-validator');
+const userModel = require('../../../models/userModel');
+const { sendPushNotification } = require('../../../utils/send_notification');
+const { sendViaAPNs } = require('../../../utils/send_ios_notification');
 
 // exports.registerUser = async (phoneNumber, otp, fcmToken, apnToken) => {
 //   let existingUser = await checkUserExists(phoneNumber);
@@ -95,6 +99,31 @@ exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken, referralCode) =
 
       if (referrer) {
          user.referredBy = referrer._id;
+         // Wrappping in IIFE to avoid blocking main flow annd won't affect user login flow
+         (async () => {
+            try {
+               if (referrer.fcmToken) {
+                  await sendPushNotification(referrer.fcmToken, referrer.apnToken, referrer._id, {
+                     title: 'New Referral!',
+                     body: `${user.name || 'Someone'} just signed up using your referral code.`,
+                  });
+               }
+
+               if (referrer.apnToken) {
+                  await sendViaAPNs({
+                     apnToken: referrer.apnToken,
+                     userId: referrer._id,
+                     notificationData: {
+                        title: 'New Referral!',
+                        body: `${user.name || 'Someone'} just signed up using your referral code.`,
+                     },
+                  });
+               }
+            } catch (notifyErr) {
+               console.error('Notification send failed:', notifyErr.message);
+            }
+         })();
+         // Save the user info even before sending notification to avoid delays in login flow
          await user.save();
       }
    } else if (user.role !== 'user') {
