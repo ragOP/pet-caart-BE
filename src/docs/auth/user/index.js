@@ -65,12 +65,38 @@
  * /api/auth/user/generate-referral-code:
  *   post:
  *     summary: Generate a unique referral code
- *     tags: [Auth]
+ *     tags: [Wallet]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Referral code generated successfully
+ *       404:
+ *         description: User not found
+ */
+
+/**
+ * @swagger
+ * /api/auth/user/get-all-wallet-transactions:
+ *   get:
+ *     summary: Get all wallet transactions for a user
+ *     tags: [Wallet]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         schema:
+ *           type: integer
+ *           default: 1
+ *       - in: query
+ *         name: perPage
+ *         schema:
+ *           type: integer
+ *           default: 50
+ *     responses:
+ *       200:
+ *         description: Wallet transactions fetched successfully
  *       404:
  *         description: User not found
  */

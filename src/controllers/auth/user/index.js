@@ -6,6 +6,7 @@ const {
    updateUser,
    updateProfile,
    generateReferralCode,
+   getAllWalletTransactions,
 } = require('../../../services/auth/user/index');
 const { asyncHandler } = require('../../../utils/asyncHandler');
 const ApiResponse = require('../../../utils/apiResponse/index');
@@ -99,4 +100,16 @@ exports.handleGenerateReferralCode = asyncHandler(async (req, res) => {
    return res
       .status(200)
       .json(new ApiResponse(200, result.data, 'Referral code generated successfully', true));
+});
+
+exports.handleGetAllWalletTransactions = asyncHandler(async (req, res) => {
+   const user = req.user;
+   const { page = 1, per_page = 50 } = req.query;
+   const result = await getAllWalletTransactions(user._id, page, per_page);
+   if (!result) {
+      return res.status(200).json(new ApiResponse(404, null, 'Wallet transactions not found', false));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(200, result, 'Wallet transactions fetched successfully', true));
 });

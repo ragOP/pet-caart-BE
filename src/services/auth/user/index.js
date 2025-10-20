@@ -9,6 +9,7 @@ const {
 const jwt = require('jsonwebtoken');
 const otpModel = require('../../../models/otpModel');
 const { generateUniqueReferralCode } = require('../../../utils/generate_unique_referral_code');
+const walletModel = require('../../../models/walletModel');
 
 // exports.registerUser = async (phoneNumber, otp, fcmToken, apnToken) => {
 //   let existingUser = await checkUserExists(phoneNumber);
@@ -244,5 +245,26 @@ exports.generateReferralCode = async userId => {
       message: 'Referral code generated successfully',
       data: { referralCode },
       success: true,
+   };
+};
+
+exports.getAllWalletTransactions = async (userId, page = 1, perPage = 50) => {
+   const user = await getUserById(userId);
+   if (!user) {
+      return {
+         statusCode: 404,
+         message: 'User not found',
+         data: null,
+      };
+   }
+   const skip = (page - 1) * perPage;
+   const transactions = await walletModel.find({ userId }).skip(skip).limit(perPage);
+   return {
+      statusCode: 200,
+      message: 'Wallet transactions fetched successfully',
+      data: transactions,
+      total: transactions.length,
+      page,
+      perPage,
    };
 };
