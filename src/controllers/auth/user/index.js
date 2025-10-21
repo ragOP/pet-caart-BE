@@ -107,9 +107,30 @@ exports.handleGetAllWalletTransactions = asyncHandler(async (req, res) => {
    const { page = 1, per_page = 50 } = req.query;
    const result = await getAllWalletTransactions(user._id, page, per_page);
    if (!result) {
-      return res.status(200).json(new ApiResponse(404, null, 'Wallet transactions not found', false));
+      return res
+         .status(200)
+         .json(new ApiResponse(404, null, 'Wallet transactions not found', false));
    }
    return res
       .status(200)
       .json(new ApiResponse(200, result, 'Wallet transactions fetched successfully', true));
+});
+
+exports.handleGetWalletBalance = asyncHandler(async (req, res) => {
+   const { _id } = req.user;
+   const user = await getUserById(_id);
+   console.log('User Wallet Balance:', user.data.walletBalance);
+   if (!user) {
+      return res.status(404).json(new ApiResponse(404, null, 'User not found', false));
+   }
+   return res
+      .status(200)
+      .json(
+         new ApiResponse(
+            200,
+            { walletBalance: user.data.walletBalance },
+            'Wallet balance fetched successfully',
+            true
+         )
+      );
 });

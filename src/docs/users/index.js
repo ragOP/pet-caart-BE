@@ -123,3 +123,18 @@
  *       200:
  *         description: User updated successfully
  */
+
+/**
+ * @swagger
+ * /api/users/check-user-wallet:
+ *   get:
+ *     summary: Check user wallet balance
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Wallet balance fetched successfully
+ *       404:
+ *         description: User not found
+ */
