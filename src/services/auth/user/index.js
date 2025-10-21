@@ -66,7 +66,7 @@ const { sendViaAPNs } = require('../../../utils/send_ios_notification');
 //   };
 // };
 
-exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken, referralCode) => {
+exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken) => {
    const otpData = await otpModel.findOne({ phoneNumber, otp });
    if (!otpData) {
       return {
@@ -90,42 +90,8 @@ exports.loginUser = async (phoneNumber, otp, fcmToken, apnToken, referralCode) =
    let isExisitinguser = false;
    let user = await checkUserExists(phoneNumber);
    if (!user) {
-      let referrer = null;
-      if (referralCode?.trim()) {
-         referrer = await checkUserExistsByReferralCode(referralCode.trim());
-      }
-
       user = await createUser(phoneNumber, fcmToken, apnToken);
-
-      if (referrer) {
-         user.referredBy = referrer._id;
-         // Wrappping in IIFE to avoid blocking main flow annd won't affect user login flow
-         (async () => {
-            try {
-               if (referrer.fcmToken) {
-                  await sendPushNotification(referrer.fcmToken, referrer.apnToken, referrer._id, {
-                     title: 'New Referral!',
-                     body: `${user.name || 'Someone'} just signed up using your referral code.`,
-                  });
-               }
-
-               if (referrer.apnToken) {
-                  await sendViaAPNs({
-                     apnToken: referrer.apnToken,
-                     userId: referrer._id,
-                     notificationData: {
-                        title: 'New Referral!',
-                        body: `${user.name || 'Someone'} just signed up using your referral code.`,
-                     },
-                  });
-               }
-            } catch (notifyErr) {
-               console.error('Notification send failed:', notifyErr.message);
-            }
-         })();
-         // Save the user info even before sending notification to avoid delays in login flow
-         await user.save();
-      }
+      await user.save();
    } else if (user.role !== 'user') {
       return {
          statusCode: 401,
@@ -230,6 +196,43 @@ exports.updateProfile = async (id, data) => {
          message: 'User not found',
          data: null,
       };
+   }
+   if (data.referralCode && user.createdAt === user.updatedAt) {
+      const referrer = await checkUserExistsByReferralCode(data.referralCode.trim());
+      if (!referrer) {
+         return {
+            statusCode: 400,
+            success: false,
+            message: 'Invalid referral code',
+            data: null,
+         };
+      }
+      if (referrer) {
+         data.referredBy = referrer._id;
+         (async () => {
+            try {
+               if (referrer.fcmToken) {
+                  await sendPushNotification(referrer.fcmToken, referrer.apnToken, referrer._id, {
+                     title: 'New Referral!',
+                     body: `${user.name || 'Someone'} just signed up using your referral code.`,
+                  });
+               }
+
+               if (referrer.apnToken) {
+                  await sendViaAPNs({
+                     apnToken: referrer.apnToken,
+                     userId: referrer._id,
+                     notificationData: {
+                        title: 'New Referral!',
+                        body: `${user.name || 'Someone'} just signed up using your referral code.`,
+                     },
+                  });
+               }
+            } catch (notifyErr) {
+               console.error('Notification send failed:', notifyErr.message);
+            }
+         })();
+      }
    }
    const updatedUser = await updateUserById(id, data);
    if (!updatedUser) {
