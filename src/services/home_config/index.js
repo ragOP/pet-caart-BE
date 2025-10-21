@@ -18,6 +18,7 @@ exports.CreateNewHomeSection = async (
    isActive,
    backgroundImage,
    bannerImage,
+   bannerImageMobile,
    keyword
 ) => {
    const payload = {};
