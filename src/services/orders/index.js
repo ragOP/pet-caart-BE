@@ -200,12 +200,14 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
 
          // Create wallet transaction
          await walletModel.create(
-            {
-               userId: user._id,
-               amount: applicableWalletAmount,
-               type: 'debit',
-               description: `Used in order ${cartId}`,
-            },
+            [
+               {
+                  userId: user._id,
+                  amount: applicableWalletAmount,
+                  type: 'debit',
+                  description: `Used wallet balance for order ${cartId}`,
+               },
+            ],
             { session }
          );
 
@@ -315,12 +317,14 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
 
          // Create wallet transaction for referral bonus
          await walletModel.create(
-            {
-               userId: user.referredBy,
-               amount: referralBonus,
-               type: 'credit',
-               description: `Referral bonus for referring user ${user.name}`,
-            },
+            [
+               {
+                  userId: user.referredBy,
+                  amount: referralBonus,
+                  type: 'credit',
+                  description: `Referral bonus for referring user ${user.phoneNumber}`,
+               },
+            ],
             { session }
          );
       }
