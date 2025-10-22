@@ -15,7 +15,7 @@ exports.getCartForUser = async ({ user_id }) => {
    });
 };
 
-exports.getCartByUserId = async ({ user_id, address_id, coupon_id }) => {
+exports.getCartByUserId = async ({ user_id, address_id, coupon_id, isUsingWalletAmount }) => {
    if (!user_id) {
       return {
          message: 'User ID is required',
