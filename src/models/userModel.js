@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema(
       fcmToken: { type: String, default: '' },
       apnToken: { type: String, default: '' },
       lastLogin: { type: Date, default: Date.now },
-      referralCode: { type: String, unique: true, sparse: true },
+      referralCode: { type: String },
       referredBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
       walletBalance: { type: Number, default: 0 },
       hasCompletedFirstOrder: { type: Boolean, default: false },

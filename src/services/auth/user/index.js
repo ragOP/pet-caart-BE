@@ -197,7 +197,7 @@ exports.updateProfile = async (id, data) => {
          data: null,
       };
    }
-   if (data.referralCode && user.createdAt === user.updatedAt) {
+   if (data.referralCode && user.createdAt.toDateString() === user.updatedAt.toDateString()) {
       const referrer = await checkUserExistsByReferralCode(data.referralCode.trim());
       if (!referrer) {
          return {
@@ -234,6 +234,7 @@ exports.updateProfile = async (id, data) => {
          })();
       }
    }
+   console.log('Profile update data:', data);
    const updatedUser = await updateUserById(id, data);
    if (!updatedUser) {
       return {
