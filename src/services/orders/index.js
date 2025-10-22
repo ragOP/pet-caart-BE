@@ -16,6 +16,7 @@ const {
 } = require('../../utils/shipRocket');
 const { generateOrderBill } = require('../../utils/generateOrderBill');
 const { getUsableWalletAmount } = require('../../utils/get_usable_wallet_amount');
+const walletModel = require('../../models/walletModel');
 
 exports.createOrderService = async (payload, user, isUsingWallet) => {
    const session = await mongoose.startSession();
@@ -196,6 +197,18 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
 
          // Deduct wallet amount from user
          const updatedWalletBalance = totalWalletBalance - applicableWalletAmount;
+
+         // Create wallet transaction
+         await walletModel.create(
+            {
+               userId: user._id,
+               amount: applicableWalletAmount,
+               type: 'debit',
+               description: `Used in order ${cartId}`,
+            },
+            { session }
+         );
+
          await mongoose
             .model('User')
             .updateOne(
@@ -299,6 +312,17 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
                   sessionOptions
                ),
          ]);
+
+         // Create wallet transaction for referral bonus
+         await walletModel.create(
+            {
+               userId: user.referredBy,
+               amount: referralBonus,
+               type: 'credit',
+               description: `Referral bonus for referring user ${user.name}`,
+            },
+            { session }
+         );
       }
 
       // Create transcation
