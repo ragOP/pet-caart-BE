@@ -8,7 +8,7 @@
  *     security:
  *       - bearerAuth: []
  *     parameters:
- *       - name: isUsingWallet
+ *       - name: isUsingWalletAmount
  *         in: query
  *         description: Whether the user is using wallet balance
  *         required: false

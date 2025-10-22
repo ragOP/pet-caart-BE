@@ -11,8 +11,8 @@ const ApiResponse = require('../../utils/apiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
 
 exports.createOrder = asyncHandler(async (req, res) => {
-   const { isUsingWallet } = req.query;
-   const result = await createOrderService(req.body, req.user, isUsingWallet ? true : false);
+   const { isUsingWalletAmount = false } = req.query;
+   const result = await createOrderService(req.body, req.user, isUsingWalletAmount ? true : false);
 
    if (!result.success) {
       return res

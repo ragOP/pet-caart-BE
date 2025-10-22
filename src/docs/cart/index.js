@@ -21,7 +21,7 @@
  *         schema:
  *           type: string
  *           example: 6666666666666666
- *       - name: isUsingWallet
+ *       - name: isUsingWalletAmount
  *         in: query
  *         description: Whether the user is using wallet balance
  *         required: false
