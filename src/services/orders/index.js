@@ -28,6 +28,8 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
       const { _id } = user;
 
       if (!cartId || !addressId || !razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
+         await session.abortTransaction();
+         session.endSession();
          return {
             statusCode: 400,
             data: null,
@@ -41,6 +43,8 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
       const generatedSignature = hmac.digest('hex');
 
       if (generatedSignature !== razorpaySignature) {
+         await session.abortTransaction();
+         session.endSession();
          return {
             statusCode: 400,
             data: null,
@@ -66,6 +70,8 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          .session(session);
 
       if (!cart || cart.items.length === 0 || cart.items.some(item => item.quantity === 0)) {
+         await session.abortTransaction();
+         session.endSession();
          return {
             statusCode: 404,
             data: null,
@@ -79,15 +85,15 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
       if (addressId) {
          const address = await addressModel.findById(addressId).session(session);
          if (!address) {
+            await session.abortTransaction();
+            session.endSession();
             return {
                message: 'Address not found',
-               status: 404,
+               statusCode: 404,
                success: false,
                data: null,
             };
          }
-
-         state = address.state_code;
          addressPayload.name = address.firstName + ' ' + address.lastName;
          addressPayload.mobile = address.phone;
          addressPayload.email = user.email || '';
@@ -135,9 +141,11 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          const now = new Date();
 
          if (!coupon) {
+            await session.abortTransaction();
+            session.endSession();
             return {
                message: 'Coupon not found',
-               status: 404,
+               statusCode: 404,
                success: false,
                data: null,
             };
@@ -179,16 +187,18 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
             totalDiscountedAmount = discountAmount;
             subtotal -= discountAmount;
          } else {
+            await session.abortTransaction();
+            session.endSession();
             return {
                message: 'Coupon is expired or inactive',
-               status: 400,
+               statusCode: 400,
                success: false,
                data: null,
             };
          }
       }
 
-      const walletDiscount = 0;
+      let walletDiscount = 0;
       if (isUsingWallet) {
          const totalWalletBalance = user.walletBalance || 0;
          const applicableWalletAmount = getUsableWalletAmount(subtotal, totalWalletBalance);
@@ -250,6 +260,8 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
 
       const order = await orderModel.create([orderPayload], { session });
       if (!order || !order[0]) {
+         await session.abortTransaction();
+         session.endSession();
          return {
             statusCode: 500,
             data: null,
@@ -296,24 +308,17 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
       if (!user.hasCompletedFirstOrder && user.referredBy) {
          const referralBonus = Math.max(Number(process.env.REFERRAL_BONUS_AMOUNT) || 0, 0);
 
-         const sessionOptions = session ? { session } : {};
+         await mongoose
+            .model('User')
+            .updateOne({ _id: user._id }, { $set: { hasCompletedFirstOrder: true } }, { session });
 
-         await Promise.all([
-            mongoose
-               .model('User')
-               .updateOne(
-                  { _id: user._id },
-                  { $set: { hasCompletedFirstOrder: true } },
-                  sessionOptions
-               ),
-            mongoose
-               .model('User')
-               .updateOne(
-                  { _id: user.referredBy },
-                  { $inc: { walletBalance: referralBonus } },
-                  sessionOptions
-               ),
-         ]);
+         await mongoose
+            .model('User')
+            .updateOne(
+               { _id: user.referredBy },
+               { $inc: { walletBalance: referralBonus } },
+               { session }
+            );
 
          // Create wallet transaction for referral bonus
          await walletModel.create(
@@ -337,12 +342,14 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          userId: _id,
          type: 'order',
          paymentMethod: 'razorpay',
-         amount: subtotal + shippingCost,
+         amount: subtotal + Math.min(shippingCost, 150),
          status: 'pending',
          transactionId: null,
       };
       const transcation = await transcationModel.create([transcationPayload], { session });
       if (!transcation || !transcation[0]) {
+         await session.abortTransaction();
+         session.endSession();
          return {
             statusCode: 500,
             data: null,
