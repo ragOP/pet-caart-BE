@@ -234,7 +234,8 @@ exports.updateProfile = async (id, data) => {
          })();
       }
    }
-   console.log('Profile update data:', data);
+   // Remove referralCode from update data to prevent overwriting
+   delete data.referralCode;
    const updatedUser = await updateUserById(id, data);
    if (!updatedUser) {
       return {
