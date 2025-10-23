@@ -1,6 +1,7 @@
 const addressModel = require('../../models/addressModel');
 const cartModel = require('../../models/cartModel');
 const Coupon = require('../../models/couponModel');
+const userModel = require('../../models/userModel');
 const { getUsableWalletAmount } = require('../../utils/get_usable_wallet_amount');
 const { getTaxForItem } = require('../../utils/getTaxRate');
 const { getEstimatedPrice } = require('../../utils/shipRocket');
@@ -24,6 +25,8 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id, isUsingWallet
          cart: null,
       };
    }
+
+   const user = await userModel.findById(user_id);
 
    const cart = await cartModel
       .findOne({ userId: user_id })
@@ -166,23 +169,26 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id, isUsingWallet
       }
    }
 
-   const walletDiscount = 0;
+   let walletDiscount = 0;
 
    if (isUsingWalletAmount) {
-      const walletAmount = user.walletAmount || 0;
+      const walletAmount = user.walletBalance || 0;
       const applicableWalletAmount = getUsableWalletAmount(subtotal, walletAmount);
       walletDiscount = applicableWalletAmount;
    }
 
-   const total = subtotal != 0 ? subtotal + Math.min(shippingDetails.totalCost, 150) : 0;
-   shippingDetails.totalCost = subtotal != 0 ? Math.min(shippingDetails.totalCost, 150) : 0;
+   const shippingCost = shippingDetails?.totalCost ?? 0;
+   const total = subtotal !== 0 ? subtotal + Math.min(shippingCost || 0, 150) : 0;
+   shippingDetails.totalCost = subtotal !== 0 ? Math.min(shippingCost || 0, 150) : 0;
    shippingDetails.estimatedDays = Math.min(shippingDetails.estimatedDays, 4);
 
    return {
       ...cart.toObject(),
       items: updatedItems,
       discount_amount: discountAmount,
-      total_price_with_shipping_and_discount: parseFloat(total.toFixed(2) - walletDiscount.toFixed(2)),
+      total_price_with_shipping_and_discount: parseFloat(
+         total.toFixed(2) - walletDiscount.toFixed(2)
+      ),
       is_active: cart.is_active,
       shippingDetails,
       walletDiscount,
