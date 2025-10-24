@@ -45,6 +45,8 @@ const OrderSchema = new mongoose.Schema(
       walletDiscount: { type: Number, default: 0 },
       shippingCharge: { type: Number, default: 0 },
       cashBackOnOrder: { type: Number, default: 0 },
+      gstNumber: { type: String, default: '' },
+      totalMRP: { type: Number, required: true },
    },
    { timestamps: true }
 );

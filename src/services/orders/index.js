@@ -23,8 +23,16 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
    session.startTransaction();
 
    try {
-      const { cartId, addressId, couponId, razorpayOrderId, razorpayPaymentId, razorpaySignature } =
-         payload;
+      const {
+         cartId,
+         addressId,
+         couponId,
+         razorpayOrderId,
+         razorpayPaymentId,
+         razorpaySignature,
+         gstNumber = '',
+         couponName = '',
+      } = payload;
       const { _id } = user;
 
       if (!cartId || !addressId || !razorpayOrderId || !razorpayPaymentId || !razorpaySignature) {
@@ -139,8 +147,12 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
 
       let discountAmount = 0;
       let couponCode = '';
-      if (couponId) {
-         const coupon = await Coupon.findById(couponId).session(session);
+      if (couponId || couponName) {
+         // Check coupon by name if couponId is not provided
+         const coupon = await Coupon.findBy({
+            $or: [{ _id: couponId }, { code: couponName }],
+         }).session(session);
+
          couponCode = coupon?.code || '';
          const now = new Date();
 
@@ -186,7 +198,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
                const perUnit = discountedTotal / item.quantity;
                item.discounted_price = parseFloat(perUnit.toFixed(2));
                item.total_price = parseFloat(discountedTotal.toFixed(2));
-               item.itemMRP = parseFloat(itemMRP.toFixed(2));
+               item.itemMRP = parseFloat(item.itemMRP.toFixed(2));
             });
 
             totalDiscountedAmount = discountAmount;
@@ -292,6 +304,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          shippingCharge: Math.min(shippingCost, 150).toFixed(2),
          cashBackOnOrder: cashbackAmount.toFixed(2),
          totalMRP: finalMRP.toFixed(2),
+         gstNumber: gstNumber,
       };
 
       const order = await orderModel.create([orderPayload], { session });
