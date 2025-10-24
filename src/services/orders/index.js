@@ -245,7 +245,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
                   userId: _id,
                   amount: cashbackAmount,
                   type: 'credit',
-                  description: `Cashback for order ${orderId}`,
+                  description: `Cashback for order on ${new Date().toLocaleDateString()}`,
                },
             ],
             { session }
