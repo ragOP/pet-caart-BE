@@ -84,18 +84,18 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id, isUsingWallet
    // 1. Base subtotal
    let discountAmount = 0;
    let subtotal = 0;
-   let totalMrp = 0;
+   let totalMRP = 0;
    const updatedItems = cart.items.map(item => {
       const itemTotal = item.price * item.quantity;
+      totalMRP += item.totalMRP;
       subtotal += itemTotal;
       return {
          ...item.toObject(),
          discounted_price: item.price,
          quantity: item.quantity,
+         totalMRP: item.totalMRP,
       };
    });
-
-   totalMrp = subtotal;
 
    // 2. Apply coupon
    if (coupon_id) {
@@ -190,8 +190,9 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id, isUsingWallet
          total.toFixed(2) - walletDiscount.toFixed(2)
       ),
       is_active: cart.is_active,
+      totalMRP: totalMRP,
       shippingDetails,
-      walletDiscount,
+      walletDiscount: Number(walletDiscount.toFixed(2)),
    };
 };
 

@@ -85,12 +85,15 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
 
    let productPrice = 0;
    let weight = 0;
+   let mrp = 0;
    if (variantData) {
       productPrice = variantData.salePrice;
       weight = variantData.weight;
+      totalMRP = variantData.price;
    } else {
       productPrice = productData.salePrice;
       weight = productData.weight;
+      totalMRP = productData.price;
    }
 
    if (!cart) {
@@ -106,9 +109,11 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
                   total: productPrice * quantity,
                   addedAt: new Date(),
                   weight: weight,
+                  totalMRP: totalMRP,
                },
             ],
             total_price: productPrice * quantity,
+            totalMRP: totalMRP * quantity,
             is_active: true,
             isVariant: !!variant_id,
             selectedVariant: variant_id ? variant_id : null,
@@ -135,6 +140,7 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
          cart.items[existingItemIndex].price = productPrice;
          cart.items[existingItemIndex].total = productPrice * quantity;
          cart.items[existingItemIndex].weight = weight;
+         cart.items[existingItemIndex].totalMRP = totalMRP * quantity;
          cart.items[existingItemIndex].variantId = variantData ? variantData._id : null;
       } else {
          cart.items.splice(existingItemIndex, 1);
@@ -145,6 +151,7 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
          quantity,
          price: productPrice,
          total: productPrice * quantity,
+         totalMRP: totalMRP * quantity,
          variantId: variantData ? variantData._id : null,
          addedAt: new Date(),
          weight: weight,
@@ -153,6 +160,7 @@ exports.updateCart = async (user_id, product_id, quantity, variant_id) => {
 
    cart.total_price = cart.items.reduce((sum, item) => sum + item.total, 0);
    cart.is_active = cart.items.length > 0;
+   cart.totalMRP = cart.items.reduce((sum, item) => sum + item.totalMRP, 0);
    cart.isVariant = !!variant_id;
    cart.selectedVariant = variant_id ? variant_id : null;
 
@@ -253,6 +261,7 @@ exports.addToCartFromPreviousOrder = async (user_id, orderId) => {
             cart.items[existingItemIndex].quantity * productPrice;
          cart.items[existingItemIndex].price = productPrice;
          cart.items[existingItemIndex].weight = weight;
+         cart.items[existingItemIndex].totalMRP = totalMRP * cart.items[existingItemIndex].quantity;
          cart.items[existingItemIndex].variantId = variantData ? variantData._id : null;
       } else {
          cart.items.push({
@@ -260,6 +269,7 @@ exports.addToCartFromPreviousOrder = async (user_id, orderId) => {
             quantity: item.quantity,
             price: productPrice,
             total: productPrice * item.quantity,
+            totalMRP: totalMRP * item.quantity,
             variantId: variantData ? variantData._id : null,
             addedAt: new Date(),
             weight: weight,

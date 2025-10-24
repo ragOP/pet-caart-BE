@@ -122,14 +122,18 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
 
       let subtotal = 0;
       let totalDiscountedAmount = 0;
+      let finalMRP = 0;
       const updatedItems = cart.items.map(item => {
          const itemTotal = item.price * item.quantity;
+         const itemMRP = item.totalMRP * item.quantity;
          subtotal += itemTotal;
+         finalMRP += itemMRP;
          return {
             ...item.toObject(),
             discounted_price: item.price,
             quantity: item.quantity,
             total_price: itemTotal,
+            itemMRP: itemMRP,
          };
       });
 
@@ -182,6 +186,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
                const perUnit = discountedTotal / item.quantity;
                item.discounted_price = parseFloat(perUnit.toFixed(2));
                item.total_price = parseFloat(discountedTotal.toFixed(2));
+               item.itemMRP = parseFloat(itemMRP.toFixed(2));
             });
 
             totalDiscountedAmount = discountAmount;
@@ -259,6 +264,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          couponDiscount: item.discounted_price,
          price: item.price,
          total: item.total_price,
+         itemMRP: item.itemMRP,
       }));
 
       const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
@@ -278,8 +284,9 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          note: payload.note || '',
          weight: weight,
          walletDiscount: walletDiscount,
-         shippingCharge: Math.min(shippingCost, 150),
-         cashBackOnOrder: cashbackAmount,
+         shippingCharge: Math.min(shippingCost, 150).toFixed(2),
+         cashBackOnOrder: cashbackAmount.toFixed(2),
+         totalMRP: finalMRP.toFixed(2),
       };
 
       const order = await orderModel.create([orderPayload], { session });

@@ -14,6 +14,10 @@ const cartSchema = new mongoose.Schema(
                ref: 'Product',
                required: true,
             },
+            totalMRP: {
+               type: Number,
+               required: true,
+            },
             variantId: {
                type: mongoose.Schema.Types.ObjectId,
                ref: 'Variant',
@@ -54,6 +58,10 @@ const cartSchema = new mongoose.Schema(
          },
       ],
       total_price: {
+         type: Number,
+         default: 0,
+      },
+      totalMRP: {
          type: Number,
          default: 0,
       },
