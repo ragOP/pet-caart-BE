@@ -43,6 +43,8 @@ const OrderSchema = new mongoose.Schema(
       shipRocketOrderId: { type: String, default: null },
       weight: { type: Number, required: true },
       walletDiscount: { type: Number, default: 0 },
+      shippingCharge: { type: Number, default: 0 },
+      cashBackOnOrder: { type: Number, default: 0 },
    },
    { timestamps: true }
 );

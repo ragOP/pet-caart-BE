@@ -201,14 +201,17 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
       let walletDiscount = 0;
       if (isUsingWallet) {
          const totalWalletBalance = user.walletBalance || 0;
-         const applicableWalletAmount = getUsableWalletAmount(subtotal, totalWalletBalance);
+         const applicableWalletAmount = getUsableWalletAmount(
+            subtotal + totalDiscountedAmount,
+            totalWalletBalance
+         );
          subtotal -= applicableWalletAmount;
          walletDiscount = applicableWalletAmount;
 
          // Deduct wallet amount from user
          const updatedWalletBalance = totalWalletBalance - applicableWalletAmount;
 
-         // Create wallet transaction
+         // Create wallet transaction for debit
          await walletModel.create(
             [
                {
@@ -228,6 +231,25 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
                { $set: { walletBalance: updatedWalletBalance } },
                { session }
             );
+      }
+
+      // 5% cashback on every order to wallet on total cart value
+      const cashbackPercentage = 5;
+      const cashbackAmount = ((subtotal + Math.min(shippingCost, 150)) * cashbackPercentage) / 100;
+
+      if (cashbackAmount > 0) {
+         // Create wallet transaction for cashback credit
+         await walletModel.create(
+            [
+               {
+                  userId: _id,
+                  amount: cashbackAmount,
+                  type: 'credit',
+                  description: `Cashback for order ${orderId}`,
+               },
+            ],
+            { session }
+         );
       }
 
       const orderItemPayload = updatedItems.map(item => ({
@@ -256,6 +278,8 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          note: payload.note || '',
          weight: weight,
          walletDiscount: walletDiscount,
+         shippingCharge: Math.min(shippingCost, 150),
+         cashBackOnOrder: cashbackAmount,
       };
 
       const order = await orderModel.create([orderPayload], { session });
@@ -320,7 +344,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
                { session }
             );
 
-         // Create wallet transaction for referral bonus
+         // Create wallet transaction for referral bonus for referrer
          await walletModel.create(
             [
                {
@@ -328,6 +352,25 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
                   amount: referralBonus,
                   type: 'credit',
                   description: `Referral bonus for referring user ${user.phoneNumber}`,
+               },
+            ],
+            { session }
+         );
+
+         // Create wallet transaction for joining bonus for referee
+         const reffreeBonus = Math.max(Number(process.env.REFFREE_BONUS_AMOUNT) || 0, 0);
+         await mongoose
+            .model('User')
+            .updateOne({ _id: user._id }, { $inc: { walletBalance: reffreeBonus } }, { session });
+
+         // Create wallet transaction for joining bonus for referee
+         await walletModel.create(
+            [
+               {
+                  userId: user._id,
+                  amount: reffreeBonus,
+                  type: 'credit',
+                  description: `Joining bonus for completing first order`,
                },
             ],
             { session }
