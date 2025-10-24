@@ -255,6 +255,11 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
             ],
             { session }
          );
+
+         // Update user wallet balance
+         await mongoose
+            .model('User')
+            .updateOne({ _id: _id }, { $inc: { walletBalance: cashbackAmount } }, { session });
       }
 
       const orderItemPayload = updatedItems.map(item => ({
