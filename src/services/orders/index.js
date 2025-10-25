@@ -299,7 +299,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          items: orderItemPayload,
          address: addressPayload,
          paymentMethod: 'razorpay',
-         status: 'success',
+         status: 'pending',
          rawPrice: subtotal + totalDiscountedAmount + walletDiscount,
          discountedAmount: totalDiscountedAmount,
          discountedAmountAfterCoupon: subtotal,
