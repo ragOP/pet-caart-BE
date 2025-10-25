@@ -149,7 +149,7 @@ exports.createPaymentService = async (payload, user, isUsingWalletAmount) => {
 
    if (isUsingWalletAmount) {
       const walletAmount = user.walletBalance || 0;
-      const applicableWalletAmount = getUsableWalletAmount(subtotal, walletAmount);
+      const applicableWalletAmount = getUsableWalletAmount(subtotal + discountAmount, walletAmount);
       walletDiscount = applicableWalletAmount;
    }
 
