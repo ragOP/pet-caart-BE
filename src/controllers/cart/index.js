@@ -17,6 +17,7 @@ exports.getCart = asyncHandler(async (req, res) => {
       address_id: req.query.address_id,
       coupon_id: req.query.coupon_id,
       isUsingWalletAmount: useWallet,
+      couponName: req.query.couponName ? req.query.couponName : null,
    });
 
    if (!cart.success) {

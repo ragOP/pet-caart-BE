@@ -28,6 +28,13 @@
  *         schema:
  *           type: boolean
  *           example: true
+ *       - name: couponName
+ *         in: query
+ *         description: The name of the coupon to get the cart for
+ *         required: false
+ *         schema:
+ *           type: string
+ *           example: BLACKFRIDAY
  *     responses:
  *       200:
  *         description: Cart retrieved successfully

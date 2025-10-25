@@ -149,7 +149,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
       let couponCode = '';
       if (couponId || couponName) {
          // Check coupon by name if couponId is not provided
-         const coupon = await Coupon.findBy({
+         const coupon = await Coupon.findOne({
             $or: [{ _id: couponId }, { code: couponName }],
          }).session(session);
 

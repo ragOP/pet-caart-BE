@@ -2,12 +2,13 @@ const razorpay = require('../../config/razorpay');
 const addressModel = require('../../models/addressModel');
 const cartModel = require('../../models/cartModel');
 const Coupon = require('../../models/couponModel');
+const { getUsableWalletAmount } = require('../../utils/get_usable_wallet_amount');
 const { getTaxForItem } = require('../../utils/getTaxRate');
 const { getEstimatedPrice } = require('../../utils/shipRocket');
 const { validateId } = require('../../utils/validateId');
 
-exports.createPaymentService = async (payload, user) => {
-   const { cartId, addressId, couponId } = payload;
+exports.createPaymentService = async (payload, user, isUsingWalletAmount) => {
+   const { cartId, addressId, couponId, couponName } = payload;
 
    if (!cartId || !addressId) {
       return {
@@ -27,9 +28,7 @@ exports.createPaymentService = async (payload, user) => {
       if (validation && !validation.success) return validation;
    }
 
-   const cart = await cartModel
-      .findById(cartId)
-      .populate({ path: 'items.productId' });
+   const cart = await cartModel.findById(cartId).populate({ path: 'items.productId' });
 
    if (!cart || cart.items.length === 0 || cart.items.some(item => item.quantity === 0)) {
       return {
@@ -81,8 +80,10 @@ exports.createPaymentService = async (payload, user) => {
       });
    });
 
-   if (couponId) {
-      const coupon = await Coupon.findById(couponId);
+   if (couponId || couponName) {
+      const coupon = await Coupon.findOne({
+         $or: [{ _id: couponId }, { name: couponName }]
+      });
       const now = new Date();
 
       if (!coupon) {
@@ -144,7 +145,15 @@ exports.createPaymentService = async (payload, user) => {
       total += baseAmount;
    });
 
-   const finalAmount = Math.round((total + Math.min(shippingCost, 150)) * 100);
+   let walletDiscount = 0;
+
+   if (isUsingWalletAmount) {
+      const walletAmount = user.walletBalance || 0;
+      const applicableWalletAmount = getUsableWalletAmount(subtotal, walletAmount);
+      walletDiscount = applicableWalletAmount;
+   }
+
+   const finalAmount = Math.round(((total + Math.min(shippingCost, 150)) - walletDiscount) * 100);
 
    const razorpayOrder = await razorpay.orders.create({
       amount: finalAmount,

@@ -16,7 +16,7 @@ exports.getCartForUser = async ({ user_id }) => {
    });
 };
 
-exports.getCartByUserId = async ({ user_id, address_id, coupon_id, isUsingWalletAmount }) => {
+exports.getCartByUserId = async ({ user_id, address_id, coupon_id, isUsingWalletAmount, couponName }) => {
    if (!user_id) {
       return {
          message: 'User ID is required',
@@ -98,8 +98,10 @@ exports.getCartByUserId = async ({ user_id, address_id, coupon_id, isUsingWallet
    });
 
    // 2. Apply coupon
-   if (coupon_id) {
-      const coupon = await Coupon.findById(coupon_id);
+   if (coupon_id || couponName) {
+      const coupon = await Coupon.findOne({
+         $or: [{ _id: coupon_id }, { code: couponName }]
+      });
       const now = new Date();
 
       if (!coupon) {

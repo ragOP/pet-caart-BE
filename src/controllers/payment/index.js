@@ -3,7 +3,8 @@ const { createPaymentService } = require('../../services/payment/index');
 const { asyncHandler } = require('../../utils/asyncHandler');
 
 exports.createPayment = asyncHandler(async (req, res) => {
-   const result = await createPaymentService(req.body, req.user);
+   req.body.isUsingWalletAmount = req.query.isUsingWalletAmount === 'true';
+   const result = await createPaymentService(req.body, req.user, req.body.isUsingWalletAmount);
 
    if (!result.success) {
       return res
