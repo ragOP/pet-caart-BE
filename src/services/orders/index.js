@@ -148,10 +148,16 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
       let discountAmount = 0;
       let couponCode = '';
       if (couponId || couponName) {
-         // Check coupon by name if couponId is not provided
-         const coupon = await Coupon.findOne({
-            $or: [{ _id: couponId }, { code: couponName }],
-         }).session(session);
+         const conditions = [];
+
+         if (couponId && Types.ObjectId.isValid(couponId)) {
+            conditions.push({ _id: new Types.ObjectId(couponId) });
+         }
+
+         if (couponName) {
+            conditions.push({ name: couponName });
+         }
+         const coupon = await Coupon.findOne(conditions.length > 0 ? { $or: conditions } : {});
 
          couponCode = coupon?.code || '';
          const now = new Date();

@@ -1,3 +1,4 @@
+const { Types } = require('mongoose');
 const razorpay = require('../../config/razorpay');
 const addressModel = require('../../models/addressModel');
 const cartModel = require('../../models/cartModel');
@@ -81,9 +82,18 @@ exports.createPaymentService = async (payload, user, isUsingWalletAmount) => {
    });
 
    if (couponId || couponName) {
-      const coupon = await Coupon.findOne({
-         $or: [{ _id: couponId }, { name: couponName }]
-      });
+      const conditions = [];
+
+      if (couponId && Types.ObjectId.isValid(couponId)) {
+         conditions.push({ _id: new Types.ObjectId(couponId) });
+      }
+
+      if (couponName) {
+         conditions.push({ name: couponName });
+      }
+
+      const coupon = await Coupon.findOne(conditions.length > 0 ? { $or: conditions } : {});
+
       const now = new Date();
 
       if (!coupon) {
@@ -153,7 +163,7 @@ exports.createPaymentService = async (payload, user, isUsingWalletAmount) => {
       walletDiscount = applicableWalletAmount;
    }
 
-   const finalAmount = Math.round(((subtotal + Math.min(shippingCost, 150)) - walletDiscount) * 100);
+   const finalAmount = Math.round((subtotal + Math.min(shippingCost, 150) - walletDiscount) * 100);
 
    const razorpayOrder = await razorpay.orders.create({
       amount: finalAmount,
