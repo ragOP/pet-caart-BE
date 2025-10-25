@@ -8,6 +8,7 @@ const {
    getOrderByIdAdmin,
    updateOrderStatus,
    createShipRocketOrder,
+   handleAddAwbInfo,
 } = require('../../controllers/orders');
 const { validateRequest } = require('../../middleware/validateRequest');
 const { isUser, isAdmin } = require('../../middleware/auth/adminMiddleware');
@@ -19,5 +20,6 @@ router.route('/get-order-by-id/:id').get(isAdmin, validateRequest, getOrderByIdA
 router.route('/:id').get(isUser, validateRequest, getOrderById);
 router.route('/:id/update-status').put(isAdmin, validateRequest, updateOrderStatus);
 router.route('/:id/create-shiprocket-order').post(isAdmin, validateRequest, createShipRocketOrder);
+router.route('/:id/add-awb-info').post(isAdmin, validateRequest, handleAddAwbInfo);
 
 module.exports = router;

@@ -47,6 +47,8 @@ const OrderSchema = new mongoose.Schema(
       cashBackOnOrder: { type: Number, default: 0 },
       gstNumber: { type: String, default: '' },
       totalMRP: { type: Number, required: true },
+      awbNumber: { type: String, default: '' },
+      awbTrackingUrl: { type: String, default: 'https://shreenandancourier.com/' },
    },
    { timestamps: true }
 );

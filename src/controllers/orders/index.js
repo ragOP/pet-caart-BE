@@ -6,6 +6,7 @@ const {
    getOrderByIdServiceAdmin,
    updateOrderStatusService,
    createShipRocketOrderService,
+   addAwbInfoService
 } = require('../../services/orders');
 const ApiResponse = require('../../utils/apiResponse');
 const { asyncHandler } = require('../../utils/asyncHandler');
@@ -98,6 +99,20 @@ exports.updateOrderStatus = asyncHandler(async (req, res) => {
 exports.createShipRocketOrder = asyncHandler(async (req, res) => {
    const { length, width, height } = req.body;
    const result = await createShipRocketOrderService(req.params.id, length, width, height);
+   if (!result.success) {
+      return res
+         .status(200)
+         .json(new ApiResponse(result.statusCode, result.data, result.message, false));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(result.statusCode, result.data, result.message, true));
+});
+
+exports.handleAddAwbInfo = asyncHandler(async (req, res) => {
+   const { id } = req.params;
+   const { awbNumber } = req.body;
+   const result = await addAwbInfoService(id, awbNumber);
    if (!result.success) {
       return res
          .status(200)

@@ -292,7 +292,11 @@ exports.getAllWalletTransactions = async (userId, page = 1, perPage = 50) => {
       };
    }
    const skip = (page - 1) * perPage;
-   const transactions = await walletModel.find({ userId }).skip(skip).limit(perPage);
+   const transactions = await walletModel
+      .find({ userId })
+      .skip(skip)
+      .limit(perPage)
+      .sort({ createdAt: -1 });
    return {
       statusCode: 200,
       message: 'Wallet transactions fetched successfully',

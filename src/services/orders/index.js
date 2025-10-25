@@ -299,7 +299,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          items: orderItemPayload,
          address: addressPayload,
          paymentMethod: 'razorpay',
-         status: 'pending',
+         status: 'success',
          rawPrice: subtotal + totalDiscountedAmount + walletDiscount,
          discountedAmount: totalDiscountedAmount,
          discountedAmountAfterCoupon: subtotal,
@@ -417,8 +417,8 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          userId: _id,
          type: 'order',
          paymentMethod: 'razorpay',
-         amount: subtotal + Math.min(shippingCost, 150),
-         status: 'pending',
+         amount: subtotal + Math.min(shippingCost, 150) - walletDiscount,
+         status: 'success',
          transactionId: null,
       };
       const transcation = await transcationModel.create([transcationPayload], { session });
@@ -762,5 +762,25 @@ exports.createShipRocketOrderService = async (id, length, width, height) => {
       data: shipRocketResponse,
       success: true,
       message: 'Shiprocket order created successfully',
+   };
+};
+
+exports.addAwbInfoService = async (id, awbNumber) => {
+   const order = await orderModel.findByIdAndUpdate(id, { awbNumber }, { new: true });
+
+   if (!order) {
+      return {
+         statusCode: 404,
+         data: null,
+         success: false,
+         message: 'Order not found',
+      };
+   }
+
+   return {
+      statusCode: 200,
+      data: order,
+      success: true,
+      message: 'AWB info added successfully',
    };
 };
