@@ -153,7 +153,7 @@ exports.createPaymentService = async (payload, user, isUsingWalletAmount) => {
       walletDiscount = applicableWalletAmount;
    }
 
-   const finalAmount = Math.round(((total + Math.min(shippingCost, 150)) - walletDiscount) * 100);
+   const finalAmount = Math.round(((subtotal + Math.min(shippingCost, 150)) - walletDiscount) * 100);
 
    const razorpayOrder = await razorpay.orders.create({
       amount: finalAmount,
