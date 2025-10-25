@@ -17,6 +17,7 @@ const {
 const { generateOrderBill } = require('../../utils/generateOrderBill');
 const { getUsableWalletAmount } = require('../../utils/get_usable_wallet_amount');
 const walletModel = require('../../models/walletModel');
+const { Types } = require('mongoose');
 
 exports.createOrderService = async (payload, user, isUsingWallet) => {
    const session = await mongoose.startSession();

@@ -1,3 +1,4 @@
+const { Types } = require('mongoose');
 const addressModel = require('../../models/addressModel');
 const cartModel = require('../../models/cartModel');
 const Coupon = require('../../models/couponModel');
@@ -116,7 +117,7 @@ exports.getCartByUserId = async ({
       }
 
       const coupon = await Coupon.findOne(conditions.length > 0 ? { $or: conditions } : {});
-      
+
       const now = new Date();
 
       if (!coupon) {
