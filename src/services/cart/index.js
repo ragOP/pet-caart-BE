@@ -256,14 +256,17 @@ exports.addToCartFromPreviousOrder = async (user_id, orderId) => {
       );
       const productPrice = variantData ? variantData.salePrice : productData.salePrice;
       const weight = variantData ? variantData.weight : productData.weight;
+      const totalMRP = variantData ? variantData.price : productData.price;
+
       if (existingItemIndex !== -1) {
          cart.items[existingItemIndex].quantity += item.quantity;
          cart.items[existingItemIndex].total =
             cart.items[existingItemIndex].quantity * productPrice;
          cart.items[existingItemIndex].price = productPrice;
          cart.items[existingItemIndex].weight = weight;
-         cart.items[existingItemIndex].totalMRP = totalMRP * cart.items[existingItemIndex].quantity;
          cart.items[existingItemIndex].variantId = variantData ? variantData._id : null;
+         cart.items[existingItemIndex].totalMRP =
+            cart.items[existingItemIndex].quantity * totalMRP;
       } else {
          cart.items.push({
             productId: item.productId,
