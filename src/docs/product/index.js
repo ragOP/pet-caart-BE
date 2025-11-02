@@ -174,6 +174,12 @@
  *         required: false
  *         schema:
  *           type: string
+ *       - name: collectionSlug
+ *         in: query
+ *         description: Collection slug
+ *         required: false
+ *         schema:
+ *           type: string
  *       - name: price_range
  *         in: query
  *         description: Price range

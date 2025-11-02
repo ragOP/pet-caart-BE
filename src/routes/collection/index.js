@@ -24,7 +24,7 @@ router
       handleCreateCollection
    );
 router.route('/').get(handleGetAllCollections);
-router.route('/:id').get(isAdmin, handleGetSingleCollection);
+router.route('/:id').get(handleGetSingleCollection);
 router.route('/:id').put(isAdmin, upload.single('images'), handleUpdateCollection);
 router.route('/delete/:id').delete(isAdmin, handleDeleteCollection);
 

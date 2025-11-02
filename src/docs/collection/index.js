@@ -56,8 +56,6 @@
  *   get:
  *     summary: Get a collection by id
  *     tags: [Collection]
- *     security:
- *       - bearerAuth: []
  *     parameters:
  *       - name: id
  *         in: path
