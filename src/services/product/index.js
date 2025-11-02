@@ -422,3 +422,21 @@ exports.deleteProduct = async id => {
       data: null,
    };
 };
+
+exports.getSingleProductBySlug = async slug => {
+   const product = await getProductBySlug(slug);
+   if (!product) {
+      return {
+         statusCode: 404,
+         success: false,
+         message: 'Product not found',
+         data: null,
+      };
+   }
+   return {
+      statusCode: 200,
+      success: true,
+      message: 'Product fetched successfully',
+      data: product,
+   };
+};

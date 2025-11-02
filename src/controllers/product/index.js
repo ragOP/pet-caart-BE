@@ -7,6 +7,7 @@ const {
    updateProduct,
    getRecommendedProducts,
    deleteProduct,
+   getSingleProductBySlug
 } = require('../../services/product/index');
 const ApiResponse = require('../../utils/apiResponse/index');
 
@@ -316,6 +317,20 @@ exports.handleDeleteProduct = asyncHandler(async (req, res) => {
       return res.status(400).json(new ApiResponse(400, null, 'Product id is required'));
    }
    const result = await deleteProduct(id);
+   if (!result) {
+      return res.status(404).json(new ApiResponse(404, null, 'Product not found'));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
+});
+
+exports.handleGetSingleProductBySlug = asyncHandler(async (req, res) => {
+   const { slug } = req.params;
+   if (!slug) {
+      return res.status(400).json(new ApiResponse(400, null, 'Product slug is required'));
+   }
+   const result = await getSingleProductBySlug(slug);
    if (!result) {
       return res.status(404).json(new ApiResponse(404, null, 'Product not found'));
    }

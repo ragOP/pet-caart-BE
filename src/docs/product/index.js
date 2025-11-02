@@ -421,3 +421,25 @@
  *   500:
  *     description: Internal server error
  */
+
+/**
+ * @swagger
+ * /api/product/get-single-product/slug/{slug}:
+ *   get:
+ *     summary: Get a single product by slug
+ *     tags: [Product]
+ *     parameters:
+ *       - in: path
+ *         name: slug
+ *         required: true
+ *         description: The slug of the product
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Product fetched successfully
+ *       404:
+ *         description: Product not found
+ *       500:
+ *         description: Internal server error
+ */
