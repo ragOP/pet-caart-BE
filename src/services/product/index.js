@@ -433,10 +433,15 @@ exports.getSingleProductBySlug = async slug => {
          data: null,
       };
    }
+   const variants = await variantModel.find({ productId: product._id });
+   const updatedProductWithVariants = {
+      ...product._doc,
+      variants,
+   };
    return {
       statusCode: 200,
       success: true,
       message: 'Product fetched successfully',
-      data: product,
+      data: updatedProductWithVariants,
    };
 };
