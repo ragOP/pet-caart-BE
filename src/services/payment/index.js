@@ -62,10 +62,15 @@ exports.createPaymentService = async (payload, user, isUsingWalletAmount) => {
    const estimatedPrice = await getEstimatedPrice(pincode, weight);
    const shippingDetails = estimatedPrice.data.data.available_courier_companies;
 
-   const shippingCost =
-      shippingDetails[0].rate +
-      shippingDetails[0].coverage_charges +
-      shippingDetails[0].other_charges;
+   // const shippingCost =
+   //    shippingDetails[0].rate +
+   //    shippingDetails[0].coverage_charges +
+   //    shippingDetails[0].other_charges;
+
+   let shippingCost;
+   if (cart.total_price >= 999) shippingCost = 0;
+   else if (cart.total_price >= 500) shippingCost = 99;
+   else shippingCost = 79;
 
    let subtotal = 0;
    let discountAmount = 0;
@@ -163,7 +168,9 @@ exports.createPaymentService = async (payload, user, isUsingWalletAmount) => {
       walletDiscount = applicableWalletAmount;
    }
 
-   const finalAmount = Math.round((subtotal + Math.min(shippingCost, 150) - walletDiscount) * 100);
+   const platformFee = 15;
+
+   const finalAmount = Math.round((subtotal + shippingCost - walletDiscount + platformFee) * 100);
 
    const razorpayOrder = await razorpay.orders.create({
       amount: finalAmount,

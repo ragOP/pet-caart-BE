@@ -126,7 +126,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          const estimatedPrice = await getEstimatedPrice(pincode, weight);
          const couriers = estimatedPrice.data.data.available_courier_companies;
 
-         shippingCost = couriers[0].rate + couriers[0].coverage_charges + couriers[0].other_charges;
+         // shippingCost = couriers[0].rate + couriers[0].coverage_charges + couriers[0].other_charges;
       }
 
       let subtotal = 0;
@@ -257,9 +257,14 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
             );
       }
 
+      // Calculate shipping cost based on subtotal
+      if (subtotal >= 999) shippingCost = 0;
+      else if (subtotal >= 500) shippingCost = 99;
+      else shippingCost = 79;
+
       // 5% cashback on every order to wallet on total cart value
       const cashbackPercentage = 5;
-      const cashbackAmount = ((subtotal + Math.min(shippingCost, 150)) * cashbackPercentage) / 100;
+      const cashbackAmount = ((subtotal + shippingCost) * cashbackPercentage) / 100;
 
       if (cashbackAmount > 0) {
          // Create wallet transaction for cashback credit
@@ -291,6 +296,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          itemMRP: item.itemMRP,
       }));
 
+
       const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
 
       const orderPayload = {
@@ -303,12 +309,12 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          rawPrice: subtotal + totalDiscountedAmount + walletDiscount,
          discountedAmount: totalDiscountedAmount,
          discountedAmountAfterCoupon: subtotal,
-         totalAmount: subtotal + Math.min(shippingCost, 150),
+         totalAmount: subtotal + shippingCost,
          couponCode: couponCode,
          note: payload.note || '',
          weight: weight,
          walletDiscount: walletDiscount,
-         shippingCharge: Math.min(shippingCost, 150).toFixed(2),
+         shippingCharge: shippingCost.toFixed(2),
          cashBackOnOrder: cashbackAmount.toFixed(2),
          totalMRP: finalMRP.toFixed(2),
          gstNumber: gstNumber,

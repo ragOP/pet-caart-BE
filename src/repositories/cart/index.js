@@ -52,6 +52,9 @@ exports.getCartByUserId = async ({
          cart: null,
       };
    }
+   
+   // Platform fee fixed at 15
+   const platformFee = 15;
 
    let pincode = null;
    if (address_id) {
@@ -78,6 +81,7 @@ exports.getCartByUserId = async ({
    let shippingDetails = {};
    if (pincode) {
       const estimatedPrice = await getEstimatedPrice(pincode, weight);
+      console.log(estimatedPrice, 'estimatedPrice');
       const couriers = estimatedPrice.data.data.available_courier_companies;
 
       shippingDetails = {
@@ -136,6 +140,11 @@ exports.getCartByUserId = async ({
          coupon.totalUseLimit > 0
       ) {
          if (subtotal < coupon.minPurchase) {
+            let shippingCost;
+            if (subtotal >= 999) shippingCost = 0;
+            else if (subtotal >= 500) shippingCost = 99;
+            else shippingCost = 79;
+
             return {
                message: 'Minimum purchase amount is not met',
                status: 400,
@@ -144,10 +153,14 @@ exports.getCartByUserId = async ({
                   ...cart.toObject(),
                   items: updatedItems,
                   discount_amount: 0,
-                  total_price_with_shipping_and_discount:
-                     subtotal + Math.min(shippingDetails.totalCost, 150),
+                  total_price_with_shipping_and_discount: subtotal + shippingCost,
                   is_active: cart.is_active,
-                  shippingDetails,
+                  shippingDetails: {
+                     ...shippingDetails,
+                     totalCost: shippingCost,
+                     estimatedDays: Math.min(shippingDetails.estimatedDays, 4),
+                  },
+                  platformFee: platformFee,
                },
             };
          }
@@ -170,6 +183,10 @@ exports.getCartByUserId = async ({
 
          subtotal -= discountAmount;
       } else {
+         let shippingCost;
+         if (subtotal >= 999) shippingCost = 0;
+         else if (subtotal >= 500) shippingCost = 99;
+         else shippingCost = 79;
          return {
             message: 'Coupon is expired or inactive',
             status: 400,
@@ -178,10 +195,14 @@ exports.getCartByUserId = async ({
                ...cart.toObject(),
                items: updatedItems,
                discount_amount: 0,
-               total_price_with_shipping_and_discount:
-                  subtotal + Math.min(shippingDetails.totalCost, 150),
+               total_price_with_shipping_and_discount: subtotal + shippingCost,
                is_active: cart.is_active,
-               shippingDetails,
+               shippingDetails: {
+                  ...shippingDetails,
+                  totalCost: shippingCost,
+                  estimatedDays: Math.min(shippingDetails.estimatedDays, 4),
+               },
+               platformFee: platformFee,
             },
          };
       }
@@ -195,9 +216,13 @@ exports.getCartByUserId = async ({
       walletDiscount = applicableWalletAmount;
    }
 
-   const shippingCost = shippingDetails?.totalCost ?? 0;
-   const total = subtotal !== 0 ? subtotal + Math.min(shippingCost || 0, 150) : 0;
-   shippingDetails.totalCost = subtotal !== 0 ? Math.min(shippingCost || 0, 150) : 0;
+   let shippingCost;
+   if (subtotal >= 999) shippingCost = 0;
+   else if (subtotal >= 500) shippingCost = 99;
+   else shippingCost = 79;
+
+   const total = subtotal !== 0 ? subtotal + shippingCost + platformFee : 0;
+   shippingDetails.totalCost = subtotal !== 0 ? shippingCost : 0;
    shippingDetails.estimatedDays = Math.min(shippingDetails.estimatedDays, 4);
 
    return {
@@ -211,6 +236,7 @@ exports.getCartByUserId = async ({
       totalMRP: totalMRP,
       shippingDetails,
       walletDiscount: Number(walletDiscount.toFixed(2)),
+      platformFee: platformFee,
    };
 };
 
