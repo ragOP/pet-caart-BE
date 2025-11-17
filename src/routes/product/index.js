@@ -6,7 +6,8 @@ const {
    handleUpdateProduct,
    handleGetRecommendedProducts,
    handleDeleteProduct,
-   handleGetSingleProductBySlug
+   handleGetSingleProductBySlug,
+   handleGetSpecialOffersProducts,
 } = require('../../controllers/product/index.js');
 const { validateCreateProduct } = require('../../validators/product/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index');
@@ -41,5 +42,6 @@ router.route('/:id').put(
 router.route('/recommendations/:id').get(handleGetRecommendedProducts);
 router.delete('/delete/:id', isAdmin, handleDeleteProduct);
 router.route('/get-single-product/slug/:slug').get(handleGetSingleProductBySlug);
+router.route('/special-offers').get(handleGetSpecialOffersProducts);
 
 module.exports = router;

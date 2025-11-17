@@ -121,6 +121,7 @@ exports.getAllProducts = async ({
    sortBy,
    rating,
    collectionSlug,
+   isSpecialOffer,
 }) => {
    let filters = {};
 
@@ -144,8 +145,12 @@ exports.getAllProducts = async ({
       filters.price = { $lt: maxPrice };
    }
 
+   if (isSpecialOffer) {
+      filters.isSpecialOffer = isSpecialOffer === 'true' || isSpecialOffer === true;
+   }
+
    if (isVeg) {
-      filters.isVeg = isVeg;
+      filters.isVeg = isVeg === 'true' || isVeg === true;
    }
 
    if (lifeStage) {

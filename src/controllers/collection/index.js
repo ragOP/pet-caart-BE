@@ -4,6 +4,7 @@ const {
    getAllCollectionsBySubCategoryId,
    getSingleCollection,
    updateCollection,
+   deleteCollection,
 } = require('../../services/collection/index');
 const { asyncHandler } = require('../../utils/asyncHandler/index');
 const ApiResponse = require('../../utils/apiResponse/index');

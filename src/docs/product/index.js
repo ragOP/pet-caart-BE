@@ -22,6 +22,9 @@
  *               description:
  *                 type: string
  *                 description: The description of the product
+ *               isSpecialOffer:
+ *                 type: boolean
+ *                 description: Whether the product is a special offer
  *               price:
  *                 type: number
  *                 description: The price of the product
@@ -180,6 +183,15 @@
  *         required: false
  *         schema:
  *           type: string
+ *       - name: isVeg
+ *         in: query
+ *         description: Is vegetarian
+ *         required: false
+ *         schema:
+ *           type: boolean
+ *       - name: isSpecialOffer
+ *         in: query
+ *         description: Is special offer
  *       - name: price_range
  *         in: query
  *         description: Price range
@@ -266,6 +278,9 @@
  *               description:
  *                 type: string
  *                 description: The description of the product
+ *               isSpecialOffer:
+ *                 type: boolean
+ *                 description: Whether the product is a special offer
  *               price:
  *                 type: number
  *                 description: The price of the product
@@ -446,6 +461,38 @@
  *         description: Product fetched successfully
  *       404:
  *         description: Product not found
+ *       500:
+ *         description: Internal server error
+ */
+
+/**
+ * @swagger
+ * /api/product/special-offers:
+ *   get:
+ *     summary: Get all special offers products
+ *     tags: [Product]
+ *     parameters:
+ *       - name: search
+ *         in: query
+ *         description: Search by name or slug
+ *         required: false
+ *         schema:
+ *           type: string
+ *       - name: page
+ *         in: query
+ *         description: Page number
+ *         required: false
+ *         schema:
+ *           type: number
+ *       - name: per_page
+ *         in: query
+ *         description: Number of products per page
+ *         required: false
+ *         schema:
+ *           type: number
+ *     responses:
+ *       200:
+ *         description: A list of special offers products
  *       500:
  *         description: Internal server error
  */

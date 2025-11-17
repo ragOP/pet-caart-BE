@@ -81,7 +81,7 @@ exports.getCartByUserId = async ({
    let shippingDetails = {};
    if (pincode) {
       const estimatedPrice = await getEstimatedPrice(pincode, weight);
-      console.log(estimatedPrice, 'estimatedPrice');
+      // console.log(estimatedPrice, 'estimatedPrice');
       const couriers = estimatedPrice.data.data.available_courier_companies;
 
       shippingDetails = {

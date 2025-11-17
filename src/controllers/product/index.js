@@ -7,7 +7,7 @@ const {
    updateProduct,
    getRecommendedProducts,
    deleteProduct,
-   getSingleProductBySlug
+   getSingleProductBySlug,
 } = require('../../services/product/index');
 const ApiResponse = require('../../utils/apiResponse/index');
 
@@ -48,6 +48,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
       attributes,
       ratings,
       weight,
+      isSpecialOffer = false,
    } = req.body;
 
    // Safe JSON parser utility
@@ -126,6 +127,7 @@ exports.handleCreateProduct = asyncHandler(async (req, res) => {
       attributes: parsedAttributes,
       ratings: parsedRatings,
       weight,
+      isSpecialOffer: isSpecialOffer === 'true' || isSpecialOffer === true,
    };
 
    const result = await createProduct(productPayload);
@@ -157,6 +159,7 @@ exports.handleGetAllProducts = asyncHandler(async (req, res) => {
       sort_by,
       rating,
       collectionSlug,
+      isSpecialOffer = false,
    } = req.query;
    const result = await getAllProducts({
       search,
@@ -286,6 +289,7 @@ exports.handleUpdateProduct = asyncHandler(async (req, res) => {
       attributes: parsedAttributes,
       ratings: parsedRatings,
       weight: body.weight,
+      isSpecialOffer: body.isSpecialOffer === 'true' || body.isSpecialOffer === true,
    };
 
    // Update product
@@ -337,4 +341,26 @@ exports.handleGetSingleProductBySlug = asyncHandler(async (req, res) => {
    return res
       .status(200)
       .json(new ApiResponse(result.statusCode, result.data, result.message, result.success));
+});
+
+exports.handleGetSpecialOffersProducts = asyncHandler(async (req, res) => {
+   const {
+      search,
+      page = 1,
+      per_page = 50,
+   } = req.query;
+
+   const result = await getAllProducts({
+      search,
+      page,
+      perPage: per_page,
+      isSpecialOffer: true,
+   });
+
+   if (!result.success) {
+      return res.status(200).json(new ApiResponse(result.statusCode, null, result.message, false));
+   }
+   return res
+      .status(200)
+      .json(new ApiResponse(result.statusCode, result.data, result.message, true));
 });

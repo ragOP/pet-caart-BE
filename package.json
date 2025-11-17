@@ -12,6 +12,7 @@
    "author": "pet-caart",
    "license": "ISC",
    "dependencies": {
+      "@aws-sdk/client-s3": "^3.922.0",
       "apn": "^2.2.0",
       "axios": "^1.11.0",
       "cloudinary": "^2.6.1",
