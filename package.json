@@ -23,6 +23,7 @@
       "express-validator": "^7.2.1",
       "firebase-admin": "^13.5.0",
       "image-size": "^2.0.2",
+      "india-pincode-search": "^1.0.2",
       "jsonwebtoken": "^9.0.2",
       "logrotate-stream": "^0.2.9",
       "mongoose": "^8.14.2",

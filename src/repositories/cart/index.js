@@ -4,8 +4,8 @@ const cartModel = require('../../models/cartModel');
 const Coupon = require('../../models/couponModel');
 const userModel = require('../../models/userModel');
 const { getUsableWalletAmount } = require('../../utils/get_usable_wallet_amount');
-const { getTaxForItem } = require('../../utils/getTaxRate');
 const { getEstimatedPrice } = require('../../utils/shipRocket');
+const finder = require("india-pincode-search");
 
 exports.getCart = async () => {
    return await Cart.find({});
@@ -223,7 +223,14 @@ exports.getCartByUserId = async ({
 
    const total = subtotal !== 0 ? subtotal + shippingCost + platformFee : 0;
    shippingDetails.totalCost = subtotal !== 0 ? shippingCost : 0;
-   shippingDetails.estimatedDays = Math.min(shippingDetails.estimatedDays, 4);
+
+   // Check if pincode is in Rajkot city
+   const isRajkotCity = finder.search(pincode);
+   if (isRajkotCity){
+      shippingDetails.estimatedDays = 2;
+   }else {
+      shippingDetails.estimatedDays = Math.min(shippingDetails.estimatedDays, 4);
+   }
 
    return {
       ...cart.toObject(),
