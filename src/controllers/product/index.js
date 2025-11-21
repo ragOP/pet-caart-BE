@@ -344,11 +344,7 @@ exports.handleGetSingleProductBySlug = asyncHandler(async (req, res) => {
 });
 
 exports.handleGetSpecialOffersProducts = asyncHandler(async (req, res) => {
-   const {
-      search,
-      page = 1,
-      per_page = 50,
-   } = req.query;
+   const { search, page = 1, per_page = 50 } = req.query;
 
    const result = await getAllProducts({
       search,

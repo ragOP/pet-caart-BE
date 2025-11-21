@@ -4,7 +4,7 @@ const {
    handleGetAllCollections,
    handleGetSingleCollection,
    handleUpdateCollection,
-   handleDeleteCollection
+   handleDeleteCollection,
 } = require('../../controllers/collection/index.js');
 const { validateCreateCollection } = require('../../validators/collection/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index');

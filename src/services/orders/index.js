@@ -296,7 +296,6 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          itemMRP: item.itemMRP,
       }));
 
-
       const orderId = `ORD-${Date.now()}-${Math.floor(Math.random() * 1000000)}`;
 
       const orderPayload = {

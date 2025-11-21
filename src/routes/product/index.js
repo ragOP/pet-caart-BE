@@ -9,7 +9,6 @@ const {
    handleGetSingleProductBySlug,
    handleGetSpecialOffersProducts,
 } = require('../../controllers/product/index.js');
-const { validateCreateProduct } = require('../../validators/product/index.js');
 const { validateRequest } = require('../../middleware/validateRequest/index');
 const multer = require('multer');
 const { storage } = require('../../config/multer.js');
@@ -17,6 +16,12 @@ const { isAdmin } = require('../../middleware/auth/adminMiddleware.js');
 const router = express.Router();
 const upload = multer({ storage: storage });
 
+router.route('/special-offers').get(handleGetSpecialOffersProducts);
+router.route('/recommendations/:id').get(handleGetRecommendedProducts);
+router.delete('/delete/:id', isAdmin, handleDeleteProduct);
+router.route('/get-single-product/slug/:slug').get(handleGetSingleProductBySlug);
+
+// Dynamic Routes for Product CRUD Operations
 router.route('/').post(
    isAdmin,
    upload.fields([
@@ -39,9 +44,5 @@ router.route('/:id').put(
    validateRequest,
    handleUpdateProduct
 );
-router.route('/recommendations/:id').get(handleGetRecommendedProducts);
-router.delete('/delete/:id', isAdmin, handleDeleteProduct);
-router.route('/get-single-product/slug/:slug').get(handleGetSingleProductBySlug);
-router.route('/special-offers').get(handleGetSpecialOffersProducts);
 
 module.exports = router;

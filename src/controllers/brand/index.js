@@ -22,7 +22,16 @@ exports.handleCreateBrand = asyncHandler(async (req, res) => {
 
    const imageUrl = await uploadSingleFile(image[0].path);
 
-   const result = await createBrand({ name, slug, description, logo: imageUrl, active, createdBy, countryOfOrigin, importedBy });
+   const result = await createBrand({
+      name,
+      slug,
+      description,
+      logo: imageUrl,
+      active,
+      createdBy,
+      countryOfOrigin,
+      importedBy,
+   });
    return res.status(201).json(new ApiResponse(201, result, 'Brand created successfully', true));
 });
 

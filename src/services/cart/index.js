@@ -265,8 +265,7 @@ exports.addToCartFromPreviousOrder = async (user_id, orderId) => {
          cart.items[existingItemIndex].price = productPrice;
          cart.items[existingItemIndex].weight = weight;
          cart.items[existingItemIndex].variantId = variantData ? variantData._id : null;
-         cart.items[existingItemIndex].totalMRP =
-            cart.items[existingItemIndex].quantity * totalMRP;
+         cart.items[existingItemIndex].totalMRP = cart.items[existingItemIndex].quantity * totalMRP;
       } else {
          cart.items.push({
             productId: item.productId,

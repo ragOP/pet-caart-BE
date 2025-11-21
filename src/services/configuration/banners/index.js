@@ -13,9 +13,9 @@ exports.createBanner = async (type, image) => {
          data: null,
       };
    }
-   
+
    // Removed image dimension validation temporarily as per request
-   
+
    // const resolutionMap = {
    //    web: { width: 1448, height: 250 },
    //    app: { width: 343, height: 120 },
