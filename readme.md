@@ -1,4 +1,4 @@
-# pet-caart-be
+# PETCAART BACKEND REPO
 
 This is the backend repository for petcaart.com - A one stop shop all pet requirements.
 
