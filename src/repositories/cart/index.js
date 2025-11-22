@@ -225,12 +225,32 @@ exports.getCartByUserId = async ({
    shippingDetails.totalCost = subtotal !== 0 ? shippingCost : 0;
 
    // Check if pincode is in Rajkot city
-   const isRajkotCity = finder.search(pincode);
-   if (isRajkotCity) {
-      shippingDetails.estimatedDays = 2;
+   const pincode_with_state = finder.search(pincode);
+
+   const addDays = (date, days) => {
+      const result = new Date(date);
+      result.setDate(result.getDate() + days);
+      return result;
+   };
+
+   const formatDate = date =>
+      date.toLocaleDateString('en-US', {
+         month: 'short',
+         day: 'numeric',
+         year: 'numeric',
+      });
+
+   if (
+      pincode_with_state &&
+      (pincode_with_state[0].district === 'Rajkot' || pincode_with_state[0].city === 'Rajkot')
+   ) {
+      shippingDetails.estimatedDays = 0;
    } else {
       shippingDetails.estimatedDays = Math.min(shippingDetails.estimatedDays, 4);
    }
+
+   const estimatedDate = addDays(new Date(), shippingDetails.estimatedDays);
+   shippingDetails.estimatedDate = formatDate(estimatedDate);
 
    return {
       ...cart.toObject(),
