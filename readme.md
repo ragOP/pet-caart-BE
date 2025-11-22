@@ -55,5 +55,3 @@ Note: Inspect files under `src/config/` (for example `src/config/db.js` and `src
 **Next Steps / Local Workflow Suggestions**
 - Use a local MongoDB or MongoDB Atlas for development; give each contributor their own database URI.
 - Store sensitive keys in your machine's environment or a secrets manager; do not commit them to the repo.
-
-If you want, I can add an example `.env.example` file listing the variables above, or create a CONTRIBUTING.md with a PR checklist.
