@@ -111,10 +111,10 @@ exports.handleStartEmailCampaign = req =>
       campaignType: req.body.campaignType,
       contactField: 'email',
       messagePayload: {
-         content: req.body.body,
-         subject: req.body.title,
+         title: req.body.title,
+         body: req.body.body,
       },
-      sendFn: async user => sendEmailReminder(user, req.body.body, req.body.title),
+      sendFn: async (user, messagePayload) => sendEmailReminder(user, messagePayload.title, messagePayload.body),
    });
 
 // Android Push Notification Campaign
@@ -124,10 +124,14 @@ exports.handleStartAndriodPushNotificationCampaign = req =>
       channel: 'push_notification_android',
       campaignType: req.body.campaignType,
       contactField: 'fcmToken',
-      sendFn: async user =>
+      messagePayload: {
+         title: req.body.title || 'Special Offer Just for You! 🐾',
+         body: req.body.body || 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
+      },
+      sendFn: async (user, messagePayload) =>
          sendPushNotification(user.fcmToken, user.apnToken, user._id, {
-            title: req.body.title || 'Special Offer Just for You! 🐾',
-            body: req.body.body || 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
+            title: messagePayload.title,
+            body: messagePayload.body,
          }),
    });
 
@@ -138,12 +142,16 @@ exports.handleStartiOSPushNotificationCampaign = req =>
       channel: 'push_notification_ios',
       campaignType: req.body.campaignType,
       contactField: 'apnToken',
-      sendFn: async user =>
+      messagePayload: {
+         title: req.body.title || 'Special Offer Just for You! 🐾',
+         body: req.body.body || 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
+      },
+      sendFn: async (user, messagePayload) =>
          sendViaAPNs({
             apnToken: user.apnToken,
             notificationData: {
-               title: req.body.title || 'Special Offer Just for You! 🐾',
-               body: req.body.body || 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
+               title: messagePayload.title,
+               body: messagePayload.body,
             },
             userId: user._id,
             topicOverride: process.env.APN_TOPIC_OVERRIDE,
