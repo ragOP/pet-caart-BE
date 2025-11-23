@@ -110,7 +110,11 @@ exports.handleStartEmailCampaign = req =>
       channel: 'email',
       campaignType: req.body.campaignType,
       contactField: 'email',
-      sendFn: async user => sendEmailReminder(user),
+      messagePayload: {
+         content: req.body.body,
+         subject: req.body.title,
+      },
+      sendFn: async user => sendEmailReminder(user, req.body.body, req.body.title),
    });
 
 // Android Push Notification Campaign
@@ -122,8 +126,8 @@ exports.handleStartAndriodPushNotificationCampaign = req =>
       contactField: 'fcmToken',
       sendFn: async user =>
          sendPushNotification(user.fcmToken, user.apnToken, user._id, {
-            title: 'Special Offer Just for You! 🐾',
-            body: 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
+            title: 'Special Offer Just for You! 🐾' || req.body.title,
+            body: 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!' || req.body.body,
          }),
    });
 
@@ -138,8 +142,8 @@ exports.handleStartiOSPushNotificationCampaign = req =>
          sendViaAPNs({
             apnToken: user.apnToken,
             notificationData: {
-               title: 'Special Offer Just for You! 🐾',
-               body: 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
+               title: 'Special Offer Just for You! 🐾' || req.body.title,
+               body: 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!' || req.body.body,
             },
             userId: user._id,
             topicOverride: process.env.APN_TOPIC_OVERRIDE,

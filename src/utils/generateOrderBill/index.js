@@ -1,11 +1,8 @@
-const puppeteer = require('puppeteer');
+const htmlToPdf = require("html-pdf-node");
 const { sendEmail } = require('../nodeMailer');
 
 exports.generateOrderBill = async (order, user, address) => {
-   const browser = await puppeteer.launch();
-   const page = await browser.newPage();
-
-   const htmlContent = `
+  const htmlContent = `
     <!DOCTYPE html>
 <html>
   <head>
@@ -163,53 +160,59 @@ exports.generateOrderBill = async (order, user, address) => {
 
   `;
 
-   await page.setContent(htmlContent);
-   const pdfBuffer = await page.pdf({ format: 'A4' });
+  await page.setContent(htmlContent);
+  const pdfBuffer = await page.pdf({ format: 'A4' });
 
-   await browser.close();
+  await browser.close();
 
-   const emailOptions = {
-      from: `"Petcaart 🐾" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: `Order Received - ${order._id}`,
-      html: htmlContent,
-      attachments: [
-         {
-            filename: `order-${order._id}.pdf`,
-            content: pdfBuffer,
-            contentType: 'application/pdf',
-         },
-      ],
-   };
+  const emailOptions = {
+    from: `"Petcaart 🐾" <${process.env.EMAIL_USER}>`,
+    to: user.email,
+    subject: `Order Received - ${order._id}`,
+    html: htmlContent,
+    attachments: [
+      {
+        filename: `order-${order._id}.pdf`,
+        content: pdfBuffer,
+        contentType: 'application/pdf',
+      },
+    ],
+  };
 
-   const emailSent = await sendEmail(emailOptions);
-   if (emailSent.accepted.length > 0) {
-      return {
-         success: true,
-         message: 'Email sent successfully',
-         data: emailSent,
-         statusCode: 200,
-      };
-   }
-
-   return {
-      success: false,
-      message: 'Email not sent',
+  const emailSent = await sendEmail(emailOptions);
+  if (emailSent.accepted.length > 0) {
+    return {
+      success: true,
+      message: 'Email sent successfully',
       data: emailSent,
-      statusCode: 500,
-   };
+      statusCode: 200,
+    };
+  }
+
+  return {
+    success: false,
+    message: 'Email not sent',
+    data: emailSent,
+    statusCode: 500,
+  };
 };
 
-exports.sendEmailReminder = async user => {
-   const browser = await puppeteer.launch();
-   const page = await browser.newPage();
 
-   const htmlContent = `
+exports.sendEmailReminder = async (user, content, subject) => {
+  const defaultContent = `
+    <p>Looks like you left some pawsome items in your cart at <strong>PetCaart</strong>!</p>
+    <p>Don't miss out on pampering your furry friend — hurry, this special offer expires soon.</p>
+    <p>Complete your order now and make your pet’s day special. 🐶🐱</p>
+
+    <a href="https://petcaart.com/cart" class="cta-btn">🛒 Complete My Order</a>
+  `;
+
+  const htmlContent = `
   <!DOCTYPE html>
   <html>
     <head>
       <meta charset="UTF-8" />
-      <title>We Miss You! 🐾 | Petcaart</title>
+      <title>${subject || "We Miss You! 🐾"}</title>
       <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
@@ -284,16 +287,6 @@ exports.sendEmailReminder = async user => {
           color: #999;
           border-top: 1px solid #eee;
         }
-
-        @media (max-width: 600px) {
-          .email-body {
-            padding: 20px;
-          }
-
-          .email-header {
-            padding: 20px;
-          }
-        }
       </style>
     </head>
 
@@ -305,12 +298,10 @@ exports.sendEmailReminder = async user => {
         </div>
 
         <div class="email-body">
-          <h2>Hello, ${user.name || 'Valued Customer'} 🐾</h2>
-          <p>Looks like you left some pawsome items in your cart at <strong>PetCaart</strong>!</p>
-          <p>Don't miss out on pampering your furry friend — hurry, this special offer expires soon.</p>
-          <p>Complete your order now and make your pet’s day special. 🐶🐱</p>
+          <h2>Hello, ${user.name || "Valued Customer"} 🐾</h2>
+          ${content || defaultContent}
 
-          <a href="https://petcaart.com/cart" class="cta-btn">🛒 Complete My Order</a>
+          <a href="https://petcaart.com" class="cta-btn">🛒 Visit PetCaart</a>
         </div>
 
         <div class="footer">
@@ -322,39 +313,28 @@ exports.sendEmailReminder = async user => {
   </html>
   `;
 
-   await page.setContent(htmlContent);
-   const pdfBuffer = await page.pdf({ format: 'A4' });
-   await browser.close();
+  const emailOptions = {
+    from: `"Petcaart 🐾" <${process.env.EMAIL_USER}>`,
+    to: user.email,
+    subject: subject || `A Special Treat for You, ${user.name || "Pet Lover"}! 🐾`,
+    html: htmlContent,
+  };
 
-   const emailOptions = {
-      from: `"Petcaart 🐾" <${process.env.EMAIL_USER}>`,
-      to: user.email,
-      subject: `You left something behind, ${user.name || 'Valued Customer'}! 🐾`,
-      html: htmlContent,
-      attachments: [
-         {
-            filename: `reminder-${user.name || 'Valued Customer'}.pdf`,
-            content: pdfBuffer,
-            contentType: 'application/pdf',
-         },
-      ],
-   };
+  const emailSent = await sendEmail(emailOptions);
 
-   const emailSent = await sendEmail(emailOptions);
-
-   if (emailSent.accepted?.length > 0) {
-      return {
-         success: true,
-         message: 'Reminder email sent successfully',
-         data: emailSent,
-         statusCode: 200,
-      };
-   }
-
-   return {
-      success: false,
-      message: 'Failed to send reminder email',
+  if (emailSent.accepted?.length > 0) {
+    return {
+      success: true,
+      message: "Reminder email sent successfully",
       data: emailSent,
-      statusCode: 500,
-   };
+      statusCode: 200,
+    };
+  }
+
+  return {
+    success: false,
+    message: "Failed to send reminder email",
+    data: emailSent,
+    statusCode: 500,
+  };
 };
