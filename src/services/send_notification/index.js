@@ -114,7 +114,8 @@ exports.handleStartEmailCampaign = req =>
          title: req.body.title,
          body: req.body.body,
       },
-      sendFn: async (user, messagePayload) => sendEmailReminder(user, messagePayload.title, messagePayload.body),
+      sendFn: async (user, messagePayload) =>
+         sendEmailReminder(user, messagePayload.title, messagePayload.body),
    });
 
 // Android Push Notification Campaign
@@ -126,7 +127,9 @@ exports.handleStartAndriodPushNotificationCampaign = req =>
       contactField: 'fcmToken',
       messagePayload: {
          title: req.body.title || 'Special Offer Just for You! 🐾',
-         body: req.body.body || 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
+         body:
+            req.body.body ||
+            'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
       },
       sendFn: async (user, messagePayload) =>
          sendPushNotification(user.fcmToken, user.apnToken, user._id, {
@@ -144,7 +147,9 @@ exports.handleStartiOSPushNotificationCampaign = req =>
       contactField: 'apnToken',
       messagePayload: {
          title: req.body.title || 'Special Offer Just for You! 🐾',
-         body: req.body.body || 'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
+         body:
+            req.body.body ||
+            'Something is waiting in your cart at Petcaart. Complete your order now and enjoy exclusive discounts!',
       },
       sendFn: async (user, messagePayload) =>
          sendViaAPNs({
@@ -175,6 +180,7 @@ exports.getAllCampaigns = async () => {
       statusCode: 200,
    };
 };
+
 exports.getSingleCampaign = async id => {
    const campaign = await campaignModel
       .findById(id)
