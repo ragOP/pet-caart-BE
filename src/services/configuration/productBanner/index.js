@@ -24,35 +24,35 @@ exports.createProductBanner = async (productId, image, type) => {
       };
    }
 
-   const resolutionMap = {
-      web: { width: 1448, height: 250 },
-      app: { width: 343, height: 120 },
-      mobile: { width: 343, height: 120 },
-      tablet: { width: 696, height: 200 },
-   };
+   // const resolutionMap = {
+   //    web: { width: 1448, height: 250 },
+   //    app: { width: 343, height: 120 },
+   //    mobile: { width: 343, height: 120 },
+   //    tablet: { width: 696, height: 200 },
+   // };
 
-   const expected = resolutionMap[type];
+   // const expected = resolutionMap[type];
 
-   if (!expected) {
-      return {
-         success: false,
-         statusCode: 400,
-         message: 'Invalid banner type',
-         data: null,
-      };
-   }
+   // if (!expected) {
+   //    return {
+   //       success: false,
+   //       statusCode: 400,
+   //       message: 'Invalid banner type',
+   //       data: null,
+   //    };
+   // }
 
-   const buffer = fs.readFileSync(image);
-   const { width, height } = imageSize(buffer);
+   // const buffer = fs.readFileSync(image);
+   // const { width, height } = imageSize(buffer);
 
-   if (width !== expected.width || height !== expected.height) {
-      return {
-         success: false,
-         statusCode: 400,
-         message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
-         data: null,
-      };
-   }
+   // if (width !== expected.width || height !== expected.height) {
+   //    return {
+   //       success: false,
+   //       statusCode: 400,
+   //       message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
+   //       data: null,
+   //    };
+   // }
 
    const existingProductBanner = await ProductBanner.findOne({ type });
    if (existingProductBanner) {
@@ -120,35 +120,36 @@ exports.updateProductBanner = async (productId, image, type, isActive) => {
          message: 'Product ID and type are required',
       };
    }
-   const resolutionMap = {
-      web: { width: 1448, height: 250 },
-      app: { width: 343, height: 120 },
-      mobile: { width: 343, height: 120 },
-      tablet: { width: 696, height: 200 },
-   };
+   // const resolutionMap = {
+   //    web: { width: 1448, height: 250 },
+   //    app: { width: 343, height: 120 },
+   //    mobile: { width: 343, height: 120 },
+   //    tablet: { width: 696, height: 200 },
+   // };
 
-   const expected = resolutionMap[type];
+   // const expected = resolutionMap[type];
 
-   if (!expected) {
-      return {
-         success: false,
-         statusCode: 400,
-         message: 'Invalid banner type',
-         data: null,
-      };
-   }
+   // if (!expected) {
+   //    return {
+   //       success: false,
+   //       statusCode: 400,
+   //       message: 'Invalid banner type',
+   //       data: null,
+   //    };
+   // }
 
-   const buffer = fs.readFileSync(image);
-   const { width, height } = imageSize(buffer);
+   // const buffer = fs.readFileSync(image);
+   // const { width, height } = imageSize(buffer);
 
-   if (width !== expected.width || height !== expected.height) {
-      return {
-         success: false,
-         statusCode: 400,
-         message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
-         data: null,
-      };
-   }
+   // if (width !== expected.width || height !== expected.height) {
+   //    return {
+   //       success: false,
+   //       statusCode: 400,
+   //       message: `Invalid image resolution. Expected ${expected.width}x${expected.height}, but got ${width}x${height}`,
+   //       data: null,
+   //    };
+   // }
+   
    const product = await Product.findById(productId);
    if (!product) {
       return {
