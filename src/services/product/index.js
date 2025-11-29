@@ -145,11 +145,11 @@ exports.getAllProducts = async ({
       filters.price = { $lt: maxPrice };
    }
 
-   if (isSpecialOffer) {
+   if (isSpecialOffer !== undefined) {
       filters.isSpecialOffer = isSpecialOffer === 'true' || isSpecialOffer === true;
    }
 
-   if (isVeg) {
+   if (isVeg !== undefined) {
       filters.isVeg = isVeg === 'true' || isVeg === true;
    }
 
@@ -171,7 +171,10 @@ exports.getAllProducts = async ({
 
    if (collectionSlug) {
       const collection = await collectionModel.findOne({ slug: collectionSlug });
-      filters = { _id: { $in: collection.productIds } };
+
+      if (collection) {
+         filters._id = { $in: collection.productIds };
+      }
    }
 
    const skip = (page - 1) * perPage;
