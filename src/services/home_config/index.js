@@ -204,6 +204,23 @@ exports.UpdateGridConfig = async (
 
    if (contentTypeRef) payload.contentTypeRef = contentTypeRef;
 
+   const existingPageConfig = await getByPageKey(keyword);
+   console.log('Existing Page Config:', existingPageConfig.sections);
+   existingPageConfig.sections = existingPageConfig.sections.map(section => {
+      if (section?.id?._id?.toString() === id) {
+         console.log('Updating section label to:', title || section.label);
+         console.log('Existing section label was:', section.label);
+         console.log('Section before update:', section);
+         return {
+            ...section.toObject(),
+            label: title || section.label,
+         };
+      }
+      return section;
+   });
+   await existingPageConfig.save();
+
+
    const response = await update(id, payload);
    if (!response) {
       return {
@@ -243,7 +260,6 @@ exports.UpdateGridConfigPosition = async (id, newPosition, oldPosition) => {
          success: false,
       };
    }
-
    if (newPosition > oldPosition) {
       filter.position = { $gt: oldPosition, $lte: newPosition };
       filter._id = { $ne: id };
