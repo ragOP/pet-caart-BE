@@ -132,11 +132,13 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
       let subtotal = 0;
       let totalDiscountedAmount = 0;
       let finalMRP = 0;
+      let original_subtotal = 0;
       const updatedItems = cart.items.map(item => {
          const itemTotal = item.price * item.quantity;
          const itemMRP = item.totalMRP * item.quantity;
          subtotal += itemTotal;
          finalMRP += itemMRP;
+         original_subtotal += itemTotal;
          return {
             ...item.toObject(),
             discounted_price: item.price,
@@ -258,8 +260,8 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
       }
 
       // Calculate shipping cost based on subtotal
-      if (subtotal >= 999) shippingCost = 0;
-      else if (subtotal >= 500) shippingCost = 99;
+      if (original_subtotal >= 999) shippingCost = 0;
+      else if (original_subtotal >= 500) shippingCost = 99;
       else shippingCost = 79;
 
       // 5% cashback on every order to wallet on total cart value
@@ -308,7 +310,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          rawPrice: subtotal + totalDiscountedAmount + walletDiscount,
          discountedAmount: totalDiscountedAmount,
          discountedAmountAfterCoupon: subtotal,
-         totalAmount: subtotal + shippingCost,
+         totalAmount: subtotal + shippingCost + 15.0,
          couponCode: couponCode,
          note: payload.note || '',
          weight: weight,
@@ -422,7 +424,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
          userId: _id,
          type: 'order',
          paymentMethod: 'razorpay',
-         amount: subtotal + Math.min(shippingCost, 150) - walletDiscount,
+         amount: subtotal + Math.min(shippingCost, 150) - walletDiscount + 15.0,
          status: 'success',
          transactionId: null,
       };
@@ -443,7 +445,7 @@ exports.createOrderService = async (payload, user, isUsingWallet) => {
 
       let emailSent = false;
 
-      const orderBill = await generateOrderBill(order[0], user, addressPayload);
+      const orderBill = await generateOrderBill(order[0]._id, user, addressPayload);
 
       if (orderBill.success) {
          emailSent = true;

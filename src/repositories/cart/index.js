@@ -96,10 +96,12 @@ exports.getCartByUserId = async ({
    let discountAmount = 0;
    let subtotal = 0;
    let totalMRP = 0;
+   let original_subtotal = 0;
    const updatedItems = cart.items.map(item => {
       const itemTotal = item.price * item.quantity;
       totalMRP += item.totalMRP;
       subtotal += itemTotal;
+      original_subtotal += itemTotal;
       return {
          ...item.toObject(),
          discounted_price: item.price,
@@ -141,8 +143,8 @@ exports.getCartByUserId = async ({
       ) {
          if (subtotal < coupon.minPurchase) {
             let shippingCost;
-            if (subtotal >= 999) shippingCost = 0;
-            else if (subtotal >= 500) shippingCost = 99;
+            if (original_subtotal >= 999) shippingCost = 0;
+            else if (original_subtotal >= 500) shippingCost = 99;
             else shippingCost = 79;
 
             return {
@@ -184,8 +186,8 @@ exports.getCartByUserId = async ({
          subtotal -= discountAmount;
       } else {
          let shippingCost;
-         if (subtotal >= 999) shippingCost = 0;
-         else if (subtotal >= 500) shippingCost = 99;
+         if (original_subtotal >= 999) shippingCost = 0;
+         else if (original_subtotal >= 500) shippingCost = 99;
          else shippingCost = 79;
          return {
             message: 'Coupon is expired or inactive',
@@ -217,8 +219,8 @@ exports.getCartByUserId = async ({
    }
 
    let shippingCost;
-   if (subtotal >= 999) shippingCost = 0;
-   else if (subtotal >= 500) shippingCost = 99;
+   if (original_subtotal >= 999) shippingCost = 0;
+   else if (original_subtotal >= 500) shippingCost = 99;
    else shippingCost = 79;
 
    const total = subtotal !== 0 ? subtotal + shippingCost + platformFee : 0;

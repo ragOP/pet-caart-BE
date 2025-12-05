@@ -49,6 +49,7 @@ const OrderSchema = new mongoose.Schema(
       totalMRP: { type: Number, required: true },
       awbNumber: { type: String, default: '' },
       awbTrackingUrl: { type: String, default: 'https://shreenandancourier.com/' },
+      platformFee: { type: Number, default: 15.0 },
    },
    { timestamps: true }
 );
